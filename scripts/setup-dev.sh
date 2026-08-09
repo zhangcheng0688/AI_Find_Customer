@@ -8,9 +8,10 @@ cd "$ROOT"
 export BUN_INSTALL="${BUN_INSTALL:-$HOME/.bun}"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
-if ! python3 -c "import venv" 2>/dev/null; then
+# `import venv` can succeed even when ensurepip is missing; check ensurepip itself.
+if ! python3 -c "import ensurepip" 2>/dev/null; then
   sudo apt-get update -qq
-  sudo apt-get install -y -qq python3.12-venv python3-pip
+  sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq python3.12-venv python3-pip
 fi
 
 if ! command -v bun >/dev/null 2>&1; then
@@ -19,7 +20,11 @@ if ! command -v bun >/dev/null 2>&1; then
 fi
 
 cd "$ROOT/backend"
-python3 -m venv .venv
+# Recreate a broken/incomplete venv if pip is unavailable.
+if [[ ! -x .venv/bin/pip ]]; then
+  rm -rf .venv
+  python3 -m venv .venv
+fi
 .venv/bin/pip install --upgrade pip
 .venv/bin/pip install -r requirements.txt
 if [[ ! -f .env ]]; then
