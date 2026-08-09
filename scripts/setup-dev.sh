@@ -8,11 +8,10 @@ cd "$ROOT"
 export BUN_INSTALL="${BUN_INSTALL:-$HOME/.bun}"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
-# `import venv` can succeed even when ensurepip is missing; check ensurepip itself.
-if ! python3 -c "import ensurepip" 2>/dev/null; then
-  sudo apt-get update -qq
-  sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq python3.12-venv python3-pip
-fi
+# Fresh Cloud Agent images often lack a working ensurepip even when
+# `import ensurepip` appears to succeed. Always install python3-venv.
+sudo apt-get update -qq
+sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq python3.12-venv python3-pip
 
 if ! command -v bun >/dev/null 2>&1; then
   curl -fsSL https://bun.sh/install | bash
@@ -20,11 +19,8 @@ if ! command -v bun >/dev/null 2>&1; then
 fi
 
 cd "$ROOT/backend"
-# Recreate a broken/incomplete venv if pip is unavailable.
-if [[ ! -x .venv/bin/pip ]]; then
-  rm -rf .venv
-  python3 -m venv .venv
-fi
+rm -rf .venv
+python3 -m venv .venv
 .venv/bin/pip install --upgrade pip
 .venv/bin/pip install -r requirements.txt
 if [[ ! -f .env ]]; then
