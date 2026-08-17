@@ -122,6 +122,9 @@ def head(title_key, desc_key, title, desc):
 <title>{title}</title>
 <link rel="icon" href="{LOGO}">
 <link rel="stylesheet" href="assets/css/styles.css">
+<link rel="preload" as="image" href="assets/images/handball-hero-master-v1-scoreboard-correct.png">
+<link rel="preload" as="image" href="assets/images/icehockey-hero-master-v1.png">
+<link rel="preload" as="image" href="assets/images/football-hero-master-v1.png">
 </head>'''
 
 INDEX = head("meta.home.title", "meta.home.desc",
@@ -129,7 +132,11 @@ INDEX = head("meta.home.title", "meta.home.desc",
              "Sport media playout, LED video systems and intelligent solutions for professional live environments.") + f'''
 <body>
   <main class="hero-shell">
-    <img class="hero-image" src="assets/images/handball-hero-master-v1-scoreboard-correct.png" alt="SLAM.SYSTEMS operator at a live handball match">
+    <div class="hero-stage" aria-hidden="true">
+      <img class="hero-image on" data-hero-slide="0" src="assets/images/handball-hero-master-v1-scoreboard-correct.png" alt="SLAM.SYSTEMS operator at a live handball match">
+      <img class="hero-image" data-hero-slide="1" src="assets/images/icehockey-hero-master-v1.png" alt="SLAM.SYSTEMS operator at a live ice hockey match">
+      <img class="hero-image" data-hero-slide="2" src="assets/images/football-hero-master-v1.png" alt="SLAM.SYSTEMS operator at a live football match">
+    </div>
     <div class="hero-shade" aria-hidden="true"></div>
     {header("index.html#top").replace(" interior-header", "")}
     <section class="hero-content" id="top">
