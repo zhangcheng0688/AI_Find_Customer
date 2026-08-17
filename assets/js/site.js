@@ -78,47 +78,41 @@
     }
     var foot = document.querySelector("[data-hero-sport]");
     if (foot) foot.textContent = sport + " / " + h.num;
-    var img = document.querySelector(".hero-image");
-    if (img) img.alt = h.alt;
   }
 
-  function showHero(idx, animate) {
+  function showHero(idx) {
     idx = (idx + HEROES.length) % HEROES.length;
-    var h = HEROES[idx];
-    var img = document.querySelector(".hero-image");
-    var go = function () {
-      window.__slamHeroIndex = idx;
-      if (img) img.src = h.image;
-      labelHero(idx, getLang());
-      var dots = document.querySelectorAll("[data-hero-btn]");
-      for (var i = 0; i < dots.length; i++) {
-        dots[i].classList.toggle("on", i === idx);
-        dots[i].setAttribute("aria-selected", i === idx ? "true" : "false");
-      }
-      if (img) img.classList.remove("is-swap");
-    };
-    if (animate && img) {
-      img.classList.add("is-swap");
-      setTimeout(go, 200);
-    } else {
-      go();
+    window.__slamHeroIndex = idx;
+    var slides = document.querySelectorAll("[data-hero-slide]");
+    for (var s = 0; s < slides.length; s++) {
+      slides[s].classList.toggle("on", s === idx);
+    }
+    labelHero(idx, getLang());
+    var dots = document.querySelectorAll("[data-hero-btn]");
+    for (var i = 0; i < dots.length; i++) {
+      dots[i].classList.toggle("on", i === idx);
+      dots[i].setAttribute("aria-selected", i === idx ? "true" : "false");
     }
   }
 
   function initHero() {
     if (!document.querySelector(".hero-shell")) return;
     window.__slamHeroIndex = 0;
-    showHero(0, false);
+    var slides = document.querySelectorAll("[data-hero-slide]");
+    for (var i = 0; i < slides.length; i++) {
+      if (slides[i].decode) slides[i].decode().catch(function () {});
+    }
+    showHero(0);
     var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     var timer = null;
     function start() {
       if (reduced || timer) return;
-      timer = setInterval(function () { showHero(window.__slamHeroIndex + 1, true); }, 7000);
+      timer = setInterval(function () { showHero(window.__slamHeroIndex + 1); }, 7000);
     }
     function stop() { if (timer) { clearInterval(timer); timer = null; } }
     document.querySelectorAll("[data-hero-btn]").forEach(function (b) {
       b.addEventListener("click", function () {
-        showHero(parseInt(b.getAttribute("data-hero-btn"), 10), true);
+        showHero(parseInt(b.getAttribute("data-hero-btn"), 10));
         stop();
         start();
       });
