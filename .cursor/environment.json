@@ -1,0 +1,14 @@
+{
+  "name": "AI Hunter",
+  "install": "bash scripts/setup-dev.sh",
+  "terminals": [
+    {
+      "name": "backend",
+      "command": "cd backend && source .venv/bin/activate && uvicorn api.app:app --host 0.0.0.0 --port 8000"
+    },
+    {
+      "name": "frontend",
+      "command": "export BUN_INSTALL=\"$HOME/.bun\"; export PATH=\"$BUN_INSTALL/bin:$PATH\"; cd frontend && bun run dev -- --host 0.0.0.0 --port 3000"
+    }
+  ]
+}
