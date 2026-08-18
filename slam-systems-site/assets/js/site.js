@@ -114,7 +114,6 @@
       b.addEventListener("click", function () {
         showHero(parseInt(b.getAttribute("data-hero-btn"), 10));
         stop();
-        start();
       });
     });
     var shell = document.querySelector(".hero-shell");
