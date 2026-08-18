@@ -55,7 +55,6 @@ button { font: inherit; }
   background: #050506;
 }
 
-.hero-stage,
 .hero-image,
 .hero-shade {
   position: absolute;
@@ -63,14 +62,7 @@ button { font: inherit; }
   width: 100%;
   height: 100%;
 }
-.hero-stage { z-index: -3; overflow: hidden; background: #050506; }
-.hero-image {
-  object-fit: cover;
-  object-position: center;
-  opacity: 0;
-  transition: opacity 480ms ease;
-}
-.hero-image.on { opacity: 1; }
+.hero-image { z-index: -3; object-fit: cover; object-position: center; }
 .hero-shade {
   z-index: -2;
   background:
@@ -260,31 +252,6 @@ h1 strong { color: var(--slam-magenta); font-weight: inherit; }
 }
 .footer-rule { width: 2.4rem; height: 1px; background: var(--slam-magenta); }
 
-.hero-sports {
-  position: absolute;
-  right: clamp(1.5rem, 4.2vw, 5.5rem);
-  bottom: 4.4rem;
-  z-index: 2;
-  display: flex;
-  gap: 0.45rem;
-}
-.hero-sports button {
-  width: 2.15rem;
-  height: 2.15rem;
-  border: 1px solid rgba(255, 255, 255, 0.28);
-  background: transparent;
-  color: rgba(255, 255, 255, 0.68);
-  cursor: pointer;
-  font-family: "Good Times", "SLAM Avenir", "Avenir Next", sans-serif;
-  font-size: 0.5rem;
-  letter-spacing: 0.08em;
-}
-.hero-sports button.on {
-  border-color: var(--slam-magenta);
-  background: rgba(255, 0, 78, 0.18);
-  color: #fff;
-}
-
 @media (max-width: 1180px) {
   .site-header { grid-template-columns: 1fr auto; }
   .desktop-nav,
@@ -329,7 +296,6 @@ h1 strong { color: var(--slam-magenta); font-weight: inherit; }
   .button-primary,
   .button-secondary { min-width: 0; min-height: 3.2rem; gap: 0.8rem; padding: 0 0.9rem; font-size: 0.55rem; }
   .hero-footer { display: none; }
-  .hero-sports { right: 1.15rem; bottom: 1.15rem; }
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -582,102 +548,4 @@ h1 strong { color: var(--slam-magenta); font-weight: inherit; }
   .project-form label.full,
   .project-form button { grid-column: auto; }
   .site-footer { grid-template-columns: 1fr; }
-  .moments-gallery { grid-template-columns: 1fr 1fr; }
-  .video-stage { min-height: 0; }
-  .family-media { grid-template-columns: 1fr; }
-}
-
-/* Pictures, video, page-hero media — additive. Nav hover stays vertical-only. */
-.card-photo {
-  display: block;
-  width: 100%;
-  aspect-ratio: 16 / 10;
-  object-fit: cover;
-  margin: 0 0 1.15rem;
-  background: #111;
-}
-.content-card .card-photo:first-child { margin-top: 0; }
-.index-card { overflow: hidden; }
-.index-card .card-photo {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  aspect-ratio: auto;
-  margin: 0;
-  z-index: 0;
-}
-.index-card::before {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  background: linear-gradient(180deg, rgba(245, 245, 242, 0.18) 0%, rgba(245, 245, 242, 0.9) 48%, #f5f5f2 100%);
-  content: "";
-  pointer-events: none;
-}
-.index-card:hover::before,
-.index-card:focus-visible::before {
-  background: linear-gradient(180deg, rgba(17, 17, 17, 0.12) 0%, rgba(17, 17, 17, 0.78) 52%, #111 100%);
-}
-.index-card > * { position: relative; z-index: 2; }
-.page-hero { position: relative; overflow: hidden; background-color: #0a0a0b; }
-.page-hero-photo {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0.42;
-}
-.page-hero-inner { position: relative; z-index: 1; }
-.family-media {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.55rem;
-  margin-top: 1.6rem;
-}
-.family-media img,
-.moments-gallery img {
-  display: block;
-  width: 100%;
-  object-fit: cover;
-  background: #111;
-}
-.family-media img { height: 170px; }
-.moments-gallery {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 0.35rem;
-  padding: 0 clamp(1.5rem, 6vw, 7rem) clamp(4rem, 8vw, 6rem);
-  background: #050506;
-}
-.moments-gallery img { height: 210px; }
-.moments-heading {
-  margin: 0;
-  padding: clamp(3.5rem, 7vw, 5.5rem) clamp(1.5rem, 6vw, 7rem) 1.6rem;
-  background: #050506;
-  color: #fff;
-}
-.moments-heading p { margin: 0 0 0.8rem; color: var(--slam-magenta); font-family: "Good Times", sans-serif; font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; }
-.moments-heading h2 { margin: 0; font-size: clamp(2rem, 4.4vw, 4.2rem); font-weight: 300; letter-spacing: -0.035em; }
-.moments-heading h2 strong { color: var(--slam-magenta); font-weight: inherit; }
-.video-section { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.7fr); align-items: end; gap: 2.5rem; }
-.video-stage { min-width: 0; }
-.live-video {
-  display: block;
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  background: #000;
-  border: 1px solid rgba(255, 77, 0, 0.35);
-}
-@media (max-width: 1050px) {
-  .video-section { grid-template-columns: 1fr; }
-  .moments-gallery { grid-template-columns: repeat(2, 1fr); }
-}
-@media (max-width: 760px) {
-  .moments-gallery,
-  .moments-heading { padding-right: 1.15rem; padding-left: 1.15rem; }
-  .moments-gallery img { height: 150px; }
-  .family-media { grid-template-columns: 1fr; }
-  .family-media img { height: 150px; }
 }
