@@ -2,7 +2,7 @@
 
 Official website of **SLAM.SYSTEMS**, a brand of watermoon.communication gmbh (Switzerland), with R&D in Shenzhen.
 
-Visual and information architecture follow the boss-confirmed FTP package **SLAM.SYSTEMS_FTP_UPLOAD_v1.6**.
+Visual and information architecture follow the boss-confirmed FTP package **SLAM.SYSTEMS_FTP_UPLOAD_v1.6**. The reconstructed package (HTML/CSS/JS source) is in `vendor/ftp-v1.6/`; see `vendor/ftp-v1.6/MANIFEST.md`. The WeCom Mac ZIP path cannot be mounted here; the live FTP folder is the published equivalent of that ZIP.
 
 This folder is the complete static site. It does **not** belong in the AI customer-finder repository. Publish it to its own GitHub repo: [zhangcheng0688/slam-systems-site](https://github.com/zhangcheng0688/slam-systems-site).
 
