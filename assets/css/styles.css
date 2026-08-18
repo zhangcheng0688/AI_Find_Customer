@@ -406,7 +406,7 @@ h1 strong { color: var(--slam-magenta); font-weight: inherit; }
 .content-section h2 strong { color: var(--slam-magenta); font-weight: inherit; }
 .section-heading > p:last-child { margin: 0; color: #626262; font-size: 1.05rem; line-height: 1.7; }
 .index-grid { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid #bbb; border-left: 1px solid #bbb; }
-.index-card { position: relative; min-height: 350px; padding: 2rem; border-right: 1px solid #bbb; border-bottom: 1px solid #bbb; transition: background 180ms ease, color 180ms ease; }
+.index-card { position: relative; min-height: 350px; padding: 2rem 2rem 4.75rem; border-right: 1px solid #bbb; border-bottom: 1px solid #bbb; transition: background 180ms ease, color 180ms ease; }
 .index-card:hover,
 .index-card:focus-visible { background: #111; color: #fff; }
 .index-number { color: var(--slam-magenta); font-size: 0.62rem; }
@@ -620,6 +620,7 @@ h1 strong { color: var(--slam-magenta); font-weight: inherit; }
   background: linear-gradient(180deg, rgba(17, 17, 17, 0.12) 0%, rgba(17, 17, 17, 0.78) 52%, #111 100%);
 }
 .index-card > * { position: relative; z-index: 2; }
+.index-card > .card-link { position: absolute; z-index: 2; }
 .page-hero { position: relative; overflow: hidden; background-color: #0a0a0b; }
 .page-hero-photo {
   position: absolute;
