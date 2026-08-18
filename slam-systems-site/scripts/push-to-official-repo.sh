@@ -13,8 +13,11 @@ trap cleanup EXIT
 cp -a "$ROOT"/. "$WORK/"
 rm -rf "$WORK/.git" "$WORK/node_modules" "$WORK/scripts/push-to-official-repo.sh"
 
-# Official production host
-printf 'slam.systems\n' > "$WORK/CNAME"
+# Custom domain: only write CNAME when DNS for slam.systems actually points to GitHub Pages.
+# Until cutover, a CNAME file would make the github.io preview URL redirect to the old live site.
+if [ "${SLAM_WRITE_CNAME:-0}" = "1" ]; then
+  printf 'slam.systems\n' > "$WORK/CNAME"
+fi
 printf '' > "$WORK/.nojekyll"
 
 cd "$WORK"
