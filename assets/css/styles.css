@@ -9,7 +9,7 @@
   src:
     local("Avenir Next Ultra Light"),
     local("AvenirNext-UltraLight"),
-    url("../fonts/Avenir/AvenirNext.ttc") format("collection");
+    url("../fonts/Avenir/Avenir Next.ttc") format("collection");
   font-style: normal;
   font-weight: 300;
   font-display: swap;
@@ -20,7 +20,7 @@
   src:
     local("Avenir Next Regular"),
     local("AvenirNext-Regular"),
-    url("../fonts/Avenir/AvenirNext.ttc") format("collection");
+    url("../fonts/Avenir/Avenir Next.ttc") format("collection");
   font-style: normal;
   font-weight: 400;
   font-display: swap;
