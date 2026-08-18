@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - cursor/slam-ftp-master-hero-c99d
-      - gh-pages
 
 permissions:
   contents: read
