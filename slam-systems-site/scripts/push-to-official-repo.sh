@@ -10,11 +10,8 @@ WORK="$(mktemp -d /tmp/slam-official-XXXXXX)"
 cleanup() { rm -rf "$WORK"; }
 trap cleanup EXIT
 
-rsync -a --delete \
-  --exclude '.git' \
-  --exclude 'node_modules' \
-  --exclude 'scripts/push-to-official-repo.sh' \
-  "$ROOT/" "$WORK/"
+cp -a "$ROOT"/. "$WORK/"
+rm -rf "$WORK/.git" "$WORK/node_modules" "$WORK/scripts/push-to-official-repo.sh"
 
 # Official production host
 printf 'slam.systems\n' > "$WORK/CNAME"
