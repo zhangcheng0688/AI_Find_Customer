@@ -1,0 +1,13 @@
+{
+  "name": "slam-systems-site",
+  "private": true,
+  "version": "2.0.0",
+  "description": "SLAM.SYSTEMS official website — visual source: SLAM.SYSTEMS_FTP_UPLOAD_v1.6 (boss-confirmed)",
+  "scripts": {
+    "dev": "vite",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^5.4.8"
+  }
+}
