@@ -22,7 +22,8 @@ git init -b main
 git add -A
 git commit -m "SLAM.SYSTEMS official website (watermoon.communication gmbh)"
 git remote add origin "$DEST_URL"
-git push -u origin main
+# Fresh single-commit history on every publish, so the push must replace remote main.
+git push -u --force origin main
 
 echo
 echo "Published to $DEST_URL"
