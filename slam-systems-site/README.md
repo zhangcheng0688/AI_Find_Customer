@@ -14,9 +14,10 @@ python3 -m http.server 4173
 
 Open http://127.0.0.1:4173/
 
-Public working preview (GitHub Pages on this finder repo is blocked):
+Public GitHub Pages previews:
 
-https://raw.githack.com/zhangcheng0688/AI_Find_Customer/gh-pages/index.html
+- https://zhangcheng0688.github.io/slam-systems-site/
+- https://zhangcheng0688.github.io/AI_Find_Customer/
 
 ## Hero
 
