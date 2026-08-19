@@ -365,6 +365,9 @@ h1 strong { color: var(--slam-magenta); font-weight: inherit; }
 .section-code,
 .content-code,
 .page-kicker { margin: 0; color: var(--slam-magenta); font-size: 0.62rem; }
+.pdf-link { margin: 1rem 0 0; }
+.pdf-link a { font-family: "Good Times", "Avenir Next", sans-serif; color: var(--slam-magenta); font-size: 0.58rem; letter-spacing: 0.08em; text-decoration: none; text-transform: uppercase; }
+.pdf-link a:hover, .pdf-link a:focus-visible { text-decoration: underline; }
 .page-hero .page-kicker,
 .content-section .content-code,
 .systems-index .section-code {
