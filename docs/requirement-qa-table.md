@@ -2,6 +2,8 @@
 
 给客户/内部对齐用。口径来源：本仓库 AI Hunter 代码与测试、上游 [xiongQvQ/AI_Find_Customer](https://github.com/xiongQvQ/AI_Find_Customer)、[b2b-lead-hunter-skill](https://github.com/xiongQvQ/-b2b-lead-hunter-skill)，以及 GitHub PR #1（Qube 客服方案，仅作 P2 形态参考）。
 
+**Excel 完整版**（24 题答复 + 功能点 + GitHub 开源选型 + SEO/GEO 落地 + 分期）：`docs/海外拓客需求问答与解决方案.xlsx`。生成脚本：`scripts/build_requirement_excel.py`。
+
 测试（本机 2026-08-19）：P1 相关 **215 passed**；全量 **701 passed / 1 failed**（失败在邮件开发信 e2e，与本需求表无关）。P2/P3 **无代码、无测试**。
 
 图例：
