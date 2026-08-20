@@ -1,75 +1,380 @@
-# AI Hunter
+<h1 align="center">🎯 AI Hunter: B2B Lead-Hunting Agents</h1>
 
-> 面向外贸与 B2B 场景的自动化客户挖掘系统，基于 FastAPI、LangGraph、多 Agent 流水线与可配置多模型能力。
+<p align="center">
+  <strong>Today, outbound still depends on manual search 🧑💻. Tomorrow, a multi-agent pipeline does the hunting 🤖🤖🤖<br>
+  AI Hunter: give it a website, product docs, or keywords — it understands the company, searches, extracts leads, finds contacts, and drafts outreach</strong>
+</p>
 
-[![Python](https://img.shields.io/badge/Python-3.11%2B-blue)](https://python.org)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.115%2B-green)](https://fastapi.tiangolo.com)
-[![React](https://img.shields.io/badge/React-18-blue)](https://react.dev)
-[![LangGraph](https://img.shields.io/badge/LangGraph-StateGraph-orange)](https://github.com/langchain-ai/langgraph)
+<p align="center">
+  <a href="#-quick-start"><img src="https://img.shields.io/badge/Quick_Start-3_min-blue?style=for-the-badge" alt="Quick Start"></a>
+  <a href="#-use-cases"><img src="https://img.shields.io/badge/Use_Cases-Trade_B2B-green?style=for-the-badge" alt="Use Cases"></a>
+  <a href="#-features"><img src="https://img.shields.io/badge/Features-Multi_Agent_Pipeline-purple?style=for-the-badge" alt="Features"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge" alt="License"></a>
+</p>
 
-AI Hunter 是一个面向外贸与 B2B 线索挖掘场景的开源版项目。你只需要提供公司官网、产品文档或产品关键词，再指定目标市场，系统就会自动完成公司理解、关键词生成、网页搜索、线索提取和联系方式发现。
+<p align="center">
+  <img src="https://img.shields.io/badge/python-≥3.11-blue?logo=python&logoColor=white" alt="Python">
+  <img src="https://img.shields.io/badge/FastAPI-0.115+-green?logo=fastapi&logoColor=white" alt="FastAPI">
+  <img src="https://img.shields.io/badge/React-18-blue?logo=react&logoColor=white" alt="React">
+  <img src="https://img.shields.io/badge/LangGraph-StateGraph-orange" alt="LangGraph">
+  <img src="https://img.shields.io/badge/LiteLLM-multi_model-blueviolet" alt="LiteLLM">
+</p>
 
-## 官方链接
+**One sentence:** provide a company website, product documents, or keywords, pick a target market, and the system runs company understanding, keyword generation, web search, lead extraction, and contact discovery. &nbsp;&nbsp;[**中文文档**](README_CN.md)
 
-- 官网：https://b2binsights.io/
-- 视频介绍：https://www.bilibili.com/video/BV1AzwYzXEGD/?spm_id_from=333.1387.list.card_archive.click
-- 开源仓库：https://github.com/xiongQvQ/AI_Find_Customer
+<p align="center">
+  Website: <a href="https://b2binsights.io/">b2binsights.io</a>
+  · Open-source repo: <a href="https://github.com/xiongQvQ/AI_Find_Customer">xiongQvQ/AI_Find_Customer</a>
+  · Intro video: <a href="https://www.bilibili.com/video/BV1AzwYzXEGD">Bilibili</a>
+</p>
 
-## 定制化方案：Hermes + Skill
+---
 
-如果你需要更灵活的客户挖掘方案，我们提供基于 **Hermes + Skill** 的可定制化服务：
+## 📰 News
 
-- **Hermes Agent** 负责判断、策略、查询生成和决策，Python 脚本负责搜索、抓取、去重等确定性操作
-- **Skill 插件化**：核心能力封装为可复用的 Skill，按需组合，而非固定流水线
-- **b2b-lead-hunter Skill**：提供完整的 B2B 线索挖掘能力——多通道搜索（有机搜索、B2B 平台、Google Maps、竞品渠道、行业协会）、公司官网深度研读、联系方式提取（邮箱/电话/社媒/决策人）、证据驱动的线索评分与优先级排序、多格式导出（JSONL/CSV）
-- **质量优先**：先小规模 Pilot 验证再全量执行，每条线索可溯源、有证据支撑
-- **合规优先**：仅采集公开数据，不自动发送邮件，尊重隐私法规
+**2026-08** The open-source edition now covers the main path: lead hunting + email draft generation + campaign auto-send.
 
-如有定制需求，欢迎通过官网联系我们。
+**2026-08** UI and headless modes now share the same `producer / consumer` queue. They are no longer two split code paths.
 
-## 开源仓库范围
+**2026-08** Custom hunting is available via **Hermes + Skill** for teams that need a more flexible strategy.
 
-这次公开的开源仓库只保留以下内容：
+---
 
-- `backend/`：FastAPI + LangGraph 主服务
-- `frontend/`：React + Vite 前端
-- 必要的配置示例和文档
+## ✨ Core scenarios
 
-以下模块不进入公开仓库：
+<table align="center" width="100%">
+<tr>
+<td width="25%" align="center" style="vertical-align: top; padding: 15px;">
+
+<h3>🌍 Trade outbound</h3>
+
+<div align="center">
+  <img src="https://img.shields.io/badge/Lead_Hunt-FF6B6B?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Lead Hunt" />
+</div>
+
+<p align="center"><strong>Website → leads</strong></p>
+
+<p align="center">Give it a factory site or product keywords and find overseas distributors, wholesalers, and importers</p>
+
+</td>
+<td width="25%" align="center" style="vertical-align: top; padding: 15px;">
+
+<h3>✉️ Outreach sequence</h3>
+
+<div align="center">
+  <img src="https://img.shields.io/badge/Email_Craft-4ECDC4?style=for-the-badge&logo=gmail&logoColor=white" alt="Email" />
+</div>
+
+<p align="center"><strong>Draft → review → send</strong></p>
+
+<p align="center">Generate a 3-step English outreach sequence from ICP and site insights, then send only after human approval</p>
+
+</td>
+<td width="25%" align="center" style="vertical-align: top; padding: 15px;">
+
+<h3>🖥️ Headless automation</h3>
+
+<div align="center">
+  <img src="https://img.shields.io/badge/VPS_Queue-FFD93D?style=for-the-badge&logo=linux&logoColor=black" alt="Headless" />
+</div>
+
+<p align="center"><strong>Hunt around the clock</strong></p>
+
+<p align="center">Producer enqueues, consumer runs hunts, scheduler sends mail, Feishu reports progress and alerts</p>
+
+</td>
+<td width="25%" align="center" style="vertical-align: top; padding: 15px;">
+
+<h3>🧩 Hermes + Skill</h3>
+
+<div align="center">
+  <img src="https://img.shields.io/badge/Custom_plan-C77DFF?style=for-the-badge" alt="Hermes" />
+</div>
+
+<p align="center"><strong>Pluggable strategy</strong></p>
+
+<p align="center">Hermes decides and writes queries; Skills wrap search, crawl, and scoring — compose on demand instead of a fixed pipeline</p>
+
+</td>
+</tr>
+</table>
+
+---
+
+## 🤔 Why AI Hunter?
+
+Finding B2B leads is not hard because people “cannot search”. It is hard because search has to become a **repeatable pipeline**: understand the product, generate keywords, crawl result pages, extract contacts, write outreach, and follow replies. Most of that is still copy-paste.
+
+**What if agents ran that pipeline for you?**
+
+AI Hunter splits hunting into specialized roles. You only provide:
+
+- 🚀 **Input** — a website URL, product documents, or a few keywords
+- 🎯 **Market** — target customer profile and regions
+- ⚙️ **Bounds** — target lead count, max rounds, and minimum new leads per round
+
+The system does the rest: understand the company, expand queries, search multiple channels, extract structured leads, optionally draft outreach, and stop when your explicit conditions are met.
+
+---
+
+## 🎯 Why a pipeline helps
+
+<table>
+<tr>
+<td width="33%" valign="top">
+
+### 🤖 Clear agent roles
+`Insight → KeywordGen → Search → LeadExtract → Evaluate`. A reasoning model owns ReAct decisions; a faster model owns extraction, generation, and rewrites.
+
+```text
+InsightAgent     understand company & product
+KeywordGenAgent  generate search queries
+SearchAgent      merge multi-channel results
+LeadExtractAgent extract structured leads
+Evaluate         decide whether to continue
+```
+
+</td>
+<td width="33%" valign="top">
+
+### 🔎 Multi-channel search
+Google Search, Google Maps, and B2B in-site search, then adaptive fetching by URL type.
+
+```text
+Tavily   general web search (multi-key rotation)
+Serper   Google / Google Maps
+Jina     website and article body reading
+```
+
+</td>
+<td width="33%" valign="top">
+
+### 👀 You review, then send
+The UI shows the queue and hunt details. Email stays in draft until a human approves it into a campaign.
+
+```bash
+# Frontend
+http://localhost:3000
+
+# API / Swagger
+http://127.0.0.1:8000/docs
+```
+
+</td>
+</tr>
+</table>
+
+| | AI Hunter | Manual hunting / generic crawlers |
+|---|---------|-----------------|
+| 🎯 **Input** | Website, docs, or keywords | Humans invent queries and click pages |
+| ⚡ **Execution** | Multi-agent loop until stop conditions | Copy-paste context between tools |
+| 📇 **Output** | Structured leads (email / phone / address / social) | Hand-built spreadsheets |
+| ✉️ **Outreach** | 3-step sequence + review + campaign send | Write and send by hand |
+| 🖥️ **Deploy** | UI + VPS headless queue | Hard to keep running |
+| 🔌 **Models** | LiteLLM for MiniMax / OpenAI / Anthropic and more | Locked to one vendor |
+
+---
+
+## 🎬 Use cases
+
+### 🌍 1. A factory looking for overseas distributors
+
+You tell the system: *"This is our micro-switch factory website. Target the US electrical distributor market."* **The pipeline searches and extracts on its own.**
+
+```
+Human input: website + product keywords + target region
+
+🤖 AI Hunter:
+├── 📖 InsightAgent reads the site / docs and infers product + ICP
+├── 🔑 KeywordGenAgent writes English queries and in-site searches
+├── 🔎 SearchAgent merges:
+│   ├── Google / Tavily organic results
+│   ├── Google Maps local distributors
+│   └── B2B directory listing pages
+├── 🧬 LeadExtractAgent dedupes by domain, then deep-fetches
+│   └── company, email, phone, address, social
+├── 📊 Evaluate checks target_lead_count / max_rounds / min_new_leads_threshold
+│   ├── not done → another round with new queries
+│   └── done → stop hunting
+└── ✉️ optional EmailCraft: draft a 3-step sequence and wait for review
+```
+
+### 🏗️ 2. Submit from the UI, execute in the queue
+
+The frontend no longer treats “New hunt” as a long request that blocks the browser. It creates an `automation job`; a consumer claims it and starts the real hunt.
+
+```
+Human: fill website, keywords, region, and email samples
+
+🤖 What actually happens:
+├── frontend creates an automation job
+├── TemplateSeedWorker warms a template_seed
+├── AutomationConsumer claims the job and creates a real hunt
+├── hunt runs search / extract / evaluate / email generation
+├── on completion it creates a campaign for EmailScheduler
+└── dashboard shows queue status, recent companies, sends, and replies
+```
+
+### 💰 3. 24/7 headless outreach on a VPS
+
+Use this when you want “prepare template → hunt → generate email → auto-send” to keep running. Each hunt has bounds; the queue keeps enqueueing.
+
+```bash
+python scripts/hunt_queue.py producer \
+  --payload-file ./automation_job.json \
+  --continuous \
+  --enqueue-interval-seconds 60 \
+  --max-pending-jobs 3
+```
+
+```
+🤖 Then the system:
+├── 📊 Producer writes the payload into SQLite hunt_jobs
+├── 🌱 TemplateSeedWorker warms seeds for queued jobs
+├── 🏃 AutomationConsumer claims and runs the hunt
+├── 📬 completed sendable sequences land in email_messages
+├── ⏰ EmailScheduler scans pending every 60 seconds and sends
+└── 📥 EmailReply polls IMAP and stops follow-ups on a hit
+```
+
+---
+
+## 📦 What this public repo includes
+
+The public open-source tree keeps:
+
+- `backend/`: FastAPI + LangGraph service
+- `frontend/`: React + Vite UI
+- required config examples and docs
+
+These modules stay out of the public repo:
 
 - `license-server/`
 - `license-server-v2/`
 - `landing/`
 
-## 当前版本边界
+### Current version boundaries
 
-当前开源版已经开放“客户挖掘 + 邮件草稿生成 + 邮件发送配置”主链路，但仍有一些边界：
+- Auto-send should go through the `campaign / scheduler` path. Do not treat the hunt detail page as a full marketing-automation product.
+- Sending depends on your own SMTP / IMAP, app passwords, and security policy. This repo never ships third-party mailbox accounts.
+- Without `API_ACCESS_TOKEN`, non-localhost API access is denied by default.
 
-- 邮件自动发送建议通过 `campaign / scheduler` 链路使用，不建议把详情页当成完整营销自动化系统
-- 邮件发送依赖你自己配置 SMTP / IMAP、授权码与安全策略，仓库不会提供任何第三方邮箱账号
-- 非本机访问 API 时，如果没有配置 `API_ACCESS_TOKEN`，接口默认只允许 localhost 访问
+---
 
-## 功能特性
+## 🚀 Quick start
 
-- 多 Agent 流水线：`Insight -> KeywordGen -> Search -> LeadExtract -> Evaluate`
-- 双模型协作：推理模型负责 ReAct 决策，普通模型负责抽取、生成与改写
-- 输入灵活：支持官网 URL、PDF/Excel/CSV/Word/Markdown/TXT 等文件、或纯关键词
-- 多搜索通道：Google Search、Google Maps、B2B 平台站内搜索
-- 智能抓取：针对官网、B2B 列表页、内容页等不同 URL 自适应抓取策略
-- 联系方式发现：支持提取邮箱、电话、地址、社媒链接等结构化信息
-- AI 邮件生成：可基于 ICP、官网洞察与历史邮件样例生成 3 步开发信序列
-- 邮件预览与审核：支持在详情页预览生成邮件、人工批准/拦截、手动发送与回信检测
-- 邮件自动发送：支持把已批准邮件序列创建为 campaign，并通过 scheduler 持久化发送
-- 实时进度流：FastAPI + SSE 推送任务进展，前端实时展示各阶段状态
-- 成本可观测：接入 Langfuse 后可记录 LLM 调用成本、Token 与延迟
-- 可替换模型：统一通过 LiteLLM 接入 OpenAI、Anthropic、OpenRouter、Groq、GLM、Moonshot、MiniMax
-- 继续挖掘参数可控：支持设置目标线索数、最大轮数、每轮最少新增线索阈值
+### ✅ Check first
 
-## 架构图
+- Python `3.11+`
+- Node.js `18+` or Bun
+- at least one LLM API key
+- at least one search API key
+
+### 1. Clone
+
+```bash
+git clone https://github.com/xiongQvQ/AI_Find_Customer.git
+cd AI_Find_Customer
+```
+
+### 2. Start the backend
+
+```bash
+cd backend
+python3 -m venv .venv
+source .venv/bin/activate
+pip install --upgrade pip
+pip install -r requirements.txt
+cp .env.example .env
+uvicorn api.app:app --host 127.0.0.1 --port 8000
+```
+
+Default backend URLs:
+
+- API: `http://127.0.0.1:8000`
+- Swagger: `http://127.0.0.1:8000/docs`
+
+### 3. Start the frontend
+
+```bash
+cd frontend
+bun install
+bun run dev
+```
+
+Default frontend URL: `http://localhost:3000`
+
+### 🔌 Minimum working config
+
+Put secrets in `backend/.env`. Never put them in frontend code:
+
+```env
+LLM_MODEL=minimax/MiniMax-M2.1-highspeed
+REASONING_MODEL=minimax/MiniMax-M2.5
+MINIMAX_API_KEY=your-minimax-key
+MINIMAX_API_BASE=https://api.minimax.io/v1
+
+SERPER_API_KEY=your-serper-key
+TAVILY_API_KEY=tvly-key-1,tvly-key-2
+JINA_API_KEY=your-jina-key
+```
+
+**MiniMax** is the recommended starting provider. `MINIMAX_API_BASE`:
+
+- International default: `https://api.minimax.io/v1`
+- Mainland China option: `https://api.minimaxi.com/v1`
+
+---
+
+## ✨ Features
+
+<table>
+<tr>
+<td width="50%" valign="top">
+
+### 🤖 Multi-agent pipeline
+- `Insight -> KeywordGen -> Search -> LeadExtract -> Evaluate`
+- Dual-model setup: reasoning model for ReAct, standard model for extract/generate/rewrite
+- Controllable continue-hunting: target lead count, max rounds, min new leads per round
+
+### 📥 Flexible input
+- Website URL, product keywords, ICP, target regions
+- Upload PDF / Excel / CSV / Word / Markdown / TXT / JSON
+- Default max upload size: `50 MB`
+
+### 🔎 Search and fetch
+- Google Search, Google Maps, B2B in-site search
+- Adaptive fetch for homepages, listing pages, and content pages
+- `lead_extract` dedupes by website domain before deep fetch
+
+</td>
+<td width="50%" valign="top">
+
+### ✉️ Email path
+- 3-step outreach sequence from ICP and historical samples
+- Detail-page preview, approve, block, manual send, reply check
+- Approved sequences become a campaign; the scheduler sends persistently
+
+### 📡 Live progress and cost
+- FastAPI + SSE for stage updates
+- Optional Langfuse for LLM cost, tokens, and latency
+- Headless mode can push Feishu events, summaries, and alerts
+
+### 🔌 Swappable models
+- LiteLLM for OpenAI, Anthropic, OpenRouter, Groq, GLM, Moonshot, MiniMax
+- Email path can use its own model, RPM, and API keys so it does not starve the hunt loop
+
+</td>
+</tr>
+</table>
+
+---
+
+## 🏗️ Architecture
 
 ```mermaid
 flowchart LR
-    A[React Frontend\n任务创建 / 列表 / 详情 / SSE] --> B[FastAPI API]
+    A[React Frontend\ncreate / list / detail / SSE] --> B[FastAPI API]
     B --> C[LangGraph Pipeline]
     C --> C1[InsightAgent]
     C --> C2[KeywordGenAgent]
@@ -86,106 +391,106 @@ flowchart LR
     C3 --> F[Serper]
     C4 --> G[Jina Reader]
 
-    B --> H[SQLite / JSON 持久化]
+    B --> H[SQLite / JSON persistence]
     B --> I[SSE Stream]
     I --> A
 ```
 
-## 工作流
+## 🔁 Workflow
 
 ```mermaid
 flowchart TD
-    A[输入官网 / 上传文档 / 产品关键词] --> B[InsightAgent\n理解公司与产品]
-    B --> C[KeywordGenAgent\n生成搜索词]
-    C --> D[SearchAgent\n聚合搜索结果]
-    D --> E[LeadExtractAgent\n抽取结构化线索]
-    E --> F[Evaluate\n判断是否继续]
-    F -->|继续| C
-    F -->|结束| G[EmailCraft\n可选生成邮件序列]
-    G --> H[返回 leads / 邮件 / 成本 / 阶段结果]
+    A[Website / docs / keywords] --> B[InsightAgent\nunderstand company & product]
+    B --> C[KeywordGenAgent\ngenerate queries]
+    C --> D[SearchAgent\nmerge search results]
+    D --> E[LeadExtractAgent\nextract structured leads]
+    E --> F[Evaluate\ncontinue or stop]
+    F -->|continue| C
+    F -->|stop| G[EmailCraft\noptional email sequence]
+    G --> H[return leads / email / cost / stage results]
 ```
 
-当前停止逻辑由以下参数控制：
+Stop conditions are explicit:
 
-- `target_lead_count`：目标线索总数
-- `max_rounds`：最多迭代轮数
-- `min_new_leads_threshold`：单轮最少新增线索数
+- `target_lead_count`: total lead target
+- `max_rounds`: max iteration rounds
+- `min_new_leads_threshold`: minimum new leads in one round
 
-这个版本已经修正了“目标线索数设为 200 时，系统因隐藏动态阈值而过早停止”的问题。现在会按你显式配置的 `min_new_leads_threshold` 来判断是否继续。
+This version already fixed the bug where a target of 200 leads could stop early because of a hidden dynamic threshold. Continuation now follows the `min_new_leads_threshold` you configured.
 
-## 有界面模式
+---
 
-前端现在也已经对齐到 producer / consumer 思路，不再把“新建任务”当成一个浏览器里直接等待完成的长请求。
+## 🖥️ UI mode
 
-当前有界面模式的真实行为是：
+The frontend now follows the producer / consumer model. “New hunt” is not a browser request that waits until the whole job finishes.
 
-1. 在 `新建任务` 页面填写官网、关键词、地区、模板样例等信息
-2. 点击提交后，前端会创建一个 `automation job`
-3. `consumer` 领取这个 job 时，会先准备 `template_seed`
-4. 然后再创建真实 hunt，执行搜索、抽取、评估、邮件生成
-5. hunt 完成后自动创建 campaign，并交给 `EmailScheduler` 消费发送
-6. 首页和详情页优先展示 `job` 队列状态，只有在真实 hunt 已创建后，才继续下钻到 hunt 详情
+Current UI behavior:
 
-这意味着：
+1. Fill website, keywords, region, and template samples on `New hunt`
+2. Submit creates an `automation job`
+3. When the `consumer` claims the job, it first prepares a `template_seed`
+4. Then it creates the real hunt and runs search, extract, evaluate, and email generation
+5. After the hunt completes, it creates a campaign and hands it to `EmailScheduler`
+6. Home and detail pages show `job` queue status first, then drill into hunt detail once the hunt exists
 
-- 前端负责 `提交任务 + 查看队列 + 查看 Hunt / Campaign 状态`
-- 后端负责 `真正执行 producer / consumer + scheduler`
-- 有界面和无界面现在走的是同一套底层任务系统，不再是两套分裂逻辑
-- 队列任务详情页会展示 `job 状态 / 尝试次数 / 目标线索数 / 当前线索数 / Hunt 阶段 / 最近错误`
-- Dashboard 还会展示 `运营摘要卡 + 最近发现企业 / 最近发送邮件 / 最近回复` 事件流
-- 继续挖掘不再直接调用旧的同步 resume，而是基于当前 hunt 创建新的后续 queue job
+That means:
 
-## 邮件能力
+- Frontend owns `submit + inspect queue + inspect Hunt / Campaign status`
+- Backend owns `producer / consumer + scheduler execution`
+- UI and headless now share the same task system
+- Queue job detail shows `job status / attempts / target leads / current leads / hunt stage / last error`
+- Dashboard also shows an ops summary plus recent companies / sends / replies
+- Continue-hunting no longer calls the old synchronous resume; it enqueues a follow-up queue job from the current hunt
 
-当前版本的邮件链路分成 3 层：
+---
 
-1. 可以先基于官网洞察与历史模板样例预生成一版 `template seed`
-2. 线索挖掘完成后，可选开启 `AI 邮件生成`
-2. 在任务详情页中预览、审核、手动发送、手动查回信
-3. 把已批准的邮件序列创建为 `campaign`，再进入自动发送 / 自动回信检测
+## ✉️ Email capabilities
 
-### 邮件生成
+The email path has three layers:
 
-- 新建任务或继续挖掘时可以开启 `AI 邮件生成`
-- 也可以先调用 `POST /api/v1/email-template-seeds/prepare` 预生成模板种子，再把 `template_seed` 带进 hunt
-- 可以不提供模板，系统会自动生成模板策略和 3 步英文开发信
-- 也可以提供历史邮件样例与备注，系统会先提取你的风格再生成
-- 如果请求里已经带了 `template_seed`，邮件生成会优先复用这份种子，只对具体 lead 做轻量个性化，而不是每次从零起草模板策略
-- 生成结果会包含：
-  - `template_seed`
-  - `template_profile`
-  - `template_plan`
-  - `validation_summary`
-  - `review_summary`
+1. Optionally pre-generate a `template seed` from site insights and historical samples
+2. After hunting, optionally run `AI email generation`
+3. Preview, review, manually send, and manually check replies on the hunt detail page
+4. Create a `campaign` from approved sequences, then auto-send / auto-detect replies
 
-### 邮件预览与审核
+### Generation
 
-- 任务详情页支持预览每一组邮件序列
-- 可查看主题、正文、模板来源、生成模式、验证状态、review 问题、模板表现
-- 可人工：
-  - 批准草稿
-  - 拦截草稿
-  - 手动发送单封邮件
-  - 手动检查回信
+- Enable `AI email generation` when creating a hunt or continuing one
+- Or call `POST /api/v1/email-template-seeds/prepare` first and pass `template_seed` into the hunt
+- With no samples, the system writes a template strategy and a 3-step English sequence
+- With samples and notes, it extracts your style first
+- If `template_seed` is already in the request, generation reuses that seed and only lightly personalizes per lead
+- Output includes `template_seed`, `template_profile`, `template_plan`, `validation_summary`, and `review_summary`
 
-### 自动发送与 campaign
+### Preview and review
 
-- 自动发送不再依赖任务详情页里的临时内存队列
-- 正确做法是：
-  1. 先完成邮件生成
-  2. 只把已批准 / 可发送的序列创建为 `campaign`
-  3. 启动 campaign
-  4. 由后端 scheduler 持久化发送
+The hunt detail page can preview each sequence: subject, body, template source, generation mode, validation, review issues, and template performance. Humans can:
 
-### SMTP / IMAP 与授权码
+- approve a draft
+- block a draft
+- send one message manually
+- check replies manually
 
-邮件发送前，需要在前端 `Settings` 页面或 `backend/.env` 中配置邮箱参数。
+### Auto-send and campaigns
 
-如果你希望直接在浏览器里保存这些配置，需要先开启：
+Auto-send no longer depends on an in-memory queue on the detail page. The correct path is:
 
-- `SETTINGS_API_ENABLED=true`
+1. Finish email generation
+2. Create a `campaign` only from approved / sendable sequences
+3. Start the campaign
+4. Let the backend scheduler send persistently
 
-最少需要准备：
+### SMTP / IMAP and app passwords
+
+Configure mailbox settings in the frontend `Settings` page or in `backend/.env`.
+
+To save settings from the browser, enable:
+
+```env
+SETTINGS_API_ENABLED=true
+```
+
+Minimum required:
 
 - `EMAIL_FROM_ADDRESS`
 - `EMAIL_SMTP_HOST`
@@ -193,101 +498,55 @@ flowchart TD
 - `EMAIL_SMTP_USERNAME`
 - `EMAIL_SMTP_PASSWORD`
 
-如果要自动检测回信，还需要：
+For automatic reply detection, also set:
 
 - `EMAIL_IMAP_HOST`
 - `EMAIL_IMAP_PORT`
 - `EMAIL_IMAP_USERNAME`
 - `EMAIL_IMAP_PASSWORD`
 
-注意：
+Notes:
 
-- 很多邮箱服务商不允许直接使用登录密码，而是需要在邮箱后台开启 `IMAP / SMTP`
-- 通常还要生成 `应用密码`、`客户端授权码` 或 `第三方客户端授权码`
-- 必须先在 `Settings` 页面测试 SMTP / IMAP 连接成功，系统才允许开启自动发送和自动回信检测
-- 当前设置页已内置常见国内邮箱服务商模板，包括：
-  - QQ 邮箱
-  - 腾讯企业邮箱
-  - 网易 163 / 126
-  - 网易企业邮箱
-  - 阿里云企业邮箱
-  - 手动填写
+- Many providers reject the login password and require IMAP / SMTP plus an app password or client authorization code
+- Auto-send and auto reply-detection stay disabled until SMTP / IMAP tests succeed on the `Settings` page
+- Built-in provider templates currently include QQ Mail, Tencent Exmail, NetEase 163 / 126, NetEase enterprise mail, Alibaba Cloud enterprise mail, and manual entry
 
-## 项目结构
+---
+
+## 📁 Project layout
 
 ```text
 AI_Find_Customer/
-├── backend/                # FastAPI + LangGraph 主服务
-│   ├── agents/             # 各类 Agent
-│   ├── api/                # 路由、SSE、持久化接口
-│   ├── config/             # 配置读取
-│   ├── graph/              # StateGraph 与流程控制
-│   ├── tools/              # 搜索、抓取、LLM、解析工具
-│   ├── observability/      # Langfuse 等观测能力
-│   └── tests/              # pytest 测试
-├── frontend/               # React 前端
+├── backend/                # FastAPI + LangGraph service
+│   ├── agents/             # agents
+│   ├── api/                # routes, SSE, persistence APIs
+│   ├── config/             # config loading
+│   ├── graph/              # StateGraph and flow control
+│   ├── tools/              # search, fetch, LLM, parsers
+│   ├── observability/      # Langfuse and related tracing
+│   └── tests/              # pytest
+├── frontend/               # React UI
+├── deploy/systemd/         # systemd units for API / producer / worker
 ├── README.md
+├── README_CN.md
 └── .gitignore
 ```
 
-## 环境要求
+---
 
-- Python `3.11+`
-- Node.js `18+` 或 Bun
-- 至少一个 LLM API Key
-- 至少一个搜索 API Key
+## ⚙️ Where config lives
 
-## 快速开始
+Runtime secrets and mailbox settings live in `backend/.env`, or can be saved from the frontend `Settings` page.
 
-### 1. 克隆仓库
+Correct flow:
 
-```bash
-git clone https://github.com/xiongQvQ/AI_Find_Customer.git
-cd AI_Find_Customer
-```
+1. Copy `backend/.env.example` to `backend/.env`
+2. Fill model, search, and email settings there
+3. Do not put secrets in frontend code
+4. Set `SETTINGS_API_ENABLED=true` if you want the Settings page to persist values
+5. Settings saved in the browser are written back to the backend `.env`
 
-### 2. 启动后端
-
-```bash
-cd backend
-python3 -m venv .venv
-source .venv/bin/activate
-pip install --upgrade pip
-pip install -r requirements.txt
-cp .env.example .env
-uvicorn api.app:app --host 127.0.0.1 --port 8000
-```
-
-后端默认地址：
-
-- API：`http://127.0.0.1:8000`
-- Swagger：`http://127.0.0.1:8000/docs`
-
-### 3. 启动前端
-
-```bash
-cd frontend
-bun install
-bun run dev
-```
-
-前端默认地址：
-
-- `http://localhost:3000`
-
-## 配置文件放哪里
-
-所有运行时密钥与邮件参数都放在 `backend/.env`，也可以通过前端 `Settings` 页面保存。
-
-正确做法：
-
-1. 复制 `backend/.env.example` 为 `backend/.env`
-2. 在 `backend/.env` 内填写模型、搜索、邮件相关配置
-3. 不要把密钥写进前端代码
-4. 如果要使用前端 `Settings` 页面在线保存，请在 `.env` 中额外设置 `SETTINGS_API_ENABLED=true`
-5. 前端 `Settings` 页面保存的内容会写回后端 `.env`
-
-常见邮件相关变量示例：
+Common email variables:
 
 ```env
 EMAIL_FROM_NAME=Your Company
@@ -318,79 +577,25 @@ EMAIL_MOONSHOT_API_KEY=
 EMAIL_MINIMAX_API_KEY=
 ```
 
-如果你担心 `MiniMax` 的 RPM 被搜索主链路和邮件链路一起打满，建议单独配置：
+If you worry MiniMax RPM will be shared by hunting and email, split the email path:
 
 - `EMAIL_LLM_MODEL`
 - `EMAIL_REASONING_MODEL`
 - `EMAIL_LLM_REQUESTS_PER_MINUTE`
 - `EMAIL_REASONING_REQUESTS_PER_MINUTE`
 
-这样邮件生成、自动修复、邮件 ReAct 会走单独模型和单独限速，不会和主流程抢同一个默认模型额度。
+Email generation, auto-repair, and email ReAct then use a separate model and rate limit.
 
-如果你希望邮件链路连 API Key 都彻底独立，还可以额外配置：
+To isolate API keys as well, set `EMAIL_OPENAI_API_KEY`, `EMAIL_ANTHROPIC_API_KEY`, `EMAIL_OPENROUTER_API_KEY`, `EMAIL_GROQ_API_KEY`, `EMAIL_ZAI_API_KEY`, `EMAIL_MOONSHOT_API_KEY`, and `EMAIL_MINIMAX_API_KEY`. The email path prefers those keys and falls back to the main keys when they are empty.
 
-- `EMAIL_OPENAI_API_KEY`
-- `EMAIL_ANTHROPIC_API_KEY`
-- `EMAIL_OPENROUTER_API_KEY`
-- `EMAIL_GROQ_API_KEY`
-- `EMAIL_ZAI_API_KEY`
-- `EMAIL_MOONSHOT_API_KEY`
-- `EMAIL_MINIMAX_API_KEY`
+Current send / template-rotation behavior:
 
-设置后，邮件链路会优先使用这些专用 Key；留空时才回退到主链路的 Key。
+- Missing `EMAIL_*` model, RPM, or API key settings fall back to the main hunt config
+- When a campaign is created, every unique company email on a lead becomes its own send sequence instead of keeping only one `target_email`
+- Rate limits still come from `EmailScheduler` via `EMAIL_DAILY_SEND_LIMIT` and `EMAIL_HOURLY_SEND_LIMIT`
+- A template group starts a new seed after `100` recipient targets by default, so copy does not stay frozen
 
-邮件发送与模板轮换的当前行为：
-
-- 如果没有配置 `EMAIL_*` 专用模型、RPM、API Key，邮件链路会自动回退到主链路配置
-- campaign 入队时会把同一企业下发现的多个唯一企业邮箱都展开成独立发送序列，而不是只保留一个 `target_email`
-- 真正的频控仍由 `EmailScheduler` 统一执行，受 `EMAIL_DAILY_SEND_LIMIT` 和 `EMAIL_HOURLY_SEND_LIMIT` 约束
-- 同一模板分组默认每发送满 `100` 个收件目标就自动起下一版模板种子，避免一套文案长时间不变
-
-## 支持的输入与上传限制
-
-支持输入：
-
-- 官网 URL
-- 产品关键词
-- 目标客户画像
-- 目标地区
-- 上传文件作为补充语料
-
-当前后端允许上传的文件类型：
-
-- `.txt`
-- `.md`
-- `.pdf`
-- `.docx`
-- `.doc`
-- `.xlsx`
-- `.xls`
-- `.csv`
-- `.json`
-
-默认单文件大小限制：
-
-- `50 MB`
-
-## 推荐默认模型
-
-推荐优先使用 **MiniMax**，因为当前代码里已经完整支持：
-
-- `MINIMAX_API_KEY`
-- `MINIMAX_API_BASE`
-- LiteLLM provider 适配
-- `reasoning_model` 与 `llm_model` 分开配置
-
-推荐起步配置：
-
-```env
-LLM_MODEL=minimax/MiniMax-M2.1-highspeed
-REASONING_MODEL=minimax/MiniMax-M2.5
-MINIMAX_API_KEY=your-minimax-key
-MINIMAX_API_BASE=https://api.minimax.io/v1
-```
-
-如果你要长期跑无界面自动外呼，推荐把邮件链路单独拆出去，例如：
+For long-running headless outreach you can also split models entirely, for example MiniMax on the hunt path and OpenRouter on email:
 
 ```env
 LLM_MODEL=minimax/MiniMax-M2.1-highspeed
@@ -399,83 +604,62 @@ EMAIL_LLM_MODEL=openrouter/google/gemini-flash-1.5
 EMAIL_REASONING_MODEL=openrouter/deepseek/deepseek-r1
 ```
 
-这样主链路继续跑 MiniMax，邮件生成和修复走另一套模型，不会互相卡 RPM。
+---
 
-`MINIMAX_API_BASE` 说明：
+## 🖥️ Headless deploy on a VPS
 
-- 国际站默认：`https://api.minimax.io/v1`
-- 中国大陆可选：`https://api.minimaxi.com/v1`
-- 如果你不确定，先使用 `https://api.minimax.io/v1`
+If you do not need the UI and only want “prepare template -> hunt -> generate email -> auto-send” on a VPS, there are two modes:
 
-## 无界面部署到 VPS
+- Simple mode: `headless_worker.py`  
+  Serial on one machine; the next hunt starts after the current one finishes
+- Queue mode: `hunt_queue.py producer` + embedded consumer in `api.app`  
+  This is the default producer-consumer setup
 
-如果你不需要前端界面，只想在 VPS 上持续执行“模板准备 -> 挖掘 -> 生成邮件 -> 自动发送”，现在有两种模式：
+For a real producer-consumer split, run two long-lived processes:
 
-- 简单模式：`headless_worker.py`
-  适合单机串行跑，一轮 hunt 完成后再开始下一轮
-- 队列模式：`hunt_queue.py producer` + `api.app` 内嵌 consumer
-  适合当前默认的生产者-消费者结构
+- `API service`: hunts, embedded consumer, template-seed prewarm, campaign API, send scheduler, reply detection
+- `Producer service`: keeps writing new hunt jobs into `hunt_jobs`
 
-如果你要真正的生产者-消费者，当前推荐拆成两个常驻进程：
+That is two producer-consumer layers:
 
-- `API 服务`：负责 hunt、内嵌 consumer、template seed prewarm、campaign API、发送 scheduler、回信检测
-- `Producer 服务`：持续往 `hunt_jobs` 队列写入新的挖掘任务
+- Layer 1 producer: `backend/scripts/hunt_queue.py producer`
+- Layer 1 consumer: `AutomationConsumer` embedded in `api.app`
+- Template prewarm: `TemplateSeedWorker` embedded in `api.app`
+- Layer 2 consumer: `EmailScheduler` inside `api.app`
 
-这套结构本质上就是两层生产者-消费者：
+What actually happens:
 
-- 第一层生产者：`backend/scripts/hunt_queue.py producer`
-- 第一层消费者：`api.app` 内嵌 `AutomationConsumer`
-- 模板预热：`api.app` 内嵌 `TemplateSeedWorker`
-- 第二层消费者：`api.app` 内置的 `EmailScheduler`
+1. `hunt_queue.py producer` persists the hunt payload into SQLite `hunt_jobs`
+2. `TemplateSeedWorker` warms `template_seed` for `queued` jobs
+3. `AutomationConsumer` claims a job and creates the real hunt in-process
+4. The consumer polls that hunt until status is `completed`
+5. If email generation is on, the consumer creates and starts a campaign
+6. Campaign creation writes sendable sequences into SQLite: `lead_email_sequences`, `email_messages`
+7. `EmailScheduler` scans `pending` rows in `email_messages` every 60 seconds
+8. Due messages are sent and marked `sent / failed`
+9. `EmailReply` polls IMAP on the configured interval and stops later follow-ups on a hit
 
-当前真实逻辑再具体一点：
+Implementation notes:
 
-1. `hunt_queue.py producer` 把 hunt payload 持久化写入 SQLite 的 `hunt_jobs`
-2. `TemplateSeedWorker` 先为 `queued` job 预热 `template_seed`
-3. `AutomationConsumer` 领取 job，直接在进程内创建真实 hunt
-4. consumer 轮询这个 hunt，直到状态变成 `completed`
-5. hunt 完成后，如果开启了邮件生成，consumer 会自动创建并启动 campaign
-6. campaign 创建时，会把可发送的邮件序列写进 SQLite：
-   - `lead_email_sequences`
-   - `email_messages`
-7. `EmailScheduler` 后台循环每 60 秒扫描一次 `email_messages` 里的 `pending` 记录
-8. 到时间的邮件会被发送，发送后更新状态为 `sent / failed`
-9. `EmailReply` 后台循环按配置间隔扫描 IMAP 回信，命中后会停掉后续跟进
+- `lead_extract` dedupes by website domain before deep fetch, so one company with many URLs is not sent to the LLM repeatedly
+- `template_seed` decouples template-strategy generation from hunting, so producer / consumer do not wait for the full lead batch before choosing a template direction
+- `email_messages` is the durable send queue and is designed for long-running producer / consumer
+- If a lead has multiple company emails, the campaign creates an independent sequence and message row per unique address
+- Seeds are not reused forever; a new version is generated after the template send cap
 
-几个关键实现细节：
+So there are two durable queues, both in SQLite rather than Redis / MQ:
 
-- `lead_extract` 会先按官网域名去重，再做深度抓取，避免同一家公司被多个官网 URL 重复送进 LLM
-- `template_seed` 负责把“模板策略生成”和“线索挖掘”解耦，所以 producer / consumer 不需要等整批 lead 全部完成后再决定模板方向
-- `email_messages` 是真正的持久化发送队列，适合 producer / consumer 长期运行
-- 如果一个 lead 抽到了多个企业邮箱，campaign 会为每个唯一邮箱建立独立 sequence 和 message 队列项
-- 模板不会无限复用同一个 seed；超过模板发送上限后会自动生成新版本继续跑
+- Layer 1: `hunt_jobs` — hunts waiting to run
+- Layer 2: `email_messages` — emails waiting to send
 
-也就是说，现在已经是两层持久化队列：
-
-- 第一层队列：`hunt_jobs`
-  负责“待执行的客户挖掘任务”
-- 第二层队列：`email_messages`
-  负责“待发送的邮件消息”
-
-当前两层队列都不是 Redis / MQ，而是 SQLite 持久化队列：
-
-- `hunt_jobs`
-  - 入队：producer 创建 job
-  - 出队：consumer claim 一个 queued job
-  - 结果：`completed / failed / requeued`
-- `email_messages`
-  - 入队：创建 campaign 时写入待发送消息
-  - 出队：scheduler 轮询 `pending + scheduled_at <= now`
-  - 结果：`sent / failed / cancelled`
-
-### 自动任务配置
+### Automation job config
 
 ```bash
 cd backend
 cp automation_job.example.json automation_job.json
 ```
 
-然后编辑 `automation_job.json`。如果你希望系统长期持续运行，而不是只跑一轮，推荐把单轮任务限制在“尽量挖满一批，但仍然有边界”，例如：
+Then edit `automation_job.json`. For a system that should keep running, bound each hunt so it fills a batch but still stops, for example:
 
 ```json
 {
@@ -493,18 +677,18 @@ cp automation_job.example.json automation_job.json
 }
 ```
 
-这组参数的真实语义是：
+Those values mean:
 
-- 单个 hunt 以 `100` 个 lead 为目标
-- 最多跑 `20` 轮
-- 只要单轮还能新增 `1` 个 lead，就继续
-- 但整个系统通过 producer / consumer 持续入队和消费，所以整体不会停
+- one hunt aims for `100` leads
+- at most `20` rounds
+- continue while a round still adds at least `1` lead
+- the overall system does not stop, because producer / consumer keep enqueueing and consuming
 
-`backend/automation_job.example.json` 已经按这组推荐值更新，可以直接复制后开始跑持续任务。
+`backend/automation_job.example.json` already uses this recommended shape.
 
-不建议把“单个 hunt”做成无限执行；更合理的是“单个 hunt 有边界，但队列系统 7x24 持续运行”。
+Do not make a single hunt infinite. Give each hunt a boundary and let the queue run 24/7.
 
-### 启动 API
+### Start the API
 
 ```bash
 cd backend
@@ -512,9 +696,9 @@ source .venv/bin/activate
 uvicorn api.app:app --host 0.0.0.0 --port 8000
 ```
 
-### 启动 headless worker
+### Start the headless worker
 
-这是兼容保留的串行模式。它仍然可用，但不是当前推荐的长期运行方式。
+This serial mode is kept for compatibility. It still works, but it is not the recommended long-running setup.
 
 ```bash
 cd backend
@@ -527,28 +711,13 @@ python scripts/headless_worker.py \
   --status-poll-seconds 15
 ```
 
-上面这条命令的语义是：
+If email generation is on, each cycle first prepares a `template_seed`, hunts to `target_lead_count`, generates email, creates a campaign, writes messages into the durable send queue, and lets the background scheduler consume them by time.
 
-- 每轮如果开启邮件生成，会先准备一份 `template_seed`
-- 然后再挖到 `target_lead_count`
-- 然后自动生成邮件
-- 然后自动建 campaign
-- 然后把邮件写入持久化待发送队列
-- 发送由后台 scheduler 按时间消费
-
-### 启动推荐的 queue 模式
-
-先准备任务模板：
+### Recommended queue mode
 
 ```bash
 cd backend
 cp automation_job.example.json automation_job.json
-```
-
-启动 producer：
-
-```bash
-cd backend
 source .venv/bin/activate
 python scripts/hunt_queue.py producer \
   --payload-file ./automation_job.json \
@@ -557,25 +726,20 @@ python scripts/hunt_queue.py producer \
   --max-pending-jobs 3
 ```
 
-这条命令表示：
+That command checks every 60 seconds and enqueues again while queued + running `hunt_jobs` stay below 3.
 
-- 每 60 秒检查一次
-- 如果 `hunt_jobs` 里排队中和执行中的任务少于 3 个，就继续入队
-
-默认情况下，不需要再单独启动 consumer。`api.app` 已内嵌：
+By default you do not start a separate consumer. `api.app` already embeds:
 
 - `AutomationConsumer`
 - `TemplateSeedWorker`
 - `EmailScheduler`
 - `EmailReply`
 
-只有当你明确关闭：
+Only start a standalone consumer after you explicitly disable:
 
 ```env
 AUTOMATION_EMBEDDED_CONSUMER_ENABLED=false
 ```
-
-时，才需要单独启动 consumer：
 
 ```bash
 cd backend
@@ -587,24 +751,11 @@ python scripts/hunt_queue.py consumer \
   --status-poll-seconds 15
 ```
 
-这条命令表示：
+For higher hunt throughput, disable the embedded consumer and run multiple standalone consumers. Do not run them alongside the embedded consumer.
 
-- 每 15 秒看一次有没有新的 hunt job
-- 抢到 job 后执行 hunt
-- 失败时 120 秒后自动回到队列
-- hunt 完成后自动建 campaign 并启动
+### Status monitoring and Feishu alerts
 
-如果你要更强的挖掘吞吐，可以显式关闭 embedded consumer 后，再起多个独立 consumer 进程；否则不要让它和内嵌 consumer 并跑。
-
-### 状态监控与飞书通知
-
-无界面模式下，建议把监控拆成三层：
-
-- 实时状态接口
-- 周期汇总
-- 异常告警
-
-当前版本已经新增这些接口：
+In headless mode, split monitoring into live status, periodic summaries, and alerts. Current endpoints:
 
 ```bash
 GET /api/v1/automation/status
@@ -612,17 +763,9 @@ GET /api/v1/automation/metrics?hours=24
 GET /api/v1/automation/health
 ```
 
-它们会返回：
+They return `hunt_jobs` backlog, running hunt count, `email_messages` pending / sent / failed counts, new companies in the recent window, generated sequences, send success / failure / reply counts, and recent failure samples.
 
-- `hunt_jobs` 队列积压
-- 当前运行中的 hunt 数
-- `email_messages` 待发送 / 已发送 / 失败数量
-- 最近窗口新增企业数
-- 生成邮件序列数
-- 发送成功 / 失败 / 回复数
-- 最近失败示例
-
-如果你想接飞书机器人，新增这些配置：
+To use a Feishu bot:
 
 ```env
 AUTOMATION_FEISHU_WEBHOOK_URL=https://open.feishu.cn/open-apis/bot/v2/hook/xxx
@@ -638,51 +781,26 @@ AUTOMATION_ALERT_BACKLOG_THRESHOLD=20
 AUTOMATION_ALERT_FAILED_MESSAGES_THRESHOLD=10
 ```
 
-含义：
+- `AUTOMATION_EVENT_NOTIFICATIONS_ENABLED=true`: normal business events
+- `AUTOMATION_DISCOVERY_BATCH_SIZE=5`: one Feishu message per 5 new companies by default
+- `AUTOMATION_SEND_BATCH_SIZE=10`: one Feishu message per 10 sent emails by default
+- `AUTOMATION_EVENT_FLUSH_INTERVAL_SECONDS=600`: flush events at least every 10 minutes if the batch is not full
+- `AUTOMATION_SUMMARY_ENABLED=true`: periodic summaries
+- `AUTOMATION_SUMMARY_INTERVAL_SECONDS=7200`: every 2 hours by default
+- `AUTOMATION_ALERTS_ENABLED=true`: basic alerts
+- `AUTOMATION_ALERT_BACKLOG_THRESHOLD=20`: alert when hunt queue or pending mail exceeds 20
+- `AUTOMATION_ALERT_FAILED_MESSAGES_THRESHOLD=10`: alert when failed messages in the recent window exceed 10
 
-- `AUTOMATION_EVENT_NOTIFICATIONS_ENABLED=true`
-  开启正常业务事件通知
-- `AUTOMATION_DISCOVERY_BATCH_SIZE=5`
-  默认每累计 5 家新企业推送一条飞书消息
-- `AUTOMATION_SEND_BATCH_SIZE=10`
-  默认每累计 10 封已发送邮件推送一条飞书消息
-- `AUTOMATION_EVENT_FLUSH_INTERVAL_SECONDS=600`
-  如果批量阈值一直没凑满，最多每 10 分钟也会冲刷一次事件通知
-- `AUTOMATION_SUMMARY_ENABLED=true`
-  每隔一段时间推一次汇总
-- `AUTOMATION_SUMMARY_INTERVAL_SECONDS=7200`
-  默认 2 小时推一次
-- `AUTOMATION_ALERTS_ENABLED=true`
-  开启基础告警
-- `AUTOMATION_ALERT_BACKLOG_THRESHOLD=20`
-  当 hunt 队列或邮件待发积压超过 20 时告警
-- `AUTOMATION_ALERT_FAILED_MESSAGES_THRESHOLD=10`
-  当最近窗口失败邮件数超过 10 时告警
+Feishu notifications currently have four kinds:
 
-当前飞书通知分成 4 类：
+- `job failed`: immediate, including hunt create failure, hunt execution failure, and consumer failure before retry
+- `new companies`: batched, default every 5
+- `email sent`: batched, default every 10
+- `periodic summary`: overall runtime snapshot
 
-- `任务失败`
-  立即推送；包括创建 hunt 失败、hunt 执行失败、consumer 重试前失败
-- `新增企业`
-  按批推送；默认累计 5 家推一次
-- `邮件已发送`
-  按批推送；默认累计 10 封推一次
-- `周期汇总`
-  定时推送整体运行情况
+Summaries include hunts created / completed / failed, queue retrying / queued / running / permanently failed, new companies and generated sequences, current website and stage, recent failed hunts, recently completed sites with company and sequence counts, pending / sent / failed / reply counts, a direct explanation of “why nothing was sent”, plus top failure reasons and recent samples.
 
-周期汇总消息会包含：
-
-- Hunt 已创建 / 成功完成 / Hunt 失败数量
-- 队列重试中 / 当前排队 / 当前运行 / 队列永久失败数量
-- 新增企业数与生成邮件序列数
-- 当前运行中的官网与阶段进度
-- 最近失败 Hunt 的网站、阶段、错误、是否在重试
-- 最近完成的网站、抓到的企业数、生成的邮件序列数
-- 待发送 / 已发送 / 失败 / 回复数
-- “为什么没发邮件”的直接解释
-- 失败原因 Top 与最近失败示例
-
-测试阶段如果你想更快看到飞书消息，可以把这几个值调小：
+During testing, shrink the values if you want faster Feishu messages:
 
 ```env
 AUTOMATION_DISCOVERY_BATCH_SIZE=1
@@ -692,28 +810,28 @@ AUTOMATION_SUMMARY_ENABLED=false
 AUTOMATION_ALERTS_ENABLED=false
 ```
 
-如果你想跳过人工审核，直接放行 `needs_review` 的邮件序列，可以在 `.env` 中设置：
+To skip human review and release `needs_review` sequences:
 
 ```env
 EMAIL_REQUIRE_APPROVAL_BEFORE_SEND=false
 ```
 
-### systemd 常驻
+### systemd
 
-仓库已经提供 systemd 示例文件：
+Example units:
 
-- [deploy/systemd/ai-hunter-api.service](/Users/xiongbojian/work/opensource/AI_Find_Customer/deploy/systemd/ai-hunter-api.service)
-- [deploy/systemd/ai-hunter-producer.service](/Users/xiongbojian/work/opensource/AI_Find_Customer/deploy/systemd/ai-hunter-producer.service)
-- [deploy/systemd/ai-hunter-worker.service](/Users/xiongbojian/work/opensource/AI_Find_Customer/deploy/systemd/ai-hunter-worker.service)
+- [`deploy/systemd/ai-hunter-api.service`](deploy/systemd/ai-hunter-api.service)
+- [`deploy/systemd/ai-hunter-producer.service`](deploy/systemd/ai-hunter-producer.service)
+- [`deploy/systemd/ai-hunter-worker.service`](deploy/systemd/ai-hunter-worker.service)
 
-推荐：
+Recommended:
 
 - `ai-hunter-api.service`
 - `ai-hunter-producer.service`
 
-`ai-hunter-worker.service` 是兼容保留的串行 worker 示例，不建议和 embedded consumer 一起长期并跑。
+`ai-hunter-worker.service` is the compatibility serial worker. Do not run it long-term next to the embedded consumer.
 
-把里面的 `/opt/ai-hunter/backend` 改成你 VPS 的实际路径后：
+Change `/opt/ai-hunter/backend` to the real VPS path, then:
 
 ```bash
 sudo cp deploy/systemd/ai-hunter-api.service /etc/systemd/system/
@@ -723,9 +841,7 @@ sudo systemctl enable --now ai-hunter-api
 sudo systemctl enable --now ai-hunter-producer
 ```
 
-### 无界面模式测试
-
-本仓库已经补了针对无界面链路的测试。你可以直接执行：
+### Headless tests
 
 ```bash
 pytest backend/tests/test_automation/test_job_queue.py \
@@ -733,41 +849,34 @@ pytest backend/tests/test_automation/test_job_queue.py \
   backend/tests/test_automation/test_notifier.py \
   backend/tests/test_api/test_automation_routes.py \
   backend/tests/test_scripts/test_hunt_queue.py \
-pytest backend/tests/test_scripts/test_headless_worker.py \
+  backend/tests/test_scripts/test_headless_worker.py \
   backend/tests/test_api/test_email_routes.py \
   backend/tests/test_api/test_routes.py
 ```
 
-这组测试覆盖了：
+Coverage includes:
 
-- `hunt_jobs` 队列的入队、领取、完成、重试
-- automation status / metrics / health 接口
-- 飞书汇总与告警文案
-- producer 往 hunt 队列持续入任务
-- consumer 从 hunt 队列取任务并执行
-- worker 创建 hunt
-- 轮询 hunt 完成
-- 自动创建并启动 campaign
-- campaign 把邮件写入持久化发送队列
-- 发送资格判断和自动发送入口
+- enqueue / claim / complete / retry for `hunt_jobs`
+- automation status / metrics / health APIs
+- Feishu summary and alert copy
+- producer enqueueing
+- consumer claiming and running
+- worker creating hunts
+- polling until a hunt completes
+- auto-creating and starting campaigns
+- campaign writes into the durable send queue
+- send eligibility and the auto-send entrypoint
 
-## API Key 申请入口与填写方式
+---
+
+## 🔑 API key signup and where to put them
 
 ### 1. MiniMax
 
-官方入口：
+- Platform: https://platform.minimaxi.com/
+- Docs: https://platform.minimaxi.com/document
 
-- 平台入口：https://platform.minimaxi.com/
-- 官方文档：https://platform.minimaxi.com/document
-
-建议流程：
-
-1. 注册并登录 MiniMax 平台
-2. 进入控制台后创建或查看 API Key
-3. 把 Key 填到 `backend/.env` 的 `MINIMAX_API_KEY`
-4. 设置 `LLM_MODEL` 和 `REASONING_MODEL`
-
-示例：
+Sign up, create or copy an API key, put it in `backend/.env` as `MINIMAX_API_KEY`, then set `LLM_MODEL` and `REASONING_MODEL`.
 
 ```env
 LLM_MODEL=minimax/MiniMax-M2.1-highspeed
@@ -778,22 +887,11 @@ MINIMAX_API_BASE=https://api.minimax.io/v1
 
 ### 2. Tavily
 
-官方入口：
+- Product: https://tavily.com/
+- Docs: https://docs.tavily.com/
+- Console: https://app.tavily.com/
 
-- 产品主页：https://tavily.com/
-- 文档入口：https://docs.tavily.com/
-- 控制台入口：https://app.tavily.com/
-
-这个项目支持多个 Tavily Key 直接写到一个环境变量里，后端会按英文逗号拆分并轮询使用。
-
-建议流程：
-
-1. 注册并登录 Tavily
-2. 在控制台创建 API Key
-3. 至少准备 `2-3` 个 Key
-4. 直接写进 `TAVILY_API_KEY`，中间用英文逗号连接，不要加空格
-
-示例：
+Multiple Tavily keys can live in one env var. The backend splits on commas and rotates. Prepare at least 2–3 keys, join them with commas, and do not add spaces:
 
 ```env
 TAVILY_API_KEY=tvly-dev-xxx,tvly-prod-yyy,tvly-prod-zzz
@@ -801,16 +899,9 @@ TAVILY_API_KEY=tvly-dev-xxx,tvly-prod-yyy,tvly-prod-zzz
 
 ### 3. Serper
 
-官方入口：
+- Product: https://serper.dev/
 
-- 产品主页：https://serper.dev/
-
-`SERPER_API_KEY` 在这个项目里主要承担：
-
-- Google Search 补充搜索
-- Google Maps 搜索
-
-示例：
+`SERPER_API_KEY` is used for supplemental Google Search and Google Maps.
 
 ```env
 SERPER_API_KEY=your-serper-key
@@ -818,28 +909,22 @@ SERPER_API_KEY=your-serper-key
 
 ### 4. Jina Reader
 
-官方入口：
+- Product: https://jina.ai/
+- Reader: https://jina.ai/reader/
 
-- 产品主页：https://jina.ai/
-- Reader 说明：https://jina.ai/reader/
-
-`JINA_API_KEY` 用于网页抓取与正文读取。
-
-示例：
+`JINA_API_KEY` is used for page fetch and body reading.
 
 ```env
 JINA_API_KEY=your-jina-key
 ```
 
-### 5. Langfuse（可选）
+### 5. Langfuse (optional)
 
-官方入口：
+- Product: https://langfuse.com/
+- Cloud: https://cloud.langfuse.com/
+- Docs: https://langfuse.com/docs
 
-- 产品主页：https://langfuse.com/
-- Cloud：https://cloud.langfuse.com/
-- 文档：https://langfuse.com/docs
-
-如果你想看每次 LLM 调用的 Token、成本、时延，可以开启：
+To record tokens, cost, and latency per LLM call:
 
 ```env
 LANGFUSE_ENABLED=true
@@ -848,95 +933,86 @@ LANGFUSE_SECRET_KEY=your-secret-key
 LANGFUSE_HOST=https://cloud.langfuse.com
 ```
 
-## 最小可运行配置
+---
 
-```env
-LLM_MODEL=minimax/MiniMax-M2.1-highspeed
-REASONING_MODEL=minimax/MiniMax-M2.5
-MINIMAX_API_KEY=your-minimax-key
-MINIMAX_API_BASE=https://api.minimax.io/v1
+## 📋 Key settings
 
-SERPER_API_KEY=your-serper-key
-TAVILY_API_KEY=tvly-key-1,tvly-key-2
-JINA_API_KEY=your-jina-key
-```
-
-## 关键配置项说明
-
-| 变量名 | 作用 | 默认建议 |
+| Variable | Role | Suggested default |
 | --- | --- | --- |
-| `LLM_MODEL` | 常规抽取/生成模型 | `minimax/MiniMax-M2.1-highspeed` |
-| `REASONING_MODEL` | ReAct 决策模型 | `minimax/MiniMax-M2.5` |
-| `MINIMAX_API_KEY` | MiniMax 密钥 | 必填 |
-| `TAVILY_API_KEY` | 通用网页搜索，支持多个 key | 建议至少 2 个 |
-| `SERPER_API_KEY` | Google / Google Maps 搜索 | 建议配置 |
-| `JINA_API_KEY` | 网页正文抓取 | 建议配置 |
-| `DEFAULT_TARGET_LEAD_COUNT` | 默认目标线索数 | `200` |
-| `DEFAULT_MAX_ROUNDS` | 默认最大轮数 | `10` |
-| `MIN_NEW_LEADS_THRESHOLD` | 每轮最少新增线索阈值 | `5` |
-| `API_ACCESS_TOKEN` | 非本机访问时的接口令牌 | 生产环境建议设置 |
-| `SETTINGS_API_ENABLED` | 是否启用前端 Settings 在线保存 | 想用浏览器配置时设为 `true` |
+| `LLM_MODEL` | extract / generate model | `minimax/MiniMax-M2.1-highspeed` |
+| `REASONING_MODEL` | ReAct decision model | `minimax/MiniMax-M2.5` |
+| `MINIMAX_API_KEY` | MiniMax key | required |
+| `TAVILY_API_KEY` | general web search, multiple keys allowed | at least 2 |
+| `SERPER_API_KEY` | Google / Google Maps | recommended |
+| `JINA_API_KEY` | page body fetch | recommended |
+| `DEFAULT_TARGET_LEAD_COUNT` | default lead target | `200` |
+| `DEFAULT_MAX_ROUNDS` | default max rounds | `10` |
+| `MIN_NEW_LEADS_THRESHOLD` | min new leads per round | `5` |
+| `API_ACCESS_TOKEN` | token for non-localhost API access | set in production |
+| `SETTINGS_API_ENABLED` | allow Settings page to persist config | `true` if you want browser saves |
 
-## 前后端联调说明
+### Frontend / backend wiring
 
-- 前端默认通过 Vite 代理把 `/api` 转发到 `http://localhost:8000`
-- 如果后端配置了 `API_ACCESS_TOKEN`，前端需要额外设置 `VITE_API_ACCESS_TOKEN`
-- 未配置 `API_ACCESS_TOKEN` 时，后端只允许 localhost 访问，远程机器访问会返回 `403`
+- Vite proxies `/api` to `http://localhost:8000` by default
+- If the backend has `API_ACCESS_TOKEN`, the frontend also needs `VITE_API_ACCESS_TOKEN`
+- Without `API_ACCESS_TOKEN`, remote callers get `403`
 
-## 常用接口
+---
 
-- `POST /api/v1/upload`：上传文件
-- `POST /api/v1/hunts`：创建新的客户挖掘任务
-- `GET /api/v1/hunts`：获取任务列表
-- `GET /api/v1/hunts/{hunt_id}/status`：查看任务状态
-- `GET /api/v1/hunts/{hunt_id}/result`：查看任务结果
-- `GET /api/v1/hunts/{hunt_id}/cost`：查看成本统计
-- `GET /api/v1/hunts/{hunt_id}/stream`：SSE 实时进度流
-- `POST /api/v1/automation/jobs`：创建 queue job
-- `GET /api/v1/automation/jobs`：查看 queue job 列表
-- `GET /api/v1/automation/jobs/{job_id}`：查看 queue job 详情
-- `POST /api/v1/automation/jobs/from-hunt/{hunt_id}`：基于已有 hunt 创建后续 queue job
-- `POST /api/v1/automation/jobs/{job_id}/cancel`：取消 queue job
-- `POST /api/v1/automation/jobs/{job_id}/retry`：把失败/完成的 job 重新入队
-- `GET /api/v1/health`：健康检查
+## 📡 Common APIs
 
-## 常见问题
+- `POST /api/v1/upload`: upload a file
+- `POST /api/v1/hunts`: create a hunt
+- `GET /api/v1/hunts`: list hunts
+- `GET /api/v1/hunts/{hunt_id}/status`: hunt status
+- `GET /api/v1/hunts/{hunt_id}/result`: hunt result
+- `GET /api/v1/hunts/{hunt_id}/cost`: cost stats
+- `GET /api/v1/hunts/{hunt_id}/stream`: SSE progress
+- `POST /api/v1/automation/jobs`: create a queue job
+- `GET /api/v1/automation/jobs`: list queue jobs
+- `GET /api/v1/automation/jobs/{job_id}`: queue job detail
+- `POST /api/v1/automation/jobs/from-hunt/{hunt_id}`: enqueue a follow-up job from an existing hunt
+- `POST /api/v1/automation/jobs/{job_id}/cancel`: cancel a queue job
+- `POST /api/v1/automation/jobs/{job_id}/retry`: requeue a failed / completed job
+- `GET /api/v1/health`: health check
 
-### 1. 为什么我把最大返回线索数设成 200，任务却提前停了？
+---
 
-看三个参数：
+## ❓ FAQ
 
-- `target_lead_count`
-- `max_rounds`
-- `min_new_leads_threshold`
+### 1. I set the lead cap to 200, but the hunt stopped early. Why?
 
-当前逻辑会在以下任一条件满足时结束：
+Check `target_lead_count`, `max_rounds`, and `min_new_leads_threshold`.
 
-- 已达到目标线索数
-- 已达到最大轮数
-- 单轮新增线索数低于你配置的 `min_new_leads_threshold`
+The hunt stops when any of these is true:
 
-这个版本已经修正了“隐藏动态阈值导致过早停止”的问题。
+- the lead target is reached
+- max rounds are reached
+- new leads in the round fall below `min_new_leads_threshold`
 
-### 2. 为什么前端 Settings 页面保存不了配置？
+The hidden dynamic threshold that caused early stops is already fixed.
 
-先检查 `backend/.env` 里是否开启了：
+### 2. Why can’t the Settings page save config?
+
+Make sure `backend/.env` contains:
 
 ```env
 SETTINGS_API_ENABLED=true
 ```
 
-如果这个开关没开，前端设置页可以展示，但后端不会挂载设置保存接口。
+If that switch is off, the page can render, but the backend does not mount the save API.
 
-### 3. 为什么我已经配置了 SMTP / IMAP，还是不能自动发送或自动查回信？
+### 3. I already filled SMTP / IMAP. Why can’t I auto-send or auto-check replies?
 
-因为现在不是“填了参数就算可用”，还要求你在 `Settings` 页面里先测试连接成功：
+Filling the fields is not enough. You must pass the connection tests on the `Settings` page first:
 
-- 自动发送依赖 SMTP 测试成功
-- 自动回信检测依赖 IMAP 测试成功
-- 只生成邮件草稿和预览，不依赖 SMTP / IMAP
+- auto-send requires a successful SMTP test
+- auto reply-detection requires a successful IMAP test
+- draft generation and preview do not need SMTP / IMAP
 
-## 常用开发命令
+---
+
+## 🛠️ Dev commands
 
 ### Backend
 
@@ -956,25 +1032,36 @@ bun run dev
 bun run build
 ```
 
-## 深度检查后补充的文档点
+---
 
-这次按当前代码实现补上了几个以前容易漏掉的关键点：
+## 🗺️ Custom plan: Hermes + Skill
 
-- `Settings` 页面已经是实际配置入口，但需要 `SETTINGS_API_ENABLED=true`
-- 非 localhost 访问默认需要 `API_ACCESS_TOKEN`
-- Tavily 支持多 Key 轮询
-- `MIN_NEW_LEADS_THRESHOLD` 已支持任务级配置
-- 邮件链路已经开放到“生成 / 预览 / 审核 / campaign 自动发送”
-- 自动发送与自动回信检测都要求先完成邮箱测试
-- Langfuse 的接入方式和环境变量说明
+If you need a more flexible hunting setup, we offer customization on **Hermes + Skill**:
 
-## 适用场景
+- **Hermes Agent** owns judgment, strategy, query generation, and decisions; Python scripts own deterministic search, crawl, and dedupe
+- **Skills are plugins**: core capabilities are reusable Skills you compose, not a single hardcoded pipeline
+- **b2b-lead-hunter Skill**: multi-channel search (organic, B2B platforms, Google Maps, competitor channels, industry associations), deep company-site reading, contact extraction (email / phone / social / decision-makers), evidence-based scoring and ranking, export to JSONL / CSV
+- **Quality first**: run a small Pilot before a full run; every lead is traceable and evidence-backed
+- **Compliance first**: collect public data only, do not auto-send email, and respect privacy regulations
 
-- 外贸工厂找海外经销商、批发商、渠道商
-- SaaS 或 B2B 服务公司寻找潜在客户
-- 根据产品资料自动反推目标客户画像与搜索词
-- 针对特定国家或区域进行批量线索挖掘
+For custom work, reach us through the [website](https://b2binsights.io/).
 
-## License
+---
 
-本项目采用 [MIT License](LICENSE)。
+## 📄 License
+
+This project is released under the [MIT License](LICENSE).
+
+---
+
+<div align="center">
+
+**AI Hunter** — *B2B lead-hunting agents* 🎯
+
+<sub>Insight × Search × Extract × Email × one queue × one pipeline</sub>
+
+</div>
+
+<p align="center">
+  <em>Thanks for visiting ✨ AI Hunter!</em>
+</p>
