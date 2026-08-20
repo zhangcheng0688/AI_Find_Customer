@@ -3,6 +3,10 @@
 
 from __future__ import annotations
 
+import csv
+import zipfile
+from html import escape
+from io import StringIO
 from pathlib import Path
 
 from openpyxl import Workbook
@@ -49,8 +53,18 @@ def style_header(ws, ncols: int, fill_color: str = NAVY) -> None:
         cell.border = THIN
     ws.row_dimensions[1].height = 32
     ws.freeze_panes = "A2"
-    ws.auto_filter.ref = f"A1:{get_column_letter(ncols)}1"
     ws.sheet_view.showGridLines = False
+
+
+def finish_table(ws, nrows: int, ncols: int) -> None:
+    """Excel-safe autofilter covering header + all data rows."""
+    if nrows >= 2 and ncols >= 1:
+        ws.auto_filter.ref = f"A1:{get_column_letter(ncols)}{nrows}"
+    ws.page_setup.orientation = "landscape"
+    ws.page_setup.paperSize = ws.PAPERSIZE_A4
+    ws.page_setup.fitToPage = True
+    ws.page_setup.fitToWidth = 1
+    ws.page_setup.fitToHeight = 0
 
 
 def style_rows(ws, nrows: int, ncols: int, conclusion_col: int | None = None) -> None:
@@ -81,7 +95,8 @@ def set_widths(ws, widths: dict[str, float]) -> None:
 
 
 def add_hyperlink(cell, url: str) -> None:
-    cell.hyperlink = url
+    # Keep URL as plain text. Cell hyperlinks make some WPS/Excel builds refuse the file.
+    cell.value = url
     cell.font = Font(name="Calibri", size=11, color="0B57D0", underline="single")
 
 
@@ -89,80 +104,60 @@ def cover_sheet(wb: Workbook) -> None:
     ws = wb.active
     ws.title = "封面说明"
     ws.sheet_view.showGridLines = False
-    ws.merge_cells("B2:G2")
-    ws["B2"] = "海外拓客 / 官网 AI 助理 / 社媒自动化 — 需求问答与解决方案"
-    ws["B2"].font = TITLE_FONT
-    ws.merge_cells("B3:G3")
-    ws["B3"] = "给客户与内部对齐用 · 含必问问题答复、功能点方案、GitHub 开源选型、SEO/GEO 落地、分期计划"
-    ws["B3"].font = Font(name="Calibri", size=12, color="4A4A4A")
+    ws["A1"] = "海外拓客 / 官网 AI 助理 / 社媒自动化 — 需求问答与解决方案"
+    ws["A1"].font = TITLE_FONT
+    ws["A2"] = "给客户与内部对齐用 · 含必问问题答复、功能点方案、GitHub 开源选型、SEO/GEO 落地、分期计划"
+    ws["A2"].font = Font(name="Calibri", size=12, color="4A4A4A")
+    ws.row_dimensions[1].height = 28
+    ws.row_dimensions[2].height = 22
 
     blocks = [
-        (5, "这份表里有什么",
+        (4, "这份表里有什么",
          "① 必问问题答复（需求表原 24 题，可直接转发客户）\n"
          "② 12 条核心功能点：做不做、怎么做、用哪套开源\n"
          "③ GitHub 开源选型（海关、爬虫、接待、SEO/GEO、社媒、STT）\n"
          "④ SEO 与 GEO 专项落地（静态 slam.systems 也能做，不绑死 WordPress）\n"
-         "⑤ 一期/二期/三期怎么推进，以及客户需要先拍板的 6 件事"),
-        (9, "结论先看",
+         "⑤ 一期/二期/三期怎么推进，以及客户需要先拍板的事项"),
+        (6, "结论先看",
          "P1 海关拓客：在现有 AI Hunter 上演进，但「按 HS 找全球进口商」必须买授权海关库；公开源以美线提单为主。\n"
          "P2 官网助理 + SEO/GEO：能做好。接待用 RAG 挂件（WP 或静态站都能挂）；SEO/GEO 用 JSON-LD + sitemap + llms.txt + AI 爬虫放行，不承诺搜索排名、不承诺一定被 ChatGPT 引用。\n"
          "P3 社媒：发帖用官方 OAuth（可自托管 Postiz）；自动赞/粉不做。"),
-        (13, "依据",
+        (8, "依据",
          "本仓库 AI Hunter 代码与测试（P1 相关 215 通过；全量 701 通过 / 1 失败在邮件 e2e）。\n"
          "上游 GitHub：xiongQvQ/AI_Find_Customer、b2b-lead-hunter-skill。\n"
-         "开源选型检索日期：2026-08-19。Star 数为当时 GitHub 数据，会变动。"),
-        (17, "图例",
-         "绿色「可承诺 / 一期可做」= 可写进方案\n"
-         "黄色「有条件承诺」= 要采购海关库、试点或客户拍板\n"
-         "红色「不能承诺 / 不做」= 自动赞粉、封号必解、全球公开企业级海关、搜索排名保证"),
+         "开源选型检索日期：2026-08-19。"),
+        (10, "图例",
+         "绿色「可承诺 / 一期可做」= 可写进方案；黄色「有条件承诺」= 要采购海关库、试点或客户拍板；红色「不能承诺 / 不做」= 自动赞粉、封号必解、全球公开企业级海关、搜索排名保证"),
     ]
     for title_row, title, body in blocks:
-        ws.merge_cells(start_row=title_row, start_column=2, end_row=title_row, end_column=7)
-        ws.cell(title_row, 2, title).font = SUB_FONT
-        ws.merge_cells(start_row=title_row + 1, start_column=2, end_row=title_row + 2, end_column=7)
-        body_cell = ws.cell(title_row + 1, 2, body)
-        body_cell.alignment = WRAP
-        body_cell.font = BODY
-        ws.row_dimensions[title_row + 1].height = 48
-        ws.row_dimensions[title_row + 2].height = 48
+        ws.cell(title_row, 1, title).font = SUB_FONT
+        cell = ws.cell(title_row + 1, 1, body)
+        cell.alignment = WRAP
+        cell.font = BODY
+        ws.row_dimensions[title_row + 1].height = 72
 
-    ws["B21"] = "工作表导航"
-    ws["B21"].font = SUB_FONT
+    ws["A13"] = "工作表"
+    ws["B13"] = "内容"
+    ws["A13"].font = HEADER_FONT
+    ws["A13"].fill = fill(NAVY)
+    ws["B13"].font = HEADER_FONT
+    ws["B13"].fill = fill(NAVY)
     nav = [
         ("必问问题答复", "需求表 24 道必问问题 + 可给客户的答复 + 后续方案"),
         ("功能点与解决方案", "12 条核心功能：现状、开源组合、交付结论"),
         ("GitHub开源选型", "检索到的开源项目、许可证、用来解决哪条需求、采用方式"),
         ("SEO与GEO落地", "针对 slam.systems 静态站的 SEO/GEO 清单（不改原业务逻辑）"),
         ("分期实施计划", "一期 P1 / 二期 P2+SEO / 三期 P3 发帖筛客"),
-        ("客户拍板清单", "开工前必须书面确认的 6 件事"),
+        ("客户拍板清单", "开工前必须书面确认的事项"),
     ]
-    ws["B22"] = "工作表"
-    ws["C22"] = "内容"
-    ws["B22"].font = HEADER_FONT
-    ws["B22"].fill = fill(NAVY)
-    ws["B22"].alignment = CENTER
-    ws["C22"].font = HEADER_FONT
-    ws["C22"].fill = fill(NAVY)
-    ws["C22"].alignment = CENTER
-    ws.merge_cells("C22:G22")
-    for col in range(3, 8):
-        ws.cell(22, col).fill = fill(NAVY)
-        ws.cell(22, col).font = HEADER_FONT
-    for i, (name, desc) in enumerate(nav, start=23):
-        ws[f"B{i}"] = name
-        ws[f"C{i}"] = desc
-        ws.merge_cells(f"C{i}:G{i}")
-        ws[f"B{i}"].font = Font(name="Calibri", bold=True, color=NAVY)
-        ws[f"C{i}"].alignment = WRAP
+    for i, (name, desc) in enumerate(nav, start=14):
+        ws.cell(i, 1, name).font = Font(name="Calibri", bold=True, color=NAVY)
+        cell = ws.cell(i, 2, desc)
+        cell.alignment = WRAP
+        cell.font = BODY
         ws.row_dimensions[i].height = 22
 
-    set_widths(ws, {"A": 3, "B": 22, "C": 22, "D": 22, "E": 22, "F": 22, "G": 28})
-    ws.page_setup.orientation = "landscape"
-    ws.page_setup.fitToPage = True
-    ws.page_setup.fitToWidth = 1
-    ws.page_setup.fitToHeight = 0
-    ws.print_title_rows = "1:1"
-    ws.sheet_properties.pageSetUpPr.fitToPage = True
+    set_widths(ws, {"A": 28, "B": 72, "C": 20})
 
 
 def qa_sheet(wb: Workbook) -> None:
@@ -299,17 +294,7 @@ def qa_sheet(wb: Workbook) -> None:
             ws.cell(r, c, val)
     style_rows(ws, 1 + len(rows), len(headers), conclusion_col=8)
     set_widths(ws, {"A": 8, "B": 8, "C": 12, "D": 28, "E": 42, "F": 42, "G": 36, "H": 22})
-    ws.auto_filter.ref = f"A1:H{1+len(rows)}"
-    ws.page_setup.orientation = "landscape"
-    ws.page_setup.fitToPage = True
-    ws.page_setup.fitToWidth = 1
-    ws.page_setup.fitToHeight = 0
-    ws.page_setup.paperSize = ws.PAPERSIZE_A4
-    ws.sheet_properties.pageSetUpPr.fitToPage = True
-    ws.print_options.horizontalCentered = True
-    ws.page_setup.horizontalDpi = 300
-    ws.oddHeader.left.text = "海外拓客需求 · 必问问题答复"
-    ws.oddFooter.right.text = "第 &P 页 / 共 &N 页"
+    finish_table(ws, 1 + len(rows), len(headers))
 
 
 def features_sheet(wb: Workbook) -> None:
@@ -385,11 +370,7 @@ def features_sheet(wb: Workbook) -> None:
             ws.cell(r, c, val)
     style_rows(ws, 1 + len(rows), len(headers), conclusion_col=8)
     set_widths(ws, {"A": 8, "B": 10, "C": 28, "D": 36, "E": 42, "F": 34, "G": 22, "H": 24})
-    ws.auto_filter.ref = f"A1:H{1+len(rows)}"
-    ws.page_setup.orientation = "landscape"
-    ws.page_setup.fitToPage = True
-    ws.page_setup.fitToWidth = 1
-    ws.page_setup.fitToHeight = 0
+    finish_table(ws, 1 + len(rows), len(headers))
 
 
 def github_sheet(wb: Workbook) -> None:
@@ -449,11 +430,7 @@ def github_sheet(wb: Workbook) -> None:
             add_hyperlink(ws.cell(r, 3), row[2])
     style_rows(ws, 1 + len(rows), len(headers), conclusion_col=10)
     set_widths(ws, {"A": 16, "B": 22, "C": 42, "D": 12, "E": 14, "F": 32, "G": 22, "H": 32, "I": 24, "J": 16})
-    ws.auto_filter.ref = f"A1:J{1+len(rows)}"
-    ws.page_setup.orientation = "landscape"
-    ws.page_setup.fitToPage = True
-    ws.page_setup.fitToWidth = 1
-    ws.page_setup.fitToHeight = 0
+    finish_table(ws, 1 + len(rows), len(headers))
 
 
 def seo_sheet(wb: Workbook) -> None:
@@ -495,26 +472,18 @@ def seo_sheet(wb: Workbook) -> None:
     for r in range(2, 14):
         ws.row_dimensions[r].height = 78
     set_widths(ws, {"A": 8, "B": 12, "C": 36, "D": 22, "E": 36, "F": 42, "G": 26, "H": 24})
-    ws.auto_filter.ref = f"A1:H{1+len(rows)}"
-
-    ws["A16"] = "SEO vs GEO 一句话"
-    ws["A16"].font = SUB_FONT
-    ws.merge_cells("A17:H19")
-    ws["A17"] = (
+    finish_table(ws, 1 + len(rows), len(headers))
+    ws["A15"] = "SEO vs GEO"
+    ws["A15"].font = SUB_FONT
+    ws["A16"] = (
         "SEO：让Google等搜索引擎看懂页面（title、sitemap、JSON-LD、速度）。"
         "GEO/AEO：让ChatGPT、Perplexity、Google AI Overviews 等生成式引擎在引用时找得到、引用得准（llms.txt、原子事实、AI爬虫放行、知识库与页面一致）。"
         "开源能把「可被理解、可被抓取、不互相矛盾」做完；没有任何开源插件能保证排名或保证被点名引用。"
         "slam.systems 是静态站，Yoast/Rank Math/AEO God Mode 不能直接安装，但同等能力全部可以手写进现有HTML，且不改现有业务逻辑。"
     )
-    ws["A17"].alignment = WRAP
-    ws["A17"].font = BODY
-    ws.row_dimensions[17].height = 36
-    ws.row_dimensions[18].height = 36
-    ws.row_dimensions[19].height = 36
-    ws.page_setup.orientation = "landscape"
-    ws.page_setup.fitToPage = True
-    ws.page_setup.fitToWidth = 1
-    ws.page_setup.fitToHeight = 0
+    ws["A16"].alignment = WRAP
+    ws["A16"].font = BODY
+    ws.row_dimensions[16].height = 90
 
 
 def plan_sheet(wb: Workbook) -> None:
@@ -549,10 +518,7 @@ def plan_sheet(wb: Workbook) -> None:
         ws.row_dimensions[r].height = 96
     style_rows(ws, 4, len(headers), conclusion_col=None)
     set_widths(ws, {"A": 22, "B": 28, "C": 22, "D": 40, "E": 32, "F": 36, "G": 28})
-    ws.page_setup.orientation = "landscape"
-    ws.page_setup.fitToPage = True
-    ws.page_setup.fitToWidth = 1
-    ws.page_setup.fitToHeight = 0
+    finish_table(ws, 4, len(headers))
 
 
 def gate_sheet(wb: Workbook) -> None:
@@ -576,14 +542,66 @@ def gate_sheet(wb: Workbook) -> None:
         ws.row_dimensions[r].height = 56
     style_rows(ws, 1 + len(rows), len(headers), conclusion_col=None)
     set_widths(ws, {"A": 8, "B": 42, "C": 32, "D": 36, "E": 36})
-    ws.page_setup.orientation = "landscape"
-    ws.page_setup.fitToPage = True
-    ws.page_setup.fitToWidth = 1
-    ws.page_setup.fitToHeight = 0
+    finish_table(ws, 1 + len(rows), len(headers))
+
+
+def write_csv_zip(wb: Workbook, zip_path: Path) -> None:
+    zip_path.parent.mkdir(parents=True, exist_ok=True)
+    with zipfile.ZipFile(zip_path, "w", compression=zipfile.ZIP_DEFLATED) as zf:
+        for ws in wb.worksheets:
+            rows = []
+            for row in ws.iter_rows(max_row=ws.max_row, max_col=ws.max_column, values_only=True):
+                rows.append(["" if v is None else str(v) for v in row])
+            csv_name = f"{ws.title}.csv"
+            sio = StringIO()
+            writer = csv.writer(sio, lineterminator="\n")
+            writer.writerows(rows)
+            # utf-8-sig so Microsoft Excel on Windows opens Chinese correctly
+            zf.writestr(csv_name, sio.getvalue().encode("utf-8-sig"))
+    print(f"wrote {zip_path}")
+
+
+def write_html(wb: Workbook, html_path: Path) -> None:
+    parts = [
+        "<!doctype html><html lang=zh><head><meta charset=utf-8>",
+        "<title>海外拓客需求问答与解决方案</title>",
+        "<style>body{font:14px/1.45 Segoe UI,Calibri,sans-serif;margin:0;background:#f4f1ea}",
+        "h1{margin:0;padding:16px 20px;background:#1F3A5F;color:#fff;font-size:20px}",
+        "nav{display:flex;flex-wrap:wrap;gap:8px;padding:10px 16px;background:#fff;position:sticky;top:0;border-bottom:1px solid #ddd}",
+        "nav a{padding:6px 10px;border-radius:6px;background:#1F3A5F;color:#fff;text-decoration:none;font-size:13px}",
+        "section{padding:16px} table{border-collapse:collapse;background:#fff}",
+        "th,td{border:1px solid #d9d4c8;padding:8px 10px;vertical-align:top;max-width:420px}",
+        "th{background:#1F3A5F;color:#fff} tr:nth-child(even) td{background:#f7f4ef}</style></head><body>",
+        "<h1>海外拓客需求问答与解决方案</h1><nav>",
+    ]
+    for ws in wb.worksheets:
+        parts.append(f'<a href="#{escape(ws.title)}">{escape(ws.title)}</a>')
+    parts.append("</nav>")
+    for ws in wb.worksheets:
+        parts.append(f'<section id="{escape(ws.title)}"><h2>{escape(ws.title)}</h2><div style="overflow:auto"><table>')
+        for i, row in enumerate(ws.iter_rows(max_row=ws.max_row, max_col=ws.max_column, values_only=True), 1):
+            parts.append("<tr>")
+            tag = "th" if i == 1 else "td"
+            for v in row:
+                parts.append(f"<{tag}>{escape(str(v or '')).replace(chr(10), '<br>')}</{tag}>")
+            parts.append("</tr>")
+        parts.append("</table></div></section>")
+    parts.append("</body></html>")
+    html_path.parent.mkdir(parents=True, exist_ok=True)
+    html_path.write_text("".join(parts), encoding="utf-8")
+    print(f"wrote {html_path}")
+
+
+def copy_to(src: Path, dest: Path) -> None:
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    dest.write_bytes(src.read_bytes())
+    print(f"wrote {dest}")
 
 
 def main() -> None:
     wb = Workbook()
+    wb.properties.creator = "AI Hunter"
+    wb.properties.title = "海外拓客需求问答与解决方案"
     cover_sheet(wb)
     qa_sheet(wb)
     features_sheet(wb)
@@ -592,21 +610,33 @@ def main() -> None:
     plan_sheet(wb)
     gate_sheet(wb)
 
+    docs = Path("/workspace/docs")
     desktop = Path.home() / "Desktop"
-    desktop.mkdir(parents=True, exist_ok=True)
-    filename = "海外拓客需求问答与解决方案.xlsx"
-    paths = [
-        desktop / filename,
-        Path("/workspace/docs") / filename,
-    ]
     artifacts = Path("/opt/cursor/artifacts")
-    if artifacts.exists():
-        paths.append(artifacts / filename)
+    desktop.mkdir(parents=True, exist_ok=True)
+    docs.mkdir(parents=True, exist_ok=True)
 
-    for path in paths:
-        path.parent.mkdir(parents=True, exist_ok=True)
-        wb.save(path)
-        print(f"wrote {path}")
+    cn_name = "海外拓客需求问答与解决方案.xlsx"
+    en_name = "overseas-gtm-qa-solutions.xlsx"
+    primary = docs / en_name
+    wb.save(primary)
+    print(f"wrote {primary}")
+
+    for folder in (docs, desktop, artifacts):
+        if folder == artifacts and not artifacts.exists():
+            continue
+        copy_to(primary, folder / cn_name)
+        copy_to(primary, folder / en_name)
+
+    write_csv_zip(wb, docs / "overseas-gtm-qa-solutions-csv.zip")
+    write_csv_zip(wb, desktop / "overseas-gtm-qa-solutions-csv.zip")
+    if artifacts.exists():
+        write_csv_zip(wb, artifacts / "overseas-gtm-qa-solutions-csv.zip")
+
+    write_html(wb, docs / "overseas-gtm-qa-solutions.html")
+    write_html(wb, desktop / "overseas-gtm-qa-solutions.html")
+    if artifacts.exists():
+        write_html(wb, artifacts / "overseas-gtm-qa-solutions.html")
 
 
 if __name__ == "__main__":
