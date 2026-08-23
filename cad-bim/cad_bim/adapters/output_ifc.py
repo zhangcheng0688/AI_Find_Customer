@@ -70,7 +70,7 @@ def write_ifc(intent: DesignIntent, path: str | Path) -> Path:
 def _add_wall(model, body, storey, wall: Wall):
     entity = ifcopenshell.api.root.create_entity(model, ifc_class="IfcWall", name=wall.name or wall.id)
     ifcopenshell.api.spatial.assign_container(model, relating_structure=storey, products=[entity])
-    ifcopenshell.api.geometry.create_2pt_wall(
+    representation = ifcopenshell.api.geometry.create_2pt_wall(
         model,
         element=entity,
         context=body,
@@ -81,11 +81,23 @@ def _add_wall(model, body, storey, wall: Wall):
         thickness=wall.thickness,
         is_si=True,
     )
+    ifcopenshell.api.geometry.assign_representation(model, product=entity, representation=representation)
     pset = ifcopenshell.api.pset.add_pset(model, product=entity, name="Pset_WallCommon")
     ifcopenshell.api.pset.edit_pset(
         model,
         pset=pset,
         properties={"IsExternal": True, "LoadBearing": True, "Reference": wall.id},
+    )
+    _tag(
+        model,
+        entity,
+        {
+            "cad_id": wall.id,
+            "kind": "wall",
+            "thickness": wall.thickness,
+            "height": wall.height,
+            "length": wall.length,
+        },
     )
     return entity
 
@@ -123,6 +135,19 @@ def _add_opening(model, body, storey, host, wall: Wall, opening: Opening) -> Non
         ifcopenshell.api.geometry.assign_representation(model, product=filling, representation=representation)
     ifcopenshell.api.feature.add_feature(model, feature=feature, element=host)
     ifcopenshell.api.feature.add_filling(model, opening=feature, element=filling)
+    _tag(
+        model,
+        filling,
+        {
+            "cad_id": opening.id,
+            "kind": opening.kind,
+            "wall_id": opening.wall_id,
+            "offset": opening.offset,
+            "width": opening.width,
+            "height": opening.height,
+            "sill": opening.sill,
+        },
+    )
 
 
 def _add_slab(model, body, storey, slab: Slab) -> None:
@@ -136,6 +161,7 @@ def _add_slab(model, body, storey, slab: Slab) -> None:
         model, context=body, depth=slab.thickness, polyline=polyline
     )
     ifcopenshell.api.geometry.assign_representation(model, product=entity, representation=representation)
+    _tag(model, entity, {"cad_id": slab.id, "kind": "slab", "thickness": slab.thickness})
 
 
 def _add_space(model, body, storey, space: Space) -> None:
@@ -152,6 +178,12 @@ def _add_space(model, body, storey, space: Space) -> None:
         model, context=body, profile=profile, depth=space.height
     )
     ifcopenshell.api.geometry.assign_representation(model, product=entity, representation=representation)
+    _tag(model, entity, {"cad_id": space.id, "kind": "space", "height": space.height})
+
+
+def _tag(model, product, properties: dict) -> None:
+    pset = ifcopenshell.api.pset.add_pset(model, product=product, name="Pset_CadBim")
+    ifcopenshell.api.pset.edit_pset(model, pset=pset, properties=properties)
 
 
 def _opening_matrix(wall: Wall, opening: Opening) -> np.ndarray:

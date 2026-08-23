@@ -70,6 +70,14 @@ def _verify_ifc(intent: DesignIntent, path: Path) -> list[CheckResult]:
             "project/site/building/storey present",
         )
     )
+    walls_with_body = [wall for wall in model.by_type("IfcWall") if wall.Representation]
+    checks.append(
+        CheckResult(
+            "ifc_wall_geometry",
+            len(walls_with_body) == len(model.by_type("IfcWall")),
+            f"walls_with_body={len(walls_with_body)}",
+        )
+    )
     return checks
 
 

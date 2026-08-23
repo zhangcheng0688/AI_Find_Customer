@@ -6,6 +6,7 @@ import sys
 from pathlib import Path
 
 from cad_bim.adapters.computer_use import describe_host_requirements
+from cad_bim.inputs import describe_inputs
 from cad_bim.pipeline import build, inspect_input, run_demo
 
 
@@ -20,6 +21,13 @@ def main(argv: list[str] | None = None) -> int:
     build_cmd.add_argument("source", type=Path)
     build_cmd.add_argument("--out", type=Path, default=Path("out"))
     build_cmd.add_argument("--targets", default="auto", help="Comma list: ifc,step,dxf or auto")
+    build_cmd.add_argument("--patch", type=Path, help="JSON list of direct-edit operations")
+
+    edit_cmd = sub.add_parser("edit", help="Load a model, apply direct edits, rebuild IFC/STEP/DXF")
+    edit_cmd.add_argument("source", type=Path)
+    edit_cmd.add_argument("--patch", type=Path, required=True)
+    edit_cmd.add_argument("--out", type=Path, default=Path("out"))
+    edit_cmd.add_argument("--targets", default="auto")
 
     inspect_cmd = sub.add_parser("inspect", help="Parse an input and print DesignIntent JSON")
     inspect_cmd.add_argument("source", type=Path)
@@ -29,6 +37,8 @@ def main(argv: list[str] | None = None) -> int:
 
     hosts = sub.add_parser("hosts", help="Explain native host / computer-use requirements")
     hosts.add_argument("app", choices=("revit", "solidworks", "autocad", "am12"))
+
+    sub.add_parser("inputs", help="Print the input contract for CAD / Revit / SolidWorks work")
 
     args = parser.parse_args(argv)
 
@@ -40,6 +50,9 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "hosts":
         print(describe_host_requirements(args.app))
         return 0
+    if args.command == "inputs":
+        print(describe_inputs())
+        return 0
     if args.command == "demo":
         results = run_demo(args.out)
         payload = {name: result.to_dict() for name, result in results.items()}
@@ -48,7 +61,12 @@ def main(argv: list[str] | None = None) -> int:
         return 0 if all(result.report.passed for result in results.values()) else 1
 
     targets = None if args.targets == "auto" else args.targets.split(",")
-    result = build(args.source, args.out, targets=targets)
+    operations = None
+    if getattr(args, "patch", None):
+        operations = json.loads(Path(args.patch).read_text(encoding="utf-8"))
+        if isinstance(operations, dict) and "ops" in operations:
+            operations = operations["ops"]
+    result = build(args.source, args.out, targets=targets, operations=operations)
     json.dump(result.to_dict(), sys.stdout, indent=2)
     sys.stdout.write("\n")
     return 0 if result.report.passed else 1

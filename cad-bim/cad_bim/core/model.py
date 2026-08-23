@@ -99,6 +99,12 @@ class DesignIntent:
     def wall_by_id(self, wall_id: str) -> Wall | None:
         return next((wall for wall in self.walls if wall.id == wall_id), None)
 
+    def opening_by_id(self, opening_id: str) -> Opening | None:
+        return next((item for item in self.openings if item.id == opening_id), None)
+
+    def part_by_id(self, part_id: str) -> MechanicalPart | None:
+        return next((part for part in self.parts if part.id == part_id), None)
+
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
 

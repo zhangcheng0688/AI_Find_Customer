@@ -1,0 +1,7 @@
+{
+  "ops": [
+    {"op": "set_wall", "id": "W1", "thickness": 0.3, "height": 3.2},
+    {"op": "set_opening", "id": "D1", "width": 1.0},
+    {"op": "add_opening", "id": "WIN2", "wall_id": "W2", "kind": "window", "offset": 2.0, "width": 1.2, "height": 1.5, "sill": 0.9, "name": "East window"}
+  ]
+}

@@ -6,12 +6,14 @@ from pathlib import Path
 from typing import Iterable
 
 from cad_bim.adapters.input_dxf import load_dxf
+from cad_bim.adapters.input_ifc import load_ifc
 from cad_bim.adapters.input_pdf import load_pdf
 from cad_bim.adapters.input_spec import load_spec
 from cad_bim.adapters.output_dxf import write_dxf
 from cad_bim.adapters.output_ifc import write_ifc
 from cad_bim.adapters.output_step import write_step
 from cad_bim.core.model import DesignIntent
+from cad_bim.edit.ops import apply_ops
 from cad_bim.verify.checks import VerificationReport, verify_outputs
 
 SUPPORTED_TARGETS = ("ifc", "step", "dxf")
@@ -44,8 +46,11 @@ def build(
     source: str | Path,
     out_dir: str | Path,
     targets: Iterable[str] | None = None,
+    operations: list[dict] | None = None,
 ) -> BuildResult:
     intent = _load(Path(source))
+    if operations:
+        apply_ops(intent, operations)
     return emit(intent, out_dir, targets)
 
 
@@ -96,7 +101,9 @@ def _load(path: Path) -> DesignIntent:
         return load_dxf(path)
     if suffix == ".pdf":
         return load_pdf(path)
-    raise ValueError(f"Unsupported input type {suffix}. Use .json, .dxf, or .pdf")
+    if suffix == ".ifc":
+        return load_ifc(path)
+    raise ValueError(f"Unsupported input type {suffix}. Use .json, .dxf, .pdf, or .ifc")
 
 
 def _normalize_targets(targets: Iterable[str] | None, intent: DesignIntent) -> set[str]:

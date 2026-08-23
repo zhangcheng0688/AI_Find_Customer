@@ -1,25 +1,25 @@
 # cad-bim
 
-给定 PDF 图纸、DXF，或一份 JSON 设计说明，这套管线产出：
+**不是 Blender。** 主干是「中性模型 + 标准格式」：IfcOpenShell 写/改 IFC，ezdxf 写/改 DXF，gmsh 的 Open CASCADE 内核写 STEP。Blender + [Bonsai](https://github.com/IfcOpenShell/IfcOpenShell)（原 BlenderBIM）只做效果图和漫游，不负责出可交付的 Revit / SolidWorks 模型。
 
-- **IFC4** — Revit / openBIM 的主通道
-- **STEP AP214** — SolidWorks / 机械 CAD 的主通道
-- **DXF** — 回写的中性 2D 图纸
+三个核心工具：
 
-它**不会**写出原生 `.rvt` / `.sldprt` / `.dwg`。这些是闭源二进制，全世界没有可靠的开源写入器。行业通行做法就是标准格式交换，不是妥协。
+1. **直接改 CAD**：读 DXF → 改墙/轮廓 → 写回 DXF（以及 IFC/STEP）
+2. **直接改 Revit/BIM**：读 IFC → 改墙厚/门宽/加窗 → 写回 IFC4，Revit 打开或链接
+3. **直接做 SolidWorks**：改零件厚度/孔 → 重建 STEP AP214 实体
 
 ```
-PDF / DXF / JSON spec
+PDF / DXF / IFC / JSON spec  +  修改指令
         │
         ▼
-  DesignIntent（中性语义 + 几何）
+  DesignIntent（中性语义 + 几何）  ←  edit/ 直接改这里
         │
-        ├── adapters/output_ifc  →  *.ifc   → Revit 打开或链接
-        ├── adapters/output_step →  *.step  → SolidWorks 打开为实体
+        ├── adapters/output_ifc  →  *.ifc   → Revit / Bonsai
+        ├── adapters/output_step →  *.step  → SolidWorks
         └── adapters/output_dxf  →  *.dxf
                 │
                 ▼
-        verify/（回读计数 + STEP BRep 头）
+        verify/（回读计数 + 墙体几何 + STEP BRep）
 ```
 
 ## 你能交付什么，不能交付什么
@@ -59,6 +59,13 @@ python3 -m cad_bim build cad-bim/examples/l_bracket.json --out out/bracket --tar
 # 自带两条样例一次跑完
 python3 -m cad_bim demo --out out/demo
 
+# 直接改：办公室加窗、加厚南墙；支架加厚并打孔
+python3 -m cad_bim edit cad-bim/examples/office_plan.json --patch cad-bim/examples/office_edit.json --out out/office-v2
+python3 -m cad_bim edit cad-bim/examples/l_bracket.json --patch cad-bim/examples/bracket_edit.json --out out/bracket-v2
+
+# 我需要你给什么
+python3 -m cad_bim inputs
+
 # 原生宿主差在哪
 python3 -m cad_bim hosts revit
 python3 -m cad_bim hosts solidworks
@@ -80,7 +87,11 @@ python3 -m cad_bim hosts solidworks
 | `PART` / `PROFILE` | 机械拉伸轮廓 |
 | `HOLE` | 圆孔 |
 
+**已有 IFC** 可直接读回来改。本管线写出的 IFC 带 `Pset_CadBim`，往返不丢 id。
+
 **矢量 PDF** 抽路径当墙线。扫描件**不会**瞎猜尺寸——会写进 `warnings`，请改用 DXF 或 JSON。
+
+完整输入清单：`python3 -m cad_bim inputs`。
 
 ## 成熟开源件（本管线实际用到的）
 
@@ -90,6 +101,7 @@ python3 -m cad_bim hosts solidworks
 | DXF | [ezdxf](https://github.com/mozman/ezdxf) | MIT |
 | STEP BRep（OCC） | [gmsh](https://gitlab.onelab.info/gmsh/gmsh) OCC kernel | GPL / commercial |
 | 矢量 PDF | [PyMuPDF](https://github.com/pymupdf/PyMuPDF) | AGPL / commercial |
+| 效果图 / 漫游（可选，不在默认构建里） | Blender + [Bonsai](https://github.com/IfcOpenShell/IfcOpenShell) | GPL-3.0 |
 | 参数化建模（可选下一层） | [CadQuery](https://github.com/CadQuery/cadquery)、[build123d](https://github.com/gumyr/build123d) | Apache-2.0 |
 | Revit 内脚本（需 Windows） | [pyRevit](https://github.com/pyrevitlabs/pyRevit) | GPL-3.0 |
 
