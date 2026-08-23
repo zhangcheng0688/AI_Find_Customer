@@ -77,6 +77,8 @@ python3 -m cad_bim walkthrough cad-bim/examples/office_plan.json --out out/walkt
 
 漫游视频不要用 Grok 图去生成。静帧用 AI，运动用 Twinmotion / D5 / Blender Cycles。`cad-bim cinematic` 写了完整理由和工具清单。
 
+别人整理的 GitHub 全景（IfcOpenShell、text-to-cad、cad2data、pyRevit 等）有索引价值。哪些能进舾装主干、哪些只是旁路：见 [LANDSCAPE.md](LANDSCAPE.md)。
+
 把生成的 `*.ifc` 丢进 Revit（打开或链接），把 `*.step` 丢进 SolidWorks（打开零件）。几何是实体，不是网格。
 
 ## 输入约定
