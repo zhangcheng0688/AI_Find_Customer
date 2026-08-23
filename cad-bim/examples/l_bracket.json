@@ -1,0 +1,28 @@
+{
+  "name": "l_bracket",
+  "domain": "mechanical",
+  "parts": [
+    {
+      "id": "P1",
+      "name": "L-bracket",
+      "units": "mm",
+      "material": "Steel",
+      "thickness": 12.0,
+      "profile": [
+        {"x": 0, "y": 0},
+        {"x": 80, "y": 0},
+        {"x": 80, "y": 8},
+        {"x": 8, "y": 8},
+        {"x": 8, "y": 60},
+        {"x": 0, "y": 60}
+      ],
+      "holes": [
+        {"x": 40, "y": 4, "radius": 4.0},
+        {"x": 4, "y": 35, "radius": 4.0}
+      ]
+    }
+  ],
+  "metadata": {
+    "description": "12 mm thick L-bracket with two Ø8 holes. STEP AP214 is the SolidWorks handoff."
+  }
+}
