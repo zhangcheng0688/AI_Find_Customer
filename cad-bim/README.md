@@ -69,7 +69,13 @@ python3 -m cad_bim inputs
 # 原生宿主差在哪
 python3 -m cad_bim hosts revit
 python3 -m cad_bim hosts solidworks
+
+# 精致漫游：电影机位 + Blender Cycles 脚本（不要图生视频）
+python3 -m cad_bim cinematic
+python3 -m cad_bim walkthrough cad-bim/examples/office_plan.json --out out/walkthrough
 ```
+
+漫游视频不要用 Grok 图去生成。静帧用 AI，运动用 Twinmotion / D5 / Blender Cycles。`cad-bim cinematic` 写了完整理由和工具清单。
 
 把生成的 `*.ifc` 丢进 Revit（打开或链接），把 `*.step` 丢进 SolidWorks（打开零件）。几何是实体，不是网格。
 

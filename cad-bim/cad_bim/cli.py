@@ -8,6 +8,8 @@ from pathlib import Path
 from cad_bim.adapters.computer_use import describe_host_requirements
 from cad_bim.inputs import describe_inputs
 from cad_bim.pipeline import build, inspect_input, run_demo
+from cad_bim.render.package import write_walkthrough_pack
+from cad_bim.render.playbook import describe_walkthrough
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -40,6 +42,13 @@ def main(argv: list[str] | None = None) -> int:
 
     sub.add_parser("inputs", help="Print the input contract for CAD / Revit / SolidWorks work")
 
+    walk_cmd = sub.add_parser("walkthrough", help="Write a cinematic shot list + Blender Cycles script")
+    walk_cmd.add_argument("source", type=Path)
+    walk_cmd.add_argument("--out", type=Path, default=Path("out/walkthrough"))
+    walk_cmd.add_argument("--ifc", type=Path, help="Optional IFC for Bonsai import")
+
+    sub.add_parser("cinematic", help="Explain why AI walkthroughs look cheap and what to use instead")
+
     args = parser.parse_args(argv)
 
     if args.command == "inspect":
@@ -52,6 +61,15 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     if args.command == "inputs":
         print(describe_inputs())
+        return 0
+    if args.command == "cinematic":
+        print(describe_walkthrough())
+        return 0
+    if args.command == "walkthrough":
+        intent = inspect_input(args.source)
+        artifacts = write_walkthrough_pack(intent, args.out, ifc_path=args.ifc)
+        json.dump({key: str(path) for key, path in artifacts.items()}, sys.stdout, indent=2)
+        sys.stdout.write("\n")
         return 0
     if args.command == "demo":
         results = run_demo(args.out)
