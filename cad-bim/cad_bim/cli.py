@@ -6,6 +6,7 @@ import sys
 from pathlib import Path
 
 from cad_bim.adapters.computer_use import describe_host_requirements
+from cad_bim.capabilities import describe_capabilities
 from cad_bim.inputs import describe_inputs
 from cad_bim.pipeline import build, inspect_input, run_demo
 from cad_bim.render.package import write_walkthrough_pack
@@ -41,6 +42,7 @@ def main(argv: list[str] | None = None) -> int:
     hosts.add_argument("app", choices=("revit", "solidworks", "autocad", "am12"))
 
     sub.add_parser("inputs", help="Print the input contract for CAD / Revit / SolidWorks work")
+    sub.add_parser("list", help="Print what this solution can do")
 
     walk_cmd = sub.add_parser("walkthrough", help="Write a cinematic shot list + Blender Cycles script")
     walk_cmd.add_argument("source", type=Path)
@@ -61,6 +63,9 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     if args.command == "inputs":
         print(describe_inputs())
+        return 0
+    if args.command == "list":
+        print(describe_capabilities())
         return 0
     if args.command == "cinematic":
         print(describe_walkthrough())

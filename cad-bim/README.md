@@ -1,5 +1,7 @@
 # cad-bim
 
+打印能力清单：`python3 -m cad_bim list`。全文见 [CAPABILITIES.md](CAPABILITIES.md)。
+
 **不是 Blender。** 主干是「中性模型 + 标准格式」：IfcOpenShell 写/改 IFC，ezdxf 写/改 DXF，gmsh 的 Open CASCADE 内核写 STEP。Blender + [Bonsai](https://github.com/IfcOpenShell/IfcOpenShell)（原 BlenderBIM）只做效果图和漫游，不负责出可交付的 Revit / SolidWorks 模型。
 
 三个核心工具：
