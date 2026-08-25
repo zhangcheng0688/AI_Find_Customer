@@ -76,3 +76,22 @@ PDF / DXF / 规格
 2. 若经常拿到客户 `.rvt`：在 Windows 上试用 cad2data 只做 **ingest → IFC/表**，再进本管线改。
 3. 有 Revit/SW 正版机：再接 pyRevit / SW API，补原生文件最后一英里。
 4. text-to-cad skill 只用来生成**标准件/支架类零件草案**，必须经过本管线验证才能进交付。
+
+## 第二份工具表（text-to-cad / Agent Hub / GeoLibre 等）
+
+不全是「不错的方案」。有的是真项目但被写过了；有的名字对不上号；有的根本不在 CAD/BIM 赛道。
+
+| 表上的名字 | 实际是什么 | 对舾装/Revit/SW |
+| --- | --- | --- |
+| Codex text-to-cad + build123d | 真：agent 写 build123d，出 STEP。爆炸图、运动机构不是标配 | 机械零件草案有用。**下一步该接 build123d**，替换 gmsh 挤出 |
+| CAD Agent Hub | 没有叫这个、还能同时开 CATIA+UG 出 CATPart 的现成仓库。接近的是 NX_MCP、CAE-Agent-Hub、论文里的 CATIA-MCP | 必须本机有 NX/CATIA。不是云端互转 |
+| GeoLibre | 真：开源 GIS（地图/STAC/COG）。能读 DXF 当地理图层 | **不是 CAD**。船厂总图/码头坐标才用 |
+| Codex + Botrail | 没核到叫 Botrail 的工业孪生开源平台 | 先当宣传名，不要当可调用方案 |
+| PartLoom AI Platform | 没核到这个 MIT 产品。CAD-IR 是论文/规范（ArtisanCAD、CADIR），要 CATIA 或 SW 后端回放 | 有宿主才有意义。不是无许可写 `.sldprt` |
+| Multi-Agent-CAD（清华 MAC） | 真。99.3% 是 10 条提示、141 个特征，对比 text-to-cad skill。出可打印零件 | 标准件草案。不是 BIM/Revit/整船 |
+| CAD-1000-hours | 真：Markov 的 GUI 录屏数据集 | 训练点软件的模型。46% 任务完成率那条路，不当交付 |
+| CADxStudio | 网页机械 CAD SaaS | 浏览器玩零件，进不了 IFC/AM12 验收 |
+| GenCAD | 真：照片/草图 → CAD 命令序列（研究） | 草图参考。STL/程序 ≠ 可验收 STEP/IFC |
+
+和第一份清单同一句话：**能进主干的还是 build123d/OCCT + IFC/STEP；MCP/COM 要正版软件；GIS、录屏数据集、网页 CAD 都是旁路。**
+
