@@ -1,0 +1,6 @@
+{
+  "ops": [
+    {"op": "set_part", "id": "P1", "thickness": 16, "material": "Stainless"},
+    {"op": "add_hole", "id": "P1", "x": 20, "y": 4, "radius": 3}
+  ]
+}
