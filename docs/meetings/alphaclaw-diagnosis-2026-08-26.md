@@ -402,3 +402,13 @@ AlphaClaw 的「多 Agent」是同一 Gateway 里的角色卡；ClawTeam 的「�
 ---
 
 *材料性质：基于公开仓库、npm、issue、官网和第三方安全报告的会前诊断，不是对方系统的登录后渗透测试。会上若对方给演示环境，优先核验第 6 节和第 9 节，而不是再听一遍功能清单。*
+
+---
+
+## 附录：同一场会的另一份材料
+
+若议程还包含 Alicemart 经营规划，不要和 AlphaClaw 混成一个产品故事。规划压力测试见：
+
+`docs/meetings/alicemart-annual-plan-diagnosis-2026-08-27.md`
+
+结论预览：规划骨架（先验证再放大）是对的，但 ICP、客单价、杀手功能和当前站点现实对不上；Q1 应先修主链路和去 LinkFox 化，而不是找新故事。AlphaClaw 不进入 Alicemart 的年度 KPI。
