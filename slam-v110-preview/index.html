@@ -7,11 +7,18 @@
     <title>SLAM.SYSTEMS | Intelligent Live Communication Systems</title>
     <link rel="icon" href="assets/logos/slam-systems-logo-dark.png">
     <link rel="stylesheet" href="assets/css/styles-v1.7.css?v=20260822-v1.7-server-safe-1">
+    <link rel="stylesheet" href="assets/css/sport-deck-3d-v1.11.css?v=20260830-sportdeck3d-1">
   </head>
   <body>
-    <main class="hero-shell">
-      <img class="hero-image" src="assets/images/handball-hero-master-v1-scoreboard-correct.png" alt="SLAM.SYSTEMS Operator bei einem professionellen Handballspiel">
-      <div class="hero-shade" aria-hidden="true"></div>
+    <section class="hero3d" data-sportdeck3d aria-label="Sport Playout – Sportart wählen">
+      <div class="hero3d-backdrops" aria-hidden="true">
+        <img src="assets/images/sportdeck/bg-handball.jpg" alt="" data-sport="handball" class="is-active" loading="eager">
+        <img src="assets/images/sportdeck/bg-hockey.jpg" alt="" data-sport="hockey" loading="lazy">
+        <img src="assets/images/sportdeck/bg-football.jpg" alt="" data-sport="football" loading="lazy">
+        <img src="assets/images/sportdeck/bg-unihockey.jpg" alt="" data-sport="unihockey" loading="lazy">
+      </div>
+      <div class="hero3d-shade" aria-hidden="true"></div>
+      <canvas class="hero3d-canvas"></canvas>
       <header class="site-header">
         <a class="brand" href="index.html#top" aria-label="SLAM.SYSTEMS Startseite">
           <img src="assets/logos/slam-systems-logo-dark.png" alt="SLAM.SYSTEMS">
@@ -28,6 +35,21 @@
           <nav aria-label="Mobile Navigation"><a href="media-playout.html">Media Playout</a><a href="led-video-systems.html">LED Video</a><a href="solutions.html">Solution</a><a href="company.html">Company</a><a href="start-project.html">Start Your Project</a></nav>
         </details>
       </header>
+      <div class="hero3d-content">
+        <p class="hero3d-kicker">Sport Media Playout / COR Family</p>
+        <h1>One system.<br><strong>Every sport.</strong></h1>
+        <p class="hero3d-lead">Vier Sportarten, eine Bedienlogik – wählen Sie Ihre Sportart.</p>
+      </div>
+      <div class="hero3d-caption">
+        <p class="hero3d-caption-sport">Handball</p>
+        <p class="hero3d-caption-line"><span class="solution-brand-term">SCORECOR</span> Game-Time: Anzeige, Strafzeiten und Time-outs – ein Tippen genügt.</p>
+      </div>
+      <p class="hero3d-hint" aria-hidden="true">Scroll ↓</p>
+      <div class="hero3d-loading" aria-hidden="true">Loading</div>
+    </section>
+    <main class="hero-shell">
+      <img class="hero-image" src="assets/images/handball-hero-master-v1-scoreboard-correct.png" alt="SLAM.SYSTEMS Operator bei einem professionellen Handballspiel">
+      <div class="hero-shade" aria-hidden="true"></div>
       <section class="hero-content" id="top">
         <h1><span>Precision Thinking.</span><span>Intelligent Systems.</span><strong>Connected Moments.</strong></h1>
         <div class="accent-line" aria-hidden="true"></div>
@@ -51,5 +73,6 @@
     </section>
     <section class="video-section" id="video" aria-labelledby="video-title"><div><p class="section-code">Live moments / Vision of live</p><h2 id="video-title">The intelligent core behind every live sports moment.</h2></div><button class="video-trigger" type="button" aria-label="Video folgt in einer späteren Projektphase"><span>▶</span> Watch video</button></section>
     <footer class="site-footer"><img src="assets/logos/slam-systems-logo-dark.png" alt="SLAM.SYSTEMS"><p>swiss engineering and functional design | r&amp;d center shenzhen hightech park | slam.systems © since 1999</p><a href="start-project.html">Start Dein Project →</a></footer>
-  <script src="assets/js/site-navigation-v1.7.js?v=20260822-v1.7-server-safe-1"></script></body>
+  <script src="assets/js/site-navigation-v1.7.js?v=20260822-v1.7-server-safe-1"></script>
+  <script type="module" src="assets/js/sport-deck-3d-v1.11.js?v=20260830-sportdeck3d-1"></script></body>
 </html>

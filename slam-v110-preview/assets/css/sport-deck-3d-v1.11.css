@@ -1,0 +1,183 @@
+/* SLAM.SYSTEMS — 3D Sport Playout Hero (homepage top, three.js) */
+
+.hero3d {
+  position: relative;
+  isolation: isolate;
+  min-height: 100svh;
+  overflow: hidden;
+  background: #050506;
+  display: flex;
+  flex-direction: column;
+}
+
+.hero3d .site-header {
+  position: relative;
+  z-index: 6;
+}
+
+.hero3d-backdrops,
+.hero3d-backdrops img,
+.hero3d-shade,
+.hero3d-canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.hero3d-backdrops { z-index: -3; }
+
+.hero3d-backdrops img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  opacity: 0;
+  transform: scale(1.05);
+  transition: opacity 0.9s ease, transform 7s ease;
+}
+
+.hero3d-backdrops img.is-active {
+  opacity: 1;
+  transform: scale(1.13);
+}
+
+.hero3d-shade {
+  z-index: -2;
+  background:
+    linear-gradient(90deg, rgba(5, 5, 6, 0.88) 0%, rgba(5, 5, 6, 0.42) 38%, rgba(5, 5, 6, 0.1) 65%, rgba(5, 5, 6, 0.32) 100%),
+    linear-gradient(180deg, rgba(5, 5, 6, 0.55) 0%, rgba(5, 5, 6, 0.06) 30%, rgba(5, 5, 6, 0.42) 74%, rgba(5, 5, 6, 0.9) 100%);
+}
+
+.hero3d-canvas {
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: pan-y;
+}
+
+/* --- Overlay content --------------------------------------------- */
+
+.hero3d-content {
+  position: relative;
+  z-index: 5;
+  pointer-events: none;
+  padding: clamp(1rem, 3vh, 2.5rem) clamp(1.5rem, 3.2vw, 3.5rem) 0;
+  max-width: 46rem;
+}
+
+.hero3d-kicker {
+  margin: 0 0 0.9rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(247, 247, 245, 0.55);
+}
+
+.hero3d-content h1 {
+  margin: 0;
+  font-weight: 300;
+  font-size: clamp(2.4rem, 5.6vw, 4.6rem);
+  line-height: 1.04;
+  letter-spacing: -0.01em;
+  color: #fff;
+}
+
+.hero3d-content h1 strong {
+  font-weight: 300;
+  color: var(--slam-magenta);
+}
+
+.hero3d-lead {
+  margin: 1.1rem 0 0;
+  max-width: 30em;
+  font-size: clamp(0.95rem, 1.5vw, 1.08rem);
+  font-weight: 300;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+/* --- Caption (selected sport) -------------------------------------- */
+
+.hero3d-caption {
+  position: relative;
+  z-index: 5;
+  pointer-events: none;
+  margin-top: auto;
+  padding: 0 clamp(1.5rem, 3.2vw, 3.5rem) clamp(2.5rem, 6vh, 4rem);
+}
+
+.hero3d-caption-sport {
+  margin: 0 0 0.4rem;
+  font-family: "Good Times", "SLAM Avenir", sans-serif;
+  font-size: clamp(1.2rem, 2.6vw, 1.7rem);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+.hero3d-caption-line {
+  margin: 0;
+  max-width: 46em;
+  font-size: clamp(0.92rem, 1.4vw, 1.02rem);
+  font-weight: 300;
+  line-height: 1.55;
+  color: var(--muted);
+  transition: opacity 0.22s ease;
+}
+
+.hero3d-caption-line.is-fading { opacity: 0; }
+
+.hero3d-caption-line .solution-brand-term {
+  font-family: "Good Times", "SLAM Avenir", sans-serif;
+  font-size: 0.92em;
+  letter-spacing: 0.02em;
+}
+
+.hero3d-hint {
+  position: absolute;
+  z-index: 5;
+  right: clamp(1.5rem, 3.2vw, 3.5rem);
+  bottom: clamp(2.5rem, 6vh, 4rem);
+  font-size: 0.72rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: rgba(247, 247, 245, 0.45);
+  pointer-events: none;
+  animation: hero3d-hint 2.6s ease-in-out infinite;
+}
+
+@keyframes hero3d-hint {
+  0%, 100% { transform: translateY(0); opacity: 0.45; }
+  50% { transform: translateY(6px); opacity: 0.9; }
+}
+
+.hero3d-loading {
+  position: absolute;
+  z-index: 7;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: #050506;
+  color: rgba(247, 247, 245, 0.5);
+  font-size: 0.75rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  transition: opacity 0.5s ease;
+}
+
+.hero3d-loading.is-done {
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (max-width: 860px) {
+  .hero3d-content { padding-top: 0.5rem; }
+  .hero3d-content h1 { font-size: clamp(2rem, 9vw, 2.8rem); }
+  .hero3d-hint { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero3d-hint { animation: none; }
+  .hero3d-backdrops img { transition: opacity 0.3s ease; transform: none; }
+  .hero3d-backdrops img.is-active { transform: none; }
+}
