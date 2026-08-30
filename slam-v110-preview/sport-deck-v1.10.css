@@ -1,0 +1,253 @@
+/* SLAM.SYSTEMS — Sport Playout Deck (solutions page)
+   Fanned deck of iPad playouts; pick a sport. */
+
+.sportdeck-section {
+  padding-bottom: clamp(3rem, 6vw, 5rem);
+}
+
+.sportdeck {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #0a0a0c;
+  min-height: clamp(460px, 58vw, 640px);
+}
+
+/* --- Backdrops -------------------------------------------------- */
+
+.sportdeck-backdrops,
+.sportdeck-backdrops img,
+.sportdeck-shade {
+  position: absolute;
+  inset: 0;
+}
+
+.sportdeck-backdrops { z-index: -2; }
+
+.sportdeck-backdrops img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  opacity: 0;
+  transform: scale(1.04);
+  transition: opacity 0.7s ease, transform 6s ease;
+}
+
+.sportdeck-backdrops img.is-active {
+  opacity: 1;
+  transform: scale(1.12);
+}
+
+.sportdeck-shade {
+  z-index: -1;
+  background:
+    linear-gradient(180deg, rgba(5, 5, 6, 0.55) 0%, rgba(5, 5, 6, 0.18) 34%, rgba(5, 5, 6, 0.66) 72%, rgba(5, 5, 6, 0.92) 100%);
+}
+
+/* --- Fan of devices ---------------------------------------------- */
+
+.sportdeck-fan {
+  position: relative;
+  z-index: 1;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  height: clamp(300px, 38vw, 430px);
+}
+
+.sportdeck-fan li {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  margin: 0;
+}
+
+.sportdeck-card {
+  --fan-rotate: 0deg;
+  --fan-x: 0px;
+  display: block;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  transform: translateX(calc(-50% + var(--fan-x))) rotate(var(--fan-rotate));
+  transform-origin: 50% 100%;
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1), filter 0.4s ease, opacity 0.4s ease;
+  animation: sportdeck-sway 5.5s ease-in-out infinite alternate;
+}
+
+.sportdeck-fan li:nth-child(1) .sportdeck-card { --fan-rotate: -15deg; --fan-x: -270px; animation-delay: 0s; }
+.sportdeck-fan li:nth-child(2) .sportdeck-card { --fan-rotate: -5deg;  --fan-x: -90px;  animation-delay: -1.6s; }
+.sportdeck-fan li:nth-child(3) .sportdeck-card { --fan-rotate: 5deg;   --fan-x: 90px;   animation-delay: -3.1s; }
+.sportdeck-fan li:nth-child(4) .sportdeck-card { --fan-rotate: 15deg;  --fan-x: 270px;  animation-delay: -4.4s; }
+
+@keyframes sportdeck-sway {
+  from { margin-bottom: 0; }
+  to   { margin-bottom: 8px; }
+}
+
+/* dim siblings while one card is hovered / focused */
+.sportdeck-fan:hover .sportdeck-card:not(:hover),
+.sportdeck-fan:focus-within .sportdeck-card:not(:focus-visible):not(.is-active) {
+  filter: brightness(0.42) saturate(0.7);
+}
+
+.sportdeck-card:hover,
+.sportdeck-card:focus-visible,
+.sportdeck-card.is-active {
+  z-index: 5;
+  animation-play-state: paused;
+  transform: translateX(calc(-50% + var(--fan-x))) translateY(-56px) rotate(0deg) scale(1.12);
+  filter: none;
+}
+
+.sportdeck-card:focus-visible {
+  outline: 2px solid var(--slam-magenta);
+  outline-offset: 6px;
+}
+
+/* --- Device frame -------------------------------------------------- */
+
+.sportdeck-device {
+  display: block;
+  width: clamp(180px, 21vw, 250px);
+  aspect-ratio: 4 / 3.1;
+  padding: 10px;
+  border-radius: 20px;
+  background: linear-gradient(160deg, #1b1b1f 0%, #0c0c0e 100%);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow:
+    0 24px 48px rgba(0, 0, 0, 0.55),
+    0 4px 12px rgba(0, 0, 0, 0.4);
+  position: relative;
+  transition: box-shadow 0.45s ease, border-color 0.45s ease;
+}
+
+.sportdeck-device::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 3px;
+  width: 22px;
+  height: 3px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.22);
+  transform: translateX(-50%);
+}
+
+.sportdeck-device img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+  background: #000;
+}
+
+.sportdeck-card:hover .sportdeck-device,
+.sportdeck-card.is-active .sportdeck-device {
+  border-color: rgba(255, 0, 78, 0.65);
+  box-shadow:
+    0 34px 70px rgba(0, 0, 0, 0.65),
+    0 0 0 1px rgba(255, 0, 78, 0.45),
+    0 0 44px rgba(255, 0, 78, 0.28);
+}
+
+.sportdeck-label {
+  display: block;
+  margin-top: 14px;
+  font-size: 0.78rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(247, 247, 245, 0.66);
+  transition: color 0.3s ease;
+}
+
+.sportdeck-card:hover .sportdeck-label,
+.sportdeck-card.is-active .sportdeck-label {
+  color: #fff;
+}
+
+/* --- Caption ------------------------------------------------------- */
+
+.sportdeck-caption {
+  position: relative;
+  z-index: 1;
+  padding: 0 clamp(1.25rem, 4vw, 3rem) clamp(1.5rem, 3vw, 2.25rem);
+  min-height: 4.6em;
+}
+
+.sportdeck-caption-sport {
+  margin: 0 0 0.35em;
+  font-family: "Good Times", "SLAM Avenir", sans-serif;
+  font-size: clamp(1.15rem, 2.4vw, 1.6rem);
+  letter-spacing: 0.04em;
+  color: #fff;
+}
+
+.sportdeck-caption-line {
+  margin: 0;
+  max-width: 46em;
+  font-size: clamp(0.92rem, 1.4vw, 1.02rem);
+  font-weight: 300;
+  line-height: 1.55;
+  color: var(--muted);
+  opacity: 1;
+  transition: opacity 0.25s ease;
+}
+
+.sportdeck-caption-line.is-fading { opacity: 0; }
+
+.sportdeck-caption-line .solution-brand-term {
+  font-size: 0.92em;
+}
+
+/* --- Mobile: snap carousel ------------------------------------------ */
+
+@media (max-width: 860px) {
+  .sportdeck { min-height: 0; }
+
+  .sportdeck-fan {
+    display: flex;
+    gap: 1rem;
+    height: auto;
+    padding: 1.5rem 1.25rem 0.5rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .sportdeck-fan li {
+    position: static;
+    flex: 0 0 auto;
+    scroll-snap-align: center;
+  }
+
+  .sportdeck-card,
+  .sportdeck-fan li:nth-child(n) .sportdeck-card {
+    --fan-rotate: 0deg;
+    --fan-x: 0px;
+    animation: none;
+    transform: none;
+  }
+
+  .sportdeck-card:hover,
+  .sportdeck-card:focus-visible,
+  .sportdeck-card.is-active {
+    transform: translateY(-10px);
+  }
+
+  .sportdeck-fan:hover .sportdeck-card:not(:hover) {
+    filter: none;
+  }
+
+  .sportdeck-device { width: 172px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sportdeck-card { animation: none; }
+  .sportdeck-backdrops img { transition: opacity 0.3s ease; transform: none; }
+  .sportdeck-backdrops img.is-active { transform: none; }
+}

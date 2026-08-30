@@ -1,0 +1,22 @@
+#cloud .content-copy p,
+#training .content-copy p,
+#custom-made .content-copy p {
+  text-align: justify;
+  text-justify: inter-word;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+}
+
+.solution-brand-term {
+  font-family: "Good Times", "SLAM Avenir", sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+
+.solution-preview-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 1.15rem 0 1.35rem;
+  border: 1px solid rgba(0, 0, 0, 0.14);
+}
