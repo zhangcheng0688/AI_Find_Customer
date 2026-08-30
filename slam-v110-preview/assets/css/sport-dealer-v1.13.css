@@ -1,0 +1,365 @@
+/* SLAM.SYSTEMS – Dealer Hero v1.13
+   发牌人交互：人物伸手递牌，悬停选牌，点击看高清大图 */
+
+.dealer {
+  position: relative;
+  min-height: 100svh;
+  overflow: hidden;
+  background: #050506;
+  color: #f5f2ee;
+  font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
+}
+
+.dealer-bg,
+.dealer-bg img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.dealer-bg img {
+  filter: blur(7px) brightness(0.34) saturate(0.85);
+  transform: scale(1.06);
+  transition: opacity 0.7s ease;
+  opacity: 0;
+}
+.dealer-bg img.is-active { opacity: 1; }
+
+.dealer-shade {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(5,5,6,0.88) 0%, rgba(5,5,6,0.55) 42%, rgba(5,5,6,0.25) 68%, rgba(5,5,6,0.55) 100%),
+    linear-gradient(0deg, rgba(5,5,6,0.92) 0%, rgba(5,5,6,0) 32%);
+  pointer-events: none;
+}
+
+.dealer-sweep {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(115deg, transparent 30%, rgba(255,0,78,0.07) 46%, rgba(255,255,255,0.05) 52%, transparent 66%);
+  background-size: 260% 100%;
+  animation: dealerSweep 9s ease-in-out infinite;
+  mix-blend-mode: screen;
+}
+@keyframes dealerSweep {
+  0%, 100% { background-position: 120% 0; }
+  50% { background-position: -20% 0; }
+}
+
+/* ---- header inherits site styles; keep above layers ---- */
+.dealer .site-header { position: relative; z-index: 20; }
+
+/* ---- copy ---- */
+.dealer-copy {
+  position: absolute;
+  z-index: 10;
+  left: clamp(24px, 6vw, 96px);
+  top: clamp(120px, 20vh, 210px);
+  max-width: 560px;
+}
+.dealer-kicker {
+  font-size: 12px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: rgba(245,242,238,0.62);
+  margin: 0 0 18px;
+}
+.dealer-copy h1 {
+  margin: 0 0 16px;
+  font-size: clamp(40px, 5.2vw, 76px);
+  line-height: 1.02;
+  font-weight: 300;
+  letter-spacing: -0.01em;
+}
+.dealer-copy h1 strong {
+  display: block;
+  font-weight: 650;
+  color: #ff004e;
+}
+.dealer-lead {
+  margin: 0;
+  font-size: clamp(15px, 1.25vw, 18px);
+  color: rgba(245,242,238,0.78);
+  max-width: 44ch;
+}
+
+.dealer-caption {
+  position: absolute;
+  z-index: 10;
+  left: clamp(24px, 6vw, 96px);
+  bottom: clamp(132px, 20vh, 190px);
+  max-width: 480px;
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: rgba(245,242,238,0.82);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+.dealer-caption.is-switching { opacity: 0; transform: translateY(6px); }
+.dealer-caption .solution-brand-term { color: #ff004e; font-weight: 700; letter-spacing: 0.04em; }
+
+/* ---- stage: presenter + hand card ---- */
+.dealer-stage {
+  position: absolute;
+  z-index: 8;
+  right: clamp(8px, 4vw, 72px);
+  bottom: 0;
+  height: min(92svh, 900px);
+  aspect-ratio: 1024 / 1456;
+  transition: transform 0.6s cubic-bezier(0.22, 0.9, 0.24, 1);
+  transform-origin: 50% 100%;
+}
+.dealer-stage.is-dealing { transform: scale(1.018) translateY(-6px); }
+.dealer-person {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: bottom;
+  display: block;
+  filter: drop-shadow(0 0 34px rgba(255,0,78,0.14)) drop-shadow(0 18px 44px rgba(0,0,0,0.6));
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* card resting above the open palm (palm ≈ 62% / 54% of the image) */
+.dealer-handcard {
+  position: absolute;
+  left: 62.2%;
+  top: 53.6%;
+  transform: translate(-50%, -88%) rotate(-3.5deg);
+  width: clamp(190px, 20vw, 300px);
+  border-radius: 10px;
+  cursor: pointer;
+  animation: dealerFloat 5.5s ease-in-out infinite;
+  filter: drop-shadow(0 14px 30px rgba(0,0,0,0.65));
+}
+@keyframes dealerFloat {
+  0%, 100% { transform: translate(-50%, -88%) rotate(-3.5deg) translateY(0); }
+  50% { transform: translate(-50%, -88%) rotate(-2.5deg) translateY(-9px); }
+}
+.dealer-handcard-frame {
+  display: block;
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(255,0,78,0.55);
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.6), 0 0 26px rgba(255,0,78,0.30);
+  background: #0a0a0c;
+}
+.dealer-handcard-frame img { display: block; width: 100%; height: auto; }
+.dealer-handcard.is-pop .dealer-handcard-frame { animation: dealerPop 0.5s cubic-bezier(0.2, 1.4, 0.4, 1); }
+@keyframes dealerPop {
+  0% { transform: scale(0.72); filter: brightness(2.2); }
+  60% { transform: scale(1.05); filter: brightness(1.25); }
+  100% { transform: scale(1); filter: brightness(1); }
+}
+.dealer-handcard-sport {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 10px);
+  font-size: 12px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(245,242,238,0.9);
+  text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+}
+.dealer-handcard-hint {
+  position: absolute;
+  left: 0;
+  top: calc(100% + 10px);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: rgba(245,242,238,0.55);
+  white-space: nowrap;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.9);
+}
+
+/* flying clone (deck -> hand) */
+.dealer-fly {
+  position: fixed;
+  z-index: 60;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(255,0,78,0.65);
+  box-shadow: 0 0 30px rgba(255,0,78,0.4), 0 18px 40px rgba(0,0,0,0.65);
+  pointer-events: none;
+  transition: transform 0.58s cubic-bezier(0.22, 0.9, 0.24, 1), opacity 0.58s ease;
+  will-change: transform;
+}
+.dealer-fly img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+/* ---- deck of 4 sport cards ---- */
+.dealer-deck {
+  position: absolute;
+  z-index: 12;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: clamp(18px, 3.5vh, 36px);
+  display: flex;
+  gap: clamp(10px, 1.4vw, 20px);
+  padding: 10px 14px;
+  border-radius: 16px;
+  background: rgba(10,10,12,0.55);
+  border: 1px solid rgba(255,255,255,0.07);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+.dealer-card {
+  appearance: none;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: #0c0c0f;
+  border-radius: 12px;
+  padding: 8px 8px 7px;
+  width: clamp(120px, 11vw, 164px);
+  cursor: pointer;
+  text-align: left;
+  transition: transform 0.32s cubic-bezier(0.22, 0.9, 0.24, 1), border-color 0.32s ease, box-shadow 0.32s ease;
+}
+.dealer-card img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 5 / 2;
+  object-fit: cover;
+  border-radius: 7px;
+  filter: saturate(0.75) brightness(0.85);
+  transition: filter 0.32s ease;
+}
+.dealer-card span {
+  display: block;
+  margin-top: 7px;
+  font-size: 10.5px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(245,242,238,0.6);
+  transition: color 0.32s ease;
+}
+.dealer-card:hover,
+.dealer-card:focus-visible {
+  transform: translateY(-10px) scale(1.04);
+  border-color: rgba(255,0,78,0.75);
+  box-shadow: 0 14px 30px rgba(0,0,0,0.55), 0 0 22px rgba(255,0,78,0.28);
+  outline: none;
+}
+.dealer-card:hover img,
+.dealer-card:focus-visible img { filter: saturate(1.15) brightness(1.05); }
+.dealer-card:hover span,
+.dealer-card:focus-visible span { color: #fff; }
+.dealer-card.is-locked { border-color: rgba(255,0,78,0.9); }
+.dealer-card.is-locked span { color: #ff004e; }
+
+.dealer-scroll {
+  position: absolute;
+  z-index: 10;
+  right: clamp(20px, 3vw, 44px);
+  bottom: clamp(20px, 3.5vh, 36px);
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(245,242,238,0.4);
+}
+
+/* ---- lightbox ---- */
+.dealer-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 18px;
+  background: rgba(4,4,5,0.9);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+}
+.dealer-lightbox.is-open { opacity: 1; pointer-events: auto; }
+.dealer-lightbox figure {
+  margin: 0;
+  max-width: 92vw;
+  transform: scale(0.94) translateY(10px);
+  transition: transform 0.4s cubic-bezier(0.22, 0.9, 0.24, 1);
+}
+.dealer-lightbox.is-open figure { transform: scale(1) translateY(0); }
+.dealer-lightbox img {
+  display: block;
+  max-width: 92vw;
+  max-height: 78vh;
+  width: auto;
+  height: auto;
+  border-radius: 12px;
+  border: 1px solid rgba(255,0,78,0.5);
+  box-shadow: 0 0 60px rgba(255,0,78,0.22), 0 30px 80px rgba(0,0,0,0.7);
+  background: #0a0a0c;
+}
+.dealer-lightbox figcaption {
+  margin-top: 14px;
+  text-align: center;
+  font-size: 13px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: rgba(245,242,238,0.85);
+}
+.dealer-lightbox-close {
+  appearance: none;
+  border: 1px solid rgba(255,255,255,0.25);
+  background: transparent;
+  color: rgba(245,242,238,0.85);
+  font-size: 12px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  padding: 10px 22px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: border-color 0.3s ease, color 0.3s ease;
+}
+.dealer-lightbox-close:hover { border-color: #ff004e; color: #ff004e; }
+
+/* ---- responsive ---- */
+@media (max-width: 1080px) {
+  .dealer-stage { right: -60px; opacity: 0.92; }
+}
+@media (max-width: 860px) {
+  .dealer { min-height: 100svh; }
+  .dealer-copy { top: 96px; left: 22px; right: 22px; max-width: none; }
+  .dealer-stage {
+    height: 52svh;
+    right: 50%;
+    transform: translateX(50%);
+    opacity: 0.96;
+  }
+  .dealer-stage.is-dealing { transform: translateX(50%) scale(1.015); }
+  .dealer-person { filter: drop-shadow(0 0 22px rgba(255,0,78,0.12)); }
+  .dealer-handcard { width: clamp(150px, 38vw, 210px); }
+  .dealer-handcard-hint { display: none; }
+  .dealer-caption {
+    left: 22px;
+    right: 22px;
+    top: clamp(272px, 37vh, 330px);
+    bottom: auto;
+    max-width: 26ch;
+    font-size: 13.5px;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.95);
+  }
+  .dealer-deck {
+    width: calc(100% - 32px);
+    justify-content: space-between;
+    gap: 8px;
+    padding: 8px;
+    bottom: 14px;
+  }
+  .dealer-card { width: calc(25% - 6px); padding: 6px; }
+  .dealer-card span { font-size: 8.5px; letter-spacing: 0.14em; }
+  .dealer-scroll { display: none; }
+  .dealer-copy h1 { font-size: clamp(34px, 9vw, 46px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dealer-sweep,
+  .dealer-handcard { animation: none; }
+  .dealer-fly { transition: none; }
+}
