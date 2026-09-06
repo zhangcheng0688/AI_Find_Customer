@@ -1,10 +1,19 @@
 # SLAM.SYSTEMS
 
-Official website of **SLAM.SYSTEMS**, a brand of watermoon.communication gmbh (Switzerland), with R&D in Shenzhen.
+Official website of **SLAM.SYSTEMS**, a brand of watermoon.communication GmbH (Switzerland), with R&D in Shenzhen.
 
-Visual and information architecture follow the boss-confirmed FTP package **SLAM.SYSTEMS_FTP_UPLOAD_v1.6**. The reconstructed package (HTML/CSS/JS source) is in `vendor/ftp-v1.6/`; see `vendor/ftp-v1.6/MANIFEST.md`. The WeCom Mac ZIP path cannot be mounted here; the live FTP folder is the published equivalent of that ZIP.
+This build follows the boss-confirmed package **SLAM.SYSTEMS_v2.2.6**:
 
-This folder is the complete static site. It does **not** belong in the AI customer-finder repository. Publish it to its own GitHub repo: [zhangcheng0688/slam-systems-site](https://github.com/zhangcheng0688/slam-systems-site).
+- script-aligned titles, taglines and body copy
+- activated project emails (`i@slam.systems`)
+- Swiss address in Bülach alongside Shenzhen
+- landing pages with title artwork
+- three languages: German (default), English (`/en/`), Simplified Chinese (`/zh/`)
+- Start Your Project video overlay + on-page embed
+
+The earlier FTP v1.6 reconstruction remains in `vendor/ftp-v1.6/`. The v2.2.6 HTML snapshot is in `vendor/v2.2.6/`.
+
+The original handball hero photograph is not regenerated.
 
 ## Preview
 
@@ -18,10 +27,6 @@ Public GitHub Pages previews:
 
 - https://zhangcheng0688.github.io/slam-systems-site/
 - https://zhangcheng0688.github.io/AI_Find_Customer/
-
-## Hero
-
-Theme **01 is the original handball photograph**. Ice hockey (02) and football (03) are additional sports themes. The handball file is not regenerated.
 
 ## Publish to the official repo
 
