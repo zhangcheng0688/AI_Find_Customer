@@ -1,0 +1,35 @@
+@font-face {
+  font-family: "Cherry Dorry";
+  src: url("../fonts/CherryDorry/Cherrydorry-6YYrD.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+:root {
+  --slam-handwriting: "Cherry Dorry", cursive;
+}
+
+.desktop-nav {
+  gap: clamp(1.1rem, 2.15vw, 2.4rem);
+}
+
+.desktop-nav > .nav-group > a {
+  white-space: nowrap;
+}
+
+.index-grid {
+  grid-template-columns: repeat(5, 1fr);
+}
+
+@media (max-width: 1180px) {
+  .index-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 720px) {
+  .index-grid {
+    grid-template-columns: 1fr;
+  }
+}

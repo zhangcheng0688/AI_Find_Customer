@@ -1,0 +1,27 @@
+html[lang="zh-Hans"] body .zh-copy,
+html[lang="zh-Hans"] body p.zh-copy,
+html[lang="zh-Hans"] body li.zh-copy {
+  font-family: "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", sans-serif !important;
+  font-weight: 400 !important;
+  line-height: 1.85 !important;
+  letter-spacing: 0.025em;
+  text-align: left !important;
+  word-break: normal;
+  overflow-wrap: break-word;
+  hyphens: none;
+}
+html[lang="zh-Hans"] body .zh-copy .product-name,
+html[lang="zh-Hans"] body .zh-copy .product-name *,
+html[lang="zh-Hans"] body .zh-copy .solution-brand-term {
+  font-family: "Good Times", sans-serif !important;
+  font-weight: 400 !important;
+  letter-spacing: normal;
+}
+html[lang="zh-Hans"] body .zh-copy strong { font-weight: 400; }
+html[lang="zh-Hans"] body .zh-copy.product-description { font-weight: 400 !important; }
+html[lang="zh-Hans"] body .feature-list li.zh-copy { font-weight: 300 !important; }
+html[lang="zh-Hans"] body #protection-policies li.zh-copy { font-weight: 400 !important; }
+.language-switch a[lang="zh-Hans"] {
+  font-family: "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+  font-weight: 300;
+}

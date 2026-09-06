@@ -1,0 +1,84 @@
+#cloud .content-copy p,
+#training .content-copy p,
+#custom-made .content-copy p {
+  text-align: justify;
+  text-justify: inter-word;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+}
+
+.solution-brand-term {
+  font-family: "Good Times", "SLAM Avenir", sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+
+.page-solutions #intro .feature-list li {
+  position: relative;
+  padding-left: 2rem;
+}
+
+.page-solutions #intro .feature-list li::before {
+  position: absolute;
+  left: 0;
+  margin-right: 0;
+}
+
+.solution-preview-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0 0 clamp(2.25rem, 4vw, 4rem);
+  border: 1px solid rgba(0, 0, 0, 0.14);
+}
+
+.page-solutions #cloud .content-layout,
+.page-solutions #training .content-layout,
+.page-solutions #custom-made .content-layout {
+  grid-template-columns: minmax(0, 1.5fr) minmax(230px, 0.62fr);
+  gap: clamp(3rem, 7vw, 8rem);
+  align-items: start;
+}
+
+.page-solutions #cloud .content-copy,
+.page-solutions #training .content-copy,
+.page-solutions #custom-made .content-copy {
+  max-width: 820px;
+  font-size: 1rem;
+}
+
+.page-solutions #cloud .content-card,
+.page-solutions #training .content-card,
+.page-solutions #custom-made .content-card {
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.page-solutions #cloud .content-card h3,
+.page-solutions #training .content-card h3,
+.page-solutions #custom-made .content-card h3 {
+  margin: 0.8rem 0 0.75rem;
+}
+
+.page-solutions #cloud .content-card::after,
+.page-solutions #training .content-card::after,
+.page-solutions #custom-made .content-card::after {
+  display: none;
+}
+
+@media (max-width: 1050px) {
+  .page-solutions #cloud .content-layout,
+  .page-solutions #training .content-layout,
+  .page-solutions #custom-made .content-layout {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .page-solutions #cloud .content-card,
+  .page-solutions #training .content-card,
+  .page-solutions #custom-made .content-card {
+    max-width: 620px;
+  }
+}
