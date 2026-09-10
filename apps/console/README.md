@@ -1,5 +1,11 @@
 # apps/console
 
-租户控制台。栈：React + TypeScript + Ant Design Pro。
+React + TypeScript + Ant Design 任务台（Pro 风格一页，未铺完整 Pro 脚手架）。
 
-P0 Prompt-0 仅占位。极简任务列表页见 Prompt-4。
+```bash
+cd apps/console
+npm install
+npm run dev
+```
+
+默认通过 Vite 代理访问本机 `8080` / `8081`。白标：`VITE_BRAND_NAME` / `VITE_BRAND_LOGO` / `VITE_THEME_COLOR`，运行时也会读 `GET /tenants/:id`。

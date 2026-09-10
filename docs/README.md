@@ -8,16 +8,24 @@
 
 ## 本地怎么跑
 
-P0 当前只完成目录与文档（Prompt-0）。中间件 Compose 在 **P0-2 / Prompt-1**，尚未落文件。
+无 Docker（SQLite 演示）：
 
-预期顺序（Prompt-1 之后）：
+```bash
+make factory-test
+make factory-api          # :8080
+make factory-gateway      # :8081
+make factory-console      # :5173
+```
 
-1. `docker compose -f deploy/compose/docker-compose.yml up -d` — Postgres / Redis / MinIO
-2. 启动 `apps/api`
-3. 启动 `apps/channel-gateway`
-4. 启动 `apps/console`
+有 Docker：
 
-端口与 `.env.example` 以 Prompt-1 交付为准。
+```bash
+cp deploy/compose/.env.example deploy/compose/.env
+make factory-middleware   # Postgres 5432 / Redis 6379 / MinIO 9000
+# 然后 DATABASE_URL=postgres://factory:factory@127.0.0.1:5432/factory?sslmode=disable make factory-api
+```
+
+7 天计划：[`7day-launch-plan.md`](./7day-launch-plan.md)。端口见 [`../deploy/compose/README.md`](../deploy/compose/README.md)。
 
 ## 文档
 
@@ -26,8 +34,9 @@ P0 当前只完成目录与文档（Prompt-0）。中间件 Compose 在 **P0-2 /
 | [项目简报.md](./项目简报.md) | 给 Agent 的长期上下文 |
 | [PRD与技术栈.md](./PRD与技术栈.md) | 权威 PRD v1.1 |
 | [P0任务清单.md](./P0任务清单.md) | P0 完成标准 |
-| [license-compliance.md](./license-compliance.md) | 允许 / 禁止依赖 |
-| [wecom-setup.md](./wecom-setup.md) | 企微（P1，本文仅占位） |
+| [7day-launch-plan.md](./7day-launch-plan.md) | 7 天上线冻结口径 |
+| [p1-ready.md](./p1-ready.md) | 真企微 / Coze / RAGFlow 环境变量 |
+| [p0-acceptance.md](./p0-acceptance.md) | P0 验收记录 |
 | [runbook.md](./runbook.md) | 运行手册（后续填充） |
 
 ## License 红线

@@ -8,17 +8,31 @@
 
 **License 红线：** 禁止把 **Dify / n8n / FastGPT / MaxKB** 当作可白标多租户内核；Activepieces **只用 MIT 社区核心，禁用 `packages/ee`**。OpenClaw 不替代 Coze 或任务引擎。详见 [`docs/license-compliance.md`](docs/license-compliance.md)。
 
-**本阶段（Prompt-0）只建目录与文档，不实现业务、不接企微。** Compose 中间件见 Prompt-1。目录树：
+**7 天上线计划（冻结口径）：** [`docs/7day-launch-plan.md`](docs/7day-launch-plan.md)。D7 = 可演示试点（模拟企微询价 → Mission → 无人值守催办 → 控制台），不是完整 P2 SaaS。
+
+### 怎么跑（Agent 工厂）
+
+```bash
+make factory-test
+# 三个终端：
+make factory-api        # http://localhost:8080/health
+make factory-gateway    # POST /dev/ingest
+make factory-console    # http://localhost:5173
+```
+
+中间件（需 Docker）：`make factory-middleware`。端口与引擎说明见 [`deploy/compose/README.md`](deploy/compose/README.md)。
+
+目录树：
 
 ```
-apps/api                 # Go + Gin，含 mission（尚未写代码）
-apps/console             # React + TS + Ant Design Pro
-apps/channel-gateway     # Go，渠道网关
-deploy/compose           # Prompt-1 再写 docker-compose
+apps/api                 # Go + Gin，Mission 任务引擎
+apps/console             # React + TS + Ant Design 任务台
+apps/channel-gateway     # Go，模拟企微入站
+deploy/compose           # Postgres / Redis / MinIO
 deploy/k8s
 templates/cable-quote
 templates/collection-chase
-docs/                    # PRD v1.1、简报、合规、P0 清单
+docs/                    # PRD v1.1、7 天计划、合规
 ```
 
 权威文档：[`docs/PRD与技术栈.md`](docs/PRD与技术栈.md) v1.1。文档索引：[`docs/README.md`](docs/README.md)。

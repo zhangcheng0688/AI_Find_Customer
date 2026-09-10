@@ -116,4 +116,6 @@ apps/**/node_modules/
 apps/**/dist/
 apps/**/vendor/
 apps/api/bin/
+apps/api/data/
 apps/channel-gateway/bin/
+apps/console/dist/

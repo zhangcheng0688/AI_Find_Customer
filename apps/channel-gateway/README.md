@@ -1,5 +1,16 @@
 # apps/channel-gateway
 
-企微 / 飞书渠道网关（鉴权、租户路由、收发、幂等、限流）。与 `apps/api` 同样使用 **Go**，避免双语言运行时。
+P0 用 `POST /dev/ingest` 模拟企微入站，不引入官方 SDK。
 
-P0 Prompt-0 仅占位。`POST /dev/ingest` 模拟入站见 Prompt-3。P0 **不接**真实企微 SDK。
+```bash
+cd apps/channel-gateway
+API_BASE_URL=http://localhost:8080 go run ./cmd/server
+```
+
+```bash
+curl -sS -X POST http://localhost:8081/dev/ingest \
+  -H 'Content-Type: application/json' \
+  -d '{"tenantId":"dev-tenant","botId":"bot-quote","userId":"wx-user-1","text":"YJLV 3x95 报价","externalMsgId":"msg-001"}'
+```
+
+同一 `externalMsgId` 不会重复创建 Mission（API 侧幂等）。
