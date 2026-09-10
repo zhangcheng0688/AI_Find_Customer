@@ -1,14 +1,12 @@
 #!/usr/bin/env python3
-"""SLAM.SYSTEMS GTM plan — restrained 8-slide decks, CN + EN."""
+"""SLAM.SYSTEMS GTM plan — CN + EN. Strategy + seven engines."""
 
 from pptx import Presentation
 from pptx.dml.color import RGBColor
 from pptx.enum.shapes import MSO_SHAPE
 from pptx.enum.text import MSO_ANCHOR, PP_ALIGN
-from pptx.oxml.ns import nsmap, qn
-from pptx.util import Emu, Inches, Pt
-from pptx.oxml import parse_xml
-from copy import deepcopy
+from pptx.oxml.ns import qn
+from pptx.util import Inches, Pt
 from lxml import etree
 
 INK = RGBColor(0x11, 0x11, 0x11)
@@ -19,11 +17,12 @@ WASH = RGBColor(0xF6, 0xF6, 0xF5)
 MAGENTA = RGBColor(0xFF, 0x00, 0x4E)
 WHITE = RGBColor(0xFF, 0xFF, 0xFF)
 DARK = RGBColor(0x0B, 0x0B, 0x0C)
+SOFT = RGBColor(0xC8, 0xC8, 0xC8)
 
 W = Inches(13.333)
 H = Inches(7.5)
 ML = Inches(0.62)
-MR = Inches(12.70)
+TOTAL = 11
 
 
 def set_run(run, size, color, bold=False, font_name="Calibri"):
@@ -32,7 +31,6 @@ def set_run(run, size, color, bold=False, font_name="Calibri"):
     run.font.bold = bold
     run.font.name = font_name
     rPr = run._r.get_or_add_rPr()
-    # East Asian font for Chinese glyphs
     ea = rPr.find(qn("a:ea"))
     if ea is None:
         ea = etree.SubElement(rPr, qn("a:ea"))
@@ -52,13 +50,29 @@ def add_box(slide, l, t, w, h, fill, line=None):
     return sh
 
 
-def add_tf(slide, l, t, w, h, text, size, color, bold=False, font="Calibri", align=PP_ALIGN.LEFT, anchor=MSO_ANCHOR.TOP):
+def add_tf(
+    slide,
+    l,
+    t,
+    w,
+    h,
+    text,
+    size,
+    color,
+    bold=False,
+    font="Calibri",
+    align=PP_ALIGN.LEFT,
+    anchor=MSO_ANCHOR.TOP,
+):
     box = slide.shapes.add_textbox(l, t, w, h)
     tf = box.text_frame
     tf.word_wrap = True
     tf.auto_size = None
     try:
-        tf._txBody.bodyPr.set("anchor", {MSO_ANCHOR.TOP: "t", MSO_ANCHOR.MIDDLE: "ctr", MSO_ANCHOR.BOTTOM: "b"}[anchor])
+        tf._txBody.bodyPr.set(
+            "anchor",
+            {MSO_ANCHOR.TOP: "t", MSO_ANCHOR.MIDDLE: "ctr", MSO_ANCHOR.BOTTOM: "b"}[anchor],
+        )
     except Exception:
         pass
     chunks = text.split("\n") if text else [""]
@@ -73,72 +87,63 @@ def add_tf(slide, l, t, w, h, text, size, color, bold=False, font="Calibri", ali
     return box
 
 
-def add_lines(slide, l, t, w, h, lines, size, color, font, bold=False, leading=1.15):
-    """lines: list of str or (str, bold, color) tuples."""
-    box = slide.shapes.add_textbox(l, t, w, h)
-    tf = box.text_frame
-    tf.word_wrap = True
-    for i, item in enumerate(lines):
-        p = tf.paragraphs[0] if i == 0 else tf.add_paragraph()
-        p.alignment = PP_ALIGN.LEFT
-        p.space_before = Pt(0)
-        p.space_after = Pt(2)
-        p.line_spacing = leading
-        if isinstance(item, tuple):
-            text, is_bold, col = item
-        else:
-            text, is_bold, col = item, bold, color
-        run = p.add_run()
-        run.text = text
-        set_run(run, size, col, is_bold, font)
-    return box
-
-
-def footer(slide, page, total, font, right):
-    add_tf(slide, ML, Inches(7.18), Inches(6), Inches(0.24), "SLAM.SYSTEMS  ·  GTM 2026 Q4–2027 Q1", 10, MUTED, False, font)
-    add_tf(slide, Inches(11.2), Inches(7.18), Inches(1.5), Inches(0.24), f"{page} / {total}", 10, MUTED, False, font, PP_ALIGN.RIGHT)
-    add_box(slide, ML, Inches(7.12), Inches(12.08), Pt(0.75), LINE)
+def footer(slide, page, font, dark=False):
+    c = SOFT if dark else MUTED
+    line = RGBColor(0x2A, 0x2A, 0x2C) if dark else LINE
+    add_tf(
+        slide,
+        ML,
+        Inches(7.18),
+        Inches(8),
+        Inches(0.24),
+        "SLAM.SYSTEMS  ·  GTM 2026 Q4 – 2027 Q1",
+        10,
+        c,
+        False,
+        font,
+    )
+    add_tf(
+        slide,
+        Inches(11.2),
+        Inches(7.18),
+        Inches(1.5),
+        Inches(0.24),
+        f"{page} / {TOTAL}",
+        10,
+        c,
+        False,
+        font,
+        PP_ALIGN.RIGHT,
+    )
+    add_box(slide, ML, Inches(7.12), Inches(12.08), Pt(0.75), line)
 
 
 def header(slide, kicker, title, font):
-    add_tf(slide, ML, Inches(0.28), Inches(12), Inches(0.22), kicker, 11, MAGENTA, True, font)
-    add_tf(slide, ML, Inches(0.50), Inches(12.1), Inches(0.42), title, 22, INK, True, font)
-    add_box(slide, ML, Inches(0.96), Inches(0.42), Pt(3), MAGENTA)
+    add_tf(slide, ML, Inches(0.24), Inches(12), Inches(0.22), kicker, 11, MAGENTA, True, font)
+    add_tf(slide, ML, Inches(0.46), Inches(12.1), Inches(0.42), title, 22, INK, True, font)
+    add_box(slide, ML, Inches(0.92), Inches(0.42), Pt(3), MAGENTA)
 
 
-def card(slide, l, t, w, h, kicker, title, body, font, accent=False):
-    add_box(slide, l, t, w, h, WASH if not accent else INK)
-    kc = MAGENTA if not accent else MAGENTA
-    tc = INK if not accent else WHITE
-    bc = MUTED if not accent else RGBColor(0xC8, 0xC8, 0xC8)
-    add_tf(slide, l + Inches(0.18), t + Inches(0.14), w - Inches(0.32), Inches(0.22), kicker, 10, kc, True, font)
-    add_tf(slide, l + Inches(0.18), t + Inches(0.36), w - Inches(0.32), Inches(0.36), title, 16, tc, True, font)
-    add_tf(slide, l + Inches(0.18), t + Inches(0.76), w - Inches(0.32), h - Inches(0.92), body, 12, bc, False, font)
-
-
-def table_grid(slide, l, t, col_w, row_h, rows, font, header=True):
-    """rows: list of list of str. First row header."""
-    n_cols = len(rows[0])
-    n_rows = len(rows)
+def table_grid(slide, l, t, col_w, row_h, rows, font, header_row=True, size=11):
     for r, row in enumerate(rows):
         y = t + r * row_h
-        bg = INK if (header and r == 0) else (WASH if r % 2 else PAPER)
-        fg = WHITE if (header and r == 0) else INK
+        bg = INK if (header_row and r == 0) else (WASH if r % 2 else PAPER)
+        fg = WHITE if (header_row and r == 0) else INK
         for c, cell in enumerate(row):
             x = l + sum(col_w[:c])
             w = col_w[c]
             add_box(slide, x, y, w, row_h, bg, LINE)
             pad = Inches(0.08)
-            is_head = header and r == 0
+            is_head = header_row and r == 0
             add_tf(
                 slide,
                 x + pad,
-                y + Inches(0.06),
+                y + Inches(0.04),
                 w - pad * 2,
-                row_h - Inches(0.08),
+                row_h - Inches(0.06),
                 cell,
-                10 if not is_head else 10,
-                fg if not (not is_head and c == 0) else INK,
+                size if not is_head else 11,
+                fg,
                 is_head or c == 0,
                 font,
                 PP_ALIGN.LEFT,
@@ -146,94 +151,14 @@ def table_grid(slide, l, t, col_w, row_h, rows, font, header=True):
             )
 
 
-def gantt(slide, l, t, labels, bars, weeks, font, now_label):
-    """
-    labels: row names
-    bars: list of (start_week_index, span, kind) kind in {now, later, done}
-    weeks: list of week labels
-    """
-    label_w = Inches(2.15)
-    chart_w = Inches(9.9)
-    row_h = Inches(0.38)
-    head_h = Inches(0.32)
-    n = len(weeks)
-    cell = chart_w / n
-
-    add_box(slide, l, t, label_w + chart_w, head_h + row_h * len(labels), PAPER, LINE)
-    add_box(slide, l, t, label_w, head_h, INK)
-    add_tf(slide, l + Inches(0.1), t + Inches(0.04), label_w - Inches(0.15), head_h, now_label, 10, WHITE, True, font, PP_ALIGN.LEFT, MSO_ANCHOR.MIDDLE)
-
-    for i, wlab in enumerate(weeks):
-        x = l + label_w + i * cell
-        add_box(slide, x, t, cell, head_h, INK)
-        add_tf(slide, x, t + Inches(0.04), cell, head_h, wlab, 9, WHITE, False, font, PP_ALIGN.CENTER, MSO_ANCHOR.MIDDLE)
-
-    colors = {
-        "now": MAGENTA,
-        "work": INK,
-        "later": RGBColor(0xC4, 0xC4, 0xC4),
-    }
-    for r, lab in enumerate(labels):
-        y = t + head_h + r * row_h
-        bg = WASH if r % 2 == 0 else PAPER
-        add_box(slide, l, y, label_w, row_h, bg, LINE)
-        add_tf(slide, l + Inches(0.1), y, label_w - Inches(0.14), row_h, lab, 11, INK, True, font, PP_ALIGN.LEFT, MSO_ANCHOR.MIDDLE)
-        for i in range(n):
-            add_box(slide, l + label_w + i * cell, y, cell, row_h, bg, LINE)
-        start, span, kind = bars[r]
-        bx = l + label_w + start * cell + Inches(0.06)
-        bw = span * cell - Inches(0.12)
-        by = y + Inches(0.10)
-        bh = row_h - Inches(0.20)
-        add_box(slide, bx, by, bw, bh, colors[kind])
-
-
 CN = {
     "font": "PingFang SC",
     "file": "/workspace/gtm/SLAM.SYSTEMS_GTM_Plan_CN.pptx",
-    "cover_kicker": "SLAM.SYSTEMS  ·  机密",
-    "cover_title": "市场进入计划",
-    "cover_sub": "Go-to-Market  ·  2026 Q4 – 2027 Q1",
-    "cover_line": "先打欧洲职业体育场馆。日韩明年进。社媒只做三家。获客靠名单，不靠广告。",
-    "cover_meta": "8 页  ·  直接执行版  ·  2026.09",
-    "s2k": "01  /  打哪个市场",
-    "s2t": "先打欧洲。日韩排明年。中国是工厂，不是主战场。",
-    "s3k": "02  /  卖给谁",
-    "s3t": "卖给场馆和集成商，不卖给观众。",
-    "s4k": "03  /  接下来 16 周",
-    "s4t": "一张图看完：网站何时上线，获客何时开始。",
-    "s5k": "04  /  网站上线节点",
-    "s5t": "德文先上 slam.systems。三语两周内补齐。",
-    "s6k": "05  /  社媒只做这三家",
-    "s6t": "LinkedIn 获客。Instagram 证明画面。YouTube 能被搜到。",
-    "s7k": "06  /  视频怎么做，客户怎么来",
-    "s7t": "三支片子循环用。获客四条线，每周盯数字。",
-    "s8k": "07  /  90 天必须交出来的东西",
-    "s8t": "日期、负责人、数字。没有第三种状态。",
 }
 
 EN = {
     "font": "Calibri",
     "file": "/workspace/gtm/SLAM.SYSTEMS_GTM_Plan_EN.pptx",
-    "cover_kicker": "SLAM.SYSTEMS  ·  Confidential",
-    "cover_title": "Go-to-Market Plan",
-    "cover_sub": "Q4 2026 – Q1 2027",
-    "cover_line": "Europe first. Korea and Japan next year. Three social channels only. Named accounts, not ads.",
-    "cover_meta": "8 slides  ·  Operating version  ·  September 2026",
-    "s2k": "01  /  Where we play",
-    "s2t": "Europe now. Korea / Japan in 2027. China is the factory, not the brand battlefield.",
-    "s3k": "02  /  Who we sell to",
-    "s3t": "Venues and integrators. Not spectators.",
-    "s4k": "03  /  Next 16 weeks",
-    "s4t": "One chart: when the site goes live, when outreach starts.",
-    "s5k": "04  /  Website launch",
-    "s5t": "German goes live on slam.systems first. EN/ZH within two weeks.",
-    "s6k": "05  /  Three channels only",
-    "s6t": "LinkedIn to sell. Instagram for proof. YouTube so buyers can find us.",
-    "s7k": "06  /  Video and pipeline",
-    "s7t": "Three films, reused everywhere. Four acquisition lines, reviewed weekly.",
-    "s8k": "07  /  What must be done in 90 days",
-    "s8t": "Date, owner, number. No third status.",
 }
 
 
@@ -243,261 +168,552 @@ def build(C, lang):
     prs.slide_height = H
     blank = prs.slide_layouts[6]
     font = C["font"]
-    is_cn = lang == "cn"
+    cn = lang == "cn"
 
-    # ——— 0 COVER ———
+    # ───────── 1 COVER ─────────
     s = prs.slides.add_slide(blank)
     add_box(s, 0, 0, W, H, DARK)
-    add_box(s, 0, 0, Inches(0.12), H, MAGENTA)
-    add_tf(s, ML, Inches(1.55), Inches(12), Inches(0.3), C["cover_kicker"], 13, MAGENTA, True, font)
-    add_tf(s, ML, Inches(2.05), Inches(12), Inches(0.9), C["cover_title"], 44, WHITE, True, font)
-    add_tf(s, ML, Inches(2.95), Inches(12), Inches(0.4), C["cover_sub"], 18, RGBColor(0xB8, 0xB8, 0xB8), False, font)
-    add_box(s, ML, Inches(3.50), Inches(1.1), Pt(3.5), MAGENTA)
-    add_tf(s, ML, Inches(3.75), Inches(11.2), Inches(1.1), C["cover_line"], 18, WHITE, False, font)
-    add_tf(s, ML, Inches(6.85), Inches(12), Inches(0.3), C["cover_meta"], 12, RGBColor(0x8A, 0x8A, 0x8A), False, font)
+    add_box(s, 0, 0, Inches(0.14), H, MAGENTA)
+    add_tf(
+        s,
+        ML,
+        Inches(1.28),
+        Inches(12),
+        Inches(0.28),
+        "SLAM.SYSTEMS  ·  机密" if cn else "SLAM.SYSTEMS  ·  Confidential",
+        13,
+        MAGENTA,
+        True,
+        font,
+    )
+    add_tf(
+        s,
+        ML,
+        Inches(1.72),
+        Inches(12),
+        Inches(0.95),
+        "市场进入计划" if cn else "Go-to-Market",
+        48,
+        WHITE,
+        True,
+        font,
+    )
+    add_tf(
+        s,
+        ML,
+        Inches(2.68),
+        Inches(12),
+        Inches(0.38),
+        "整体战略  ·  2026 Q4 – 2027 Q1" if cn else "The operating strategy  ·  Q4 2026 – Q1 2027",
+        18,
+        SOFT,
+        False,
+        font,
+    )
+    add_box(s, ML, Inches(3.22), Inches(1.2), Pt(3.5), MAGENTA)
+    add_tf(
+        s,
+        ML,
+        Inches(3.50),
+        Inches(11.6),
+        Inches(1.35),
+        (
+            "欧洲现在卖项目。日本靠展会找经销商。\n"
+            "线上五条线养管道。线下按展会出差——不参展，把人约出来。"
+            if cn
+            else "Sell projects in Europe now. Enter Japan through shows and dealers.\n"
+            "Five online engines fill the pipe. Offline we travel the show calendar — no booth, meetings only."
+        ),
+        20,
+        WHITE,
+        False,
+        font,
+    )
+    add_tf(
+        s,
+        ML,
+        Inches(6.72),
+        Inches(12),
+        Inches(0.3),
+        "11 页  ·  执行版  ·  2026.09" if cn else "11 slides  ·  Operating version  ·  September 2026",
+        12,
+        RGBColor(0x8A, 0x8A, 0x8A),
+        False,
+        font,
+    )
 
-    # ——— 1 MARKETS ———
+    # ───────── 2 STRATEGY ─────────
+    s = prs.slides.add_slide(blank)
+    add_box(s, 0, 0, W, H, DARK)
+    add_box(s, 0, 0, Inches(0.14), H, MAGENTA)
+    add_tf(
+        s,
+        ML,
+        Inches(0.32),
+        Inches(12),
+        Inches(0.22),
+        "01  /  整体战略" if cn else "01  /  The strategy",
+        12,
+        MAGENTA,
+        True,
+        font,
+    )
+    add_tf(
+        s,
+        ML,
+        Inches(0.58),
+        Inches(12.1),
+        Inches(0.7),
+        "一件事：让职业场馆用一套系统打完整场比赛。" if cn else "One job: one system that runs a professional match night.",
+        24,
+        WHITE,
+        True,
+        font,
+    )
+    pillars = (
+        [
+            ("01", "品牌资产", "独立站是总部。\nLinkedIn / Instagram / YouTube\n是仅有的三块招牌。\n所有邮件、展会、经销商\n都指回 slam.systems。"),
+            ("02", "需求管道", "邮件获客、直接触达、\n线上封闭活动。\n名单驱动，不投广告。\n展会前后把同一批人再打一遍。"),
+            ("03", "落地与规模", "线下按展会出差。\n不租展位，把人约到酒店。\n规模不靠加人，靠经销商\n和集成商把系统送进场馆。"),
+        ]
+        if cn
+        else [
+            ("01", "Brand asset", "The site is HQ.\nLinkedIn / Instagram / YouTube\nare the only three signs.\nMail, shows and dealers\nall point back to slam.systems."),
+            ("02", "Demand pipe", "Email, direct outreach,\nclosed online briefings.\nNamed accounts, no ads.\nThe same names get hit\nbefore and after each show."),
+            ("03", "Land & scale", "Travel the show calendar.\nNo booth — hotel meetings.\nScale is not headcount.\nDealers and integrators\nput the system in venues."),
+        ]
+    )
+    for i, (n, title, body) in enumerate(pillars):
+        x = ML + i * Inches(4.12)
+        add_box(s, x, Inches(1.55), Inches(3.92), Inches(4.85), RGBColor(0x16, 0x16, 0x18))
+        add_box(s, x, Inches(1.55), Inches(0.08), Inches(4.85), MAGENTA)
+        add_tf(s, x + Inches(0.28), Inches(1.78), Inches(3.4), Inches(0.3), n, 14, MAGENTA, True, font)
+        add_tf(s, x + Inches(0.28), Inches(2.18), Inches(3.4), Inches(0.45), title, 22, WHITE, True, font)
+        add_tf(s, x + Inches(0.28), Inches(2.78), Inches(3.4), Inches(3.2), body, 15, SOFT, False, font)
+    footer(s, 2, font, dark=True)
+
+    # ───────── 3 MARKETS ─────────
     s = prs.slides.add_slide(blank)
     add_box(s, 0, 0, W, H, PAPER)
-    header(s, C["s2k"], C["s2t"], font)
-    if is_cn:
+    header(
+        s,
+        "02  /  市场与客户" if cn else "02  /  Markets and buyers",
+        "先打欧洲。日本用展会进。中国是工厂。" if cn else "Europe first. Japan through shows. China is the factory.",
+        font,
+    )
+    if cn:
         rows = [
-            ["市场", "现在做什么", "为什么", "明确不做什么"],
-            ["欧洲\nDACH + 职业俱乐部", "主战场。立刻打。", "瑞士主体、德文母版、Bülach 地址、\nROUNDS、已有手球/冰球/足球现场。", "不铺全欧广告。\n不先开英法意西站点。"],
-            ["韩国 / 日本", "2027 Q1 找代理。\n今年不卖。", "场馆舍得为系统付钱，\n但必须有本地伙伴和语言。", "不今秋做日韩语网站。\n不投流。"],
-            ["中国", "研发、制造、交付。", "深圳工厂和软件团队在这里。\n不是欧洲买家看的主场。", "不把小红书当欧洲获客渠道。"],
+            ["市场", "角色", "现在做什么", "明确不做什么"],
+            [
+                "欧洲\nDACH + 职业俱乐部",
+                "主战场",
+                "立刻卖项目。独立站德文先上。\nSPORTEL、ISE 出差打集成商。",
+                "不铺全欧广告。\n不先开英法意西站点。",
+            ],
+            [
+                "日本",
+                "第二市场",
+                "今秋不卖散单。Inter BEE、\nSports Week 出差找经销商。",
+                "不今秋做日语站。\n不在日本投流、不租展位。",
+            ],
+            [
+                "韩国",
+                "顺路",
+                "2027.05 KOBA 可选。\n日本经销商能带路再去。",
+                "不单开韩国战役。",
+            ],
+            [
+                "中国",
+                "工厂 / 研发",
+                "深圳制造、软件、交付。",
+                "不把小红书当欧洲获客渠道。",
+            ],
         ]
-        note = "一句话：今秋只打欧洲。日韩是明年的第二场，不是现在的第二优先。"
+        buyers = [
+            ("场馆 / 俱乐部", "手球、冰球、足球的技术总监和场馆经理。买的是「一个人扛整场」。"),
+            ("集成商 / 租赁商", "欧洲 AV、体育显示公司。把 COR + LED 打进项目。也是经销商苗子。"),
+            ("联赛 / 转播", "要记分、数据和信号稳定。不跟观众做品牌。"),
+        ]
     else:
         rows = [
-            ["Market", "Do now", "Why", "Do not"],
-            ["Europe\nDACH + pro clubs", "Primary battlefield.\nStart immediately.", "Swiss entity, German master copy,\nBülach, ROUNDS, live handball /\nice hockey / football proof.", "No pan-Europe ads.\nNo FR/IT/ES sites first."],
-            ["Korea / Japan", "Find partners in Q1 2027.\nDo not sell this autumn.", "Arenas pay for systems —\nbut only with a local partner\nand language.", "No JP/KR website this autumn.\nNo paid social."],
-            ["China", "R&D, manufacture, delivery.", "Shenzhen is the factory and\nsoftware bench — not the\nEuropean buying stage.", "Xiaohongshu is not a Europe\nacquisition channel."],
+            ["Market", "Role", "Do now", "Do not"],
+            [
+                "Europe\nDACH + pro clubs",
+                "Primary",
+                "Sell projects now. German site first.\nTravel SPORTEL and ISE.",
+                "No pan-EU ads.\nNo FR/IT/ES sites first.",
+            ],
+            [
+                "Japan",
+                "Second",
+                "Do not sell parts this autumn.\nInter BEE + Sports Week for dealers.",
+                "No JP site this autumn.\nNo ads, no booth.",
+            ],
+            [
+                "Korea",
+                "Optional",
+                "KOBA May 2027 only if a Japan\ndealer can open the door.",
+                "No standalone Korea campaign.",
+            ],
+            [
+                "China",
+                "Factory / R&D",
+                "Shenzhen builds, codes, ships.",
+                "Xiaohongshu is not a Europe channel.",
+            ],
         ]
-        note = "One line: this autumn we only fight in Europe. Korea/Japan is next year’s second campaign, not this quarter’s second priority."
-    # custom 4-col cards instead of cramped table
-    col_w = [Inches(1.9), Inches(3.15), Inches(3.55), Inches(3.4)]
-    table_grid(s, ML, Inches(1.18), col_w, Inches(1.28), rows, font, True)
-    add_box(s, ML, Inches(6.45), Inches(12.08), Inches(0.52), WASH)
-    add_tf(s, ML + Inches(0.18), Inches(6.54), Inches(11.7), Inches(0.36), note, 13, INK, True, font, PP_ALIGN.LEFT, MSO_ANCHOR.MIDDLE)
-    footer(s, 2, 8, font, "")
-
-    # ——— 2 WHO ———
-    s = prs.slides.add_slide(blank)
-    add_box(s, 0, 0, W, H, PAPER)
-    header(s, C["s3k"], C["s3t"], font)
-    if is_cn:
         buyers = [
-            ("01", "场馆 / 俱乐部", "手球、冰球、足球的技术总监、场馆经理。他们买的是「一个人能扛整场比赛」。"),
-            ("02", "系统集成商 / 租赁商", "欧洲 AV、体育显示集成商。他们把 COR + LED 打包进项目。"),
-            ("03", "联赛 / 转播相关方", "要数据、记分、信号稳定。不跟观众做品牌广告。"),
+            ("Venues / clubs", "Technical directors in handball, ice hockey, football. They buy one operator for a full match."),
+            ("Integrators / rental", "European AV and sports-display firms. They bundle COR + LED — and are dealer candidates."),
+            ("Leagues / broadcast", "Score, data, stable signal. We do not advertise to fans."),
         ]
-        offer_k = "卖什么（就这三样）"
-        offers = [
-            ("Media Playout", "COR 家族：一人操作系统。主推 SCORE + DECK。"),
-            ("LED Video", "围栏、记分、室内外屏。用已有 UEFA 级现场做证据。"),
-            ("项目制", "不卖散件目录。卖一场比赛能跑起来的整套。"),
-        ]
-        kill = "不做：C 端粉丝运营、电商品牌、全国经销商大会、六国语言同时上。"
-    else:
-        buyers = [
-            ("01", "Venues / clubs", "Technical directors and arena managers in handball, ice hockey, football. They buy “one operator, one match”."),
-            ("02", "Integrators / rental", "European AV and sports-display firms who bundle COR + LED into a project."),
-            ("03", "Leagues / broadcast", "They need data, scoring, stable signal. We do not advertise to fans."),
-        ]
-        offer_k = "What we sell (only these three)"
-        offers = [
-            ("Media Playout", "COR family: one-operator system. Lead with SCORE + DECK."),
-            ("LED Video", "Perimeter, scoreboard, indoor/outdoor. Proof is existing UEFA-grade jobs."),
-            ("Projects", "Not a parts catalogue. A system that runs a match night."),
-        ]
-        kill = "Not this: consumer fandom, ecommerce, a dealer conference, six languages at once."
-    for i, (n, title, body) in enumerate(buyers):
+    table_grid(s, ML, Inches(1.12), [Inches(2.35), Inches(1.7), Inches(4.35), Inches(3.65)], Inches(0.64), rows, font, True, 11)
+    add_tf(
+        s,
+        ML,
+        Inches(4.42),
+        Inches(12),
+        Inches(0.28),
+        "卖给谁（就这三类）" if cn else "Who we sell to (only these three)",
+        12,
+        MAGENTA,
+        True,
+        font,
+    )
+    for i, (title, body) in enumerate(buyers):
         x = ML + i * Inches(4.1)
-        add_box(s, x, Inches(1.18), Inches(3.92), Inches(2.15), WASH)
-        add_tf(s, x + Inches(0.2), Inches(1.32), Inches(3.5), Inches(0.28), n, 12, MAGENTA, True, font)
-        add_tf(s, x + Inches(0.2), Inches(1.62), Inches(3.5), Inches(0.36), title, 16, INK, True, font)
-        add_tf(s, x + Inches(0.2), Inches(2.05), Inches(3.5), Inches(1.1), body, 13, MUTED, False, font)
-    add_tf(s, ML, Inches(3.50), Inches(12), Inches(0.3), offer_k, 12, MAGENTA, True, font)
-    for i, (title, body) in enumerate(offers):
-        x = ML + i * Inches(4.1)
-        add_box(s, x, Inches(3.85), Inches(3.92), Inches(1.55), PAPER, LINE)
-        add_tf(s, x + Inches(0.2), Inches(3.98), Inches(3.5), Inches(0.32), title, 14, INK, True, font)
-        add_tf(s, x + Inches(0.2), Inches(4.32), Inches(3.5), Inches(0.9), body, 12, MUTED, False, font)
-    add_tf(s, ML, Inches(5.60), Inches(12.1), Inches(0.4), kill, 13, INK, True, font)
-    footer(s, 3, 8, font, "")
+        add_box(s, x, Inches(4.76), Inches(3.92), Inches(2.10), WASH)
+        add_tf(s, x + Inches(0.18), Inches(4.90), Inches(3.55), Inches(0.32), title, 15, INK, True, font)
+        add_tf(s, x + Inches(0.18), Inches(5.26), Inches(3.55), Inches(1.42), body, 13, MUTED, False, font)
+    footer(s, 3, font)
 
-    # ——— 3 GANTT ———
+    # ───────── 4 SEVEN ENGINES ─────────
     s = prs.slides.add_slide(blank)
     add_box(s, 0, 0, W, H, PAPER)
-    header(s, C["s4k"], C["s4t"], font)
-    weeks = ["9/15", "9/22", "9/29", "10/6", "10/13", "10/20", "10/27", "11/3", "11/10", "11/17", "11/24", "12/1", "12/15", "1/26"] if not is_cn else ["9/15", "9/22", "9/29", "10/6", "10/13", "10/20", "10/27", "11/3", "11/10", "11/17", "11/24", "12/1", "12/15", "1月"]
-    if is_cn:
-        labels = ["网站德文定稿+修缺陷", "英/中文首页与导航", "slam.systems 切正式站", "三社媒账号+首发", "三支视频成片", "欧洲 40 家名单触达", "日韩代理摸底"]
-        gantt_note = "红条 = 必须在该周完成。灰条 = 启动但不作为本季考核。9/29 是网站德文上线日。"
+    header(
+        s,
+        "03  /  作战地图" if cn else "03  /  Operating map",
+        "线上五条，线下两条。同时转，不互相替代。" if cn else "Five online. Two offline. They run together.",
+        font,
+    )
+    if cn:
+        online = [
+            ("01  独立站", "slam.systems 是总部。德文先上，英/中补齐。所有渠道的落地页。"),
+            ("02  社交媒体", "只做 LinkedIn、Instagram、YouTube。获客、证据、可被搜到。"),
+            ("03  邮件获客", "对名单发序列：介绍 → 现场片 → 展会约见。不群发行业通讯。"),
+            ("04  直接触达", "Peter + Linda 点名 40 家欧洲场馆/集成商。每周 8 家。"),
+            ("05  线上活动", "封闭简报，不是公开网红直播。每月一场，给集成商和经销商苗子。"),
+        ]
+        offline = [
+            ("06  展会出差", "按欧洲、日本节点出动。不参展。展前约人，展中见面，展后跟进。"),
+            ("07  经销商", "规模从这里来。欧洲在 ISE 扩集成商。日本用 Inter BEE 找一家。"),
+        ]
+        note = "原则：线上把人养熟，线下按展会把人见掉。经销商是规模，不是今年秋天的招商大会。"
     else:
-        labels = ["DE site freeze + fixes", "EN/ZH home + nav", "Cut over slam.systems", "3 social accounts + first posts", "3 films locked", "40 EU accounts reached", "KR/JP partner mapping"]
-        gantt_note = "Magenta = must finish that week. Grey = started, not a Q4 KPI. 29 Sep is German go-live on slam.systems."
-    bars = [
-        (0, 2, "now"),
-        (1, 3, "work"),
-        (2, 2, "now"),
-        (3, 2, "now"),
-        (2, 5, "work"),
-        (3, 8, "work"),
-        (10, 4, "later"),
-    ]
-    gantt(s, ML, Inches(1.18), labels, bars, weeks, font, "工作流" if is_cn else "Workstream")
-    add_tf(s, ML, Inches(6.45), Inches(12.1), Inches(0.45), gantt_note, 13, MUTED, False, font)
-    footer(s, 4, 8, font, "")
+        online = [
+            ("01  Site", "slam.systems is HQ. German first, EN/ZH next. Every channel lands here."),
+            ("02  Social", "LinkedIn, Instagram, YouTube only. Sell, prove, be searchable."),
+            ("03  Email", "Sequences to the named list: intro → film → show meeting. No industry newsletter."),
+            ("04  Direct", "Peter + Linda name 40 EU venues/integrators. Eight a week."),
+            ("05  Online events", "Closed briefings, not public livestreams. Monthly, for integrators and dealer candidates."),
+        ]
+        offline = [
+            ("06  Show travel", "Move on the Europe and Japan calendar. No booth. Book, meet, follow up."),
+            ("07  Dealers", "This is scale. Add EU integrators at ISE. Find one Japan partner at Inter BEE."),
+        ]
+        note = "Rule: online warms the names. Offline closes them at shows. Dealers are scale — not an autumn franchise conference."
+    add_box(s, ML, Inches(1.14), Inches(7.55), Inches(5.22), WASH)
+    add_tf(s, ML + Inches(0.22), Inches(1.28), Inches(7.1), Inches(0.28), "线上  ·  一直在转" if cn else "Online  ·  always on", 13, MAGENTA, True, font)
+    for i, (t, b) in enumerate(online):
+        y = Inches(1.64) + i * Inches(0.90)
+        add_tf(s, ML + Inches(0.22), y, Inches(7.1), Inches(0.28), t, 15, INK, True, font)
+        add_tf(s, ML + Inches(0.22), y + Inches(0.30), Inches(7.1), Inches(0.52), b, 13, MUTED, False, font)
+    add_box(s, Inches(8.40), Inches(1.14), Inches(4.30), Inches(5.22), INK)
+    add_tf(s, Inches(8.62), Inches(1.28), Inches(3.9), Inches(0.28), "线下  ·  按节点出动" if cn else "Offline  ·  on the nodes", 13, MAGENTA, True, font)
+    for i, (t, b) in enumerate(offline):
+        y = Inches(1.78) + i * Inches(2.05)
+        add_tf(s, Inches(8.62), y, Inches(3.9), Inches(0.4), t, 16, WHITE, True, font)
+        add_tf(s, Inches(8.62), y + Inches(0.48), Inches(3.9), Inches(1.4), b, 14, SOFT, False, font)
+    add_tf(s, ML, Inches(6.48), Inches(12.1), Inches(0.45), note, 13, INK, True, font)
+    footer(s, 4, font)
 
-    # ——— 4 WEBSITE ———
+    # ───────── 5 SITE ─────────
     s = prs.slides.add_slide(blank)
     add_box(s, 0, 0, W, H, PAPER)
-    header(s, C["s5k"], C["s5t"], font)
-    if is_cn:
+    header(
+        s,
+        "04  /  独立站" if cn else "04  /  The site",
+        "德文先上 slam.systems。三语两周内补齐。" if cn else "German live on slam.systems first. EN/ZH within two weeks.",
+        font,
+    )
+    if cn:
         nodes = [
-            ("9/22", "定稿", "德文 v2.2.6 冻结。修：首页假视频按钮、手机菜单缺 Peripherals、表单不能只靠 mailto。"),
-            ("9/29", "上线", "slam.systems 切到新站。德文可对外发。i@slam.systems 人工 48 小时必回。"),
-            ("10/13", "三语", "EN/ZH 导航和首页可用。内页允许英德混合，但不允许中文首页仍是英文。"),
-            ("10/20", "证据", "挂上 3 支视频、1 份项目 PDF、LinkedIn 可点回网站。"),
+            ("9/22", "定稿", "德文 v2.2.6 冻结。修首页假视频、手机菜单缺 Peripherals、表单不能只靠 mailto。"),
+            ("9/29", "上线", "slam.systems 切新站。德文可对外。i@slam.systems 人工 48 小时必回。"),
+            ("10/13", "三语", "EN/ZH 导航和首页可用。中文首页不允许仍是英文。"),
+            ("10/20", "弹药", "三支片子、一份项目 PDF。所有邮件、社媒、展会二维码指回这里。"),
         ]
-        left_t = "上线当天必须为真"
-        left_b = "· 德文全站可点\n· Start Your Project 能发来询盘\n· 瑞士 + 深圳地址正确\n· 手球 hero 仍是原片，不重做"
-        right_t = "上线当天可以还没做"
-        right_b = "· 日文 / 韩文\n· 六个社媒图标全亮\n· 复杂表单后台\n· 案例页 20 张大图"
+        must_t, must_b = "上线当天必须为真", "· 德文全站可点\n· Start Your Project 能变成询盘\n· 瑞士 + 深圳地址正确\n· 手球 hero 仍是原片"
+        wait_t, wait_b = "上线当天可以还没做", "· 日文 / 韩文\n· 六个社媒图标全亮\n· 复杂表单后台\n· 案例页 20 张大图"
     else:
         nodes = [
-            ("22 Sep", "Freeze", "Lock German v2.2.6. Fix: fake Watch-video button, missing Peripherals in mobile nav, forms that are not mailto-only."),
+            ("22 Sep", "Freeze", "Lock German v2.2.6. Fix fake Watch-video, missing Peripherals in mobile nav, mailto-only forms."),
             ("29 Sep", "Go live", "Cut slam.systems to the new site. German is public. i@slam.systems answered in 48 hours."),
-            ("13 Oct", "3 languages", "EN/ZH nav and home work. Interior pages may mix EN/DE. Chinese home must not stay English."),
-            ("20 Oct", "Proof", "Three films, one project PDF, LinkedIn clicks back to the site."),
+            ("13 Oct", "3 languages", "EN/ZH nav and home work. Chinese home must not stay English."),
+            ("20 Oct", "Ammunition", "Three films, one project PDF. Every mail, post and show QR lands here."),
         ]
-        left_t = "Must be true on go-live"
-        left_b = "· Full German site clickable\n· Start Your Project produces an enquiry\n· Swiss + Shenzhen addresses correct\n· Handball hero stays the original still"
-        right_t = "Allowed to wait"
-        right_b = "· Japanese / Korean\n· All six social icons live\n· A heavy form backend\n· A 20-image case gallery"
+        must_t, must_b = "Must be true on go-live", "· Full German site clickable\n· Start Your Project produces an enquiry\n· Swiss + Shenzhen addresses correct\n· Handball hero stays the original still"
+        wait_t, wait_b = "Allowed to wait", "· Japanese / Korean\n· All six social icons live\n· A heavy form backend\n· A 20-image case gallery"
     for i, (date, tag, body) in enumerate(nodes):
-        y = Inches(1.18) + i * Inches(0.95)
-        add_box(s, ML, y, Inches(8.35), Inches(0.86), WASH)
-        add_tf(s, ML + Inches(0.18), y + Inches(0.12), Inches(1.4), Inches(0.28), date, 14, MAGENTA, True, font)
-        add_tf(s, ML + Inches(1.55), y + Inches(0.12), Inches(2.2), Inches(0.28), tag, 14, INK, True, font)
-        add_tf(s, ML + Inches(0.18), y + Inches(0.42), Inches(8.0), Inches(0.38), body, 12, MUTED, False, font)
-        if i < 3:
-            add_box(s, ML + Inches(0.42), y + Inches(0.86), Pt(2), Inches(0.09), MAGENTA)
-    add_box(s, Inches(9.15), Inches(1.18), Inches(3.55), Inches(2.35), INK)
-    add_tf(s, Inches(9.33), Inches(1.32), Inches(3.2), Inches(0.3), left_t, 12, MAGENTA, True, font)
-    add_tf(s, Inches(9.33), Inches(1.68), Inches(3.2), Inches(1.7), left_b, 13, WHITE, False, font)
-    add_box(s, Inches(9.15), Inches(3.68), Inches(3.55), Inches(2.15), WASH)
-    add_tf(s, Inches(9.33), Inches(3.82), Inches(3.2), Inches(0.3), right_t, 12, INK, True, font)
-    add_tf(s, Inches(9.33), Inches(4.18), Inches(3.2), Inches(1.5), right_b, 13, MUTED, False, font)
-    footer(s, 5, 8, font, "")
+        y = Inches(1.14) + i * Inches(1.18)
+        add_box(s, ML, y, Inches(8.35), Inches(1.06), WASH)
+        add_tf(s, ML + Inches(0.2), y + Inches(0.14), Inches(1.5), Inches(0.3), date, 16, MAGENTA, True, font)
+        add_tf(s, ML + Inches(1.7), y + Inches(0.14), Inches(2.4), Inches(0.3), tag, 16, INK, True, font)
+        add_tf(s, ML + Inches(0.2), y + Inches(0.50), Inches(7.95), Inches(0.46), body, 13, MUTED, False, font)
+    add_box(s, Inches(9.15), Inches(1.14), Inches(3.55), Inches(2.55), INK)
+    add_tf(s, Inches(9.33), Inches(1.30), Inches(3.2), Inches(0.32), must_t, 13, MAGENTA, True, font)
+    add_tf(s, Inches(9.33), Inches(1.70), Inches(3.2), Inches(1.8), must_b, 14, WHITE, False, font)
+    add_box(s, Inches(9.15), Inches(3.86), Inches(3.55), Inches(2.00), WASH)
+    add_tf(s, Inches(9.33), Inches(4.00), Inches(3.2), Inches(0.32), wait_t, 13, INK, True, font)
+    add_tf(s, Inches(9.33), Inches(4.38), Inches(3.2), Inches(1.35), wait_b, 14, MUTED, False, font)
+    footer(s, 5, font)
 
-    # ——— 5 SOCIAL ———
+    # ───────── 6 SOCIAL ─────────
     s = prs.slides.add_slide(blank)
     add_box(s, 0, 0, W, H, PAPER)
-    header(s, C["s6k"], C["s6t"], font)
-    if is_cn:
+    header(
+        s,
+        "05  /  社交媒体" if cn else "05  /  Social",
+        "只做三家。发现场，不发参数。展会周加码。" if cn else "Three channels. Post the match, not the spec. Spike around shows.",
+        font,
+    )
+    if cn:
         rows = [
-            ["渠道", "为什么只选它", "发什么", "频率", "谁来发"],
-            ["LinkedIn", "买家在这里。\n获客主场。", "一人操作系统、场馆夜、\n项目询盘入口。", "2 条/周", "Peter\nLinda 转评"],
+            ["渠道", "为什么", "发什么", "频率", "谁来发"],
+            ["LinkedIn", "买家在这里。\n获客主场。", "一人操作系统、场馆夜、\n展会约见入口。", "2 条/周\n展会周 4 条", "Peter\nLinda 转评"],
             ["Instagram", "画面即证据。\n给集成商转发。", "控制室 15 秒、LED 近景、\n比赛夜。不发参数表。", "3 条/周", "Eva\n素材来自现场"],
-            ["YouTube", "能被搜到。\n官网和邮件都嵌。", "60 秒系统片 + SCORE/LED\n各一支 30 秒。", "2 条/月", "Jürg 定调\nDonglin 协助"],
+            ["YouTube", "能被搜到。\n官网和邮件都嵌。", "60 秒系统片 + SCORE / LED\n各一支 30 秒。", "2 条/月", "Jürg 定调\nDonglin 协助"],
         ]
-        no = "明确不做：TikTok、Pinterest、小红书（对欧洲获客）、Facebook 日常运营。账号可以占着，但不排期、不考核。"
-        how = "怎么发：同一条内容先出德语母版，再出英语。每周三定三条，周五发 LinkedIn，周末发 IG。所有帖带 slam.systems 和 i@slam.systems。"
+        films = "三支片子循环用：A 60 秒系统片（10/20 交，用手球 intro 延伸）· B 30 秒 SCORE · C 30 秒 LED。官网、邮件、展会、经销商包同一套。"
+        no = "不做：TikTok、Pinterest、小红书对欧洲获客、Facebook 日常。账号可以占着，不排期、不考核。"
     else:
         rows = [
-            ["Channel", "Why only this", "What we post", "Cadence", "Who"],
-            ["LinkedIn", "Buyers live here.\nPrimary acquisition.", "One-operator system, match\nnight, enquiry link.", "2 / week", "Peter\nLinda comments"],
+            ["Channel", "Why", "What", "Cadence", "Who"],
+            ["LinkedIn", "Buyers live here.\nPrimary acquisition.", "One-operator system, match night,\nshow-meeting link.", "2 / week\n4 in show week", "Peter\nLinda comments"],
             ["Instagram", "Picture is proof.\nIntegrators forward it.", "15s control room, LED close-up,\nmatch night. No spec sheets.", "3 / week", "Eva\nfootage from site"],
             ["YouTube", "Searchable.\nEmbed on site + mail.", "60s system film + 30s SCORE\nand 30s LED.", "2 / month", "Jürg directs\nDonglin assists"],
         ]
+        films = "Three films, reused everywhere: A 60s system (due 20 Oct, extend the handball intro) · B 30s SCORE · C 30s LED. Same pack for site, mail, shows, dealers."
         no = "Do not: TikTok, Pinterest, Xiaohongshu for Europe, Facebook as a daily channel. Accounts may exist. They are not scheduled or scored."
-        how = "How: German master first, then English. Lock three posts every Wednesday. LinkedIn Friday. Instagram weekend. Every post carries slam.systems and i@slam.systems."
-    table_grid(s, ML, Inches(1.18), [Inches(1.7), Inches(2.55), Inches(3.35), Inches(1.7), Inches(2.75)], Inches(0.95), rows, font, True)
-    add_box(s, ML, Inches(5.15), Inches(12.08), Inches(0.72), INK)
-    add_tf(s, ML + Inches(0.18), Inches(5.28), Inches(11.7), Inches(0.5), no, 13, WHITE, False, font, PP_ALIGN.LEFT, MSO_ANCHOR.MIDDLE)
-    add_tf(s, ML, Inches(6.00), Inches(12.1), Inches(0.85), how, 13, MUTED, False, font)
-    footer(s, 6, 8, font, "")
+    table_grid(s, ML, Inches(1.12), [Inches(1.7), Inches(2.45), Inches(3.45), Inches(2.0), Inches(2.45)], Inches(1.05), rows, font, True, 12)
+    add_box(s, ML, Inches(5.48), Inches(12.08), Inches(0.72), INK)
+    add_tf(s, ML + Inches(0.2), Inches(5.58), Inches(11.7), Inches(0.52), films, 13, WHITE, False, font, PP_ALIGN.LEFT, MSO_ANCHOR.MIDDLE)
+    add_tf(s, ML, Inches(6.32), Inches(12.1), Inches(0.58), no, 13, MUTED, False, font)
+    footer(s, 6, font)
 
-    # ——— 6 VIDEO + ACQ ———
+    # ───────── 7 EMAIL + DIRECT ─────────
     s = prs.slides.add_slide(blank)
     add_box(s, 0, 0, W, H, PAPER)
-    header(s, C["s7k"], C["s7t"], font)
-    if is_cn:
-        films = [
-            ("片子 A  ·  60 秒", "系统片", "一人、一场、整晚。用手球 hero 同场景延伸现有 6 秒片。官网首页、YouTube、询盘页都用这一支。10/20 交片。"),
-            ("片子 B  ·  30 秒", "SCORE", "记分界面特写 + 场边大屏。只讲「一个人改比分」。LinkedIn / IG 主用。"),
-            ("片子 C  ·  30 秒", "LED", "围栏和记分屏在比赛里的样子。给集成商转发，不讲像素间距。"),
+    header(
+        s,
+        "06  /  邮件获客  ·  直接触达" if cn else "06  /  Email  ·  Direct outreach",
+        "名单驱动。先欧洲 40 家。展会是约见由头。" if cn else "Named accounts. Forty in Europe first. Shows are the reason to meet.",
+        font,
+    )
+    if cn:
+        cols = [
+            ("邮件三封", "① 介绍：一人操作系统，链到独立站。\n② 证据：嵌 60 秒系统片。\n③ 约见：用最近一场展会当由头。\n德语母版，英语备份。不群发。"),
+            ("直接触达", "Peter + Linda 点名 40 家：德瑞奥俱乐部、场馆、集成商。\n每周 8 家，电话 / LinkedIn / 邮件同一周打完。\nROUNDS 本季另带 5 个瑞士/南德机会。"),
+            ("询盘纪律", "i@slam.systems 48 小时人回。\n一张表，每周一过。\n有效对话才计数，点赞不算。\n展会周把回信改成「现场见」。"),
         ]
-        acq_t = "获客就四条线"
-        acqs = [
-            ("1  名单", "Peter + Linda 列出 40 家：德瑞奥俱乐部、场馆、集成商。每周触达 8 家。"),
-            ("2  伙伴", "ROUNDS 本季带 5 个瑞士/南德机会。不新开一堆经销商。"),
-            ("3  询盘", "网站表单 + i@slam.systems，48 小时内人回。记进一张表，每周一过。"),
-            ("4  展会", "只准备一场：ISE Barcelona 2027.02。今秋不另开欧洲巡展。"),
+        seq = [
+            ("T-21", "展前三周", "对将出现的人发第③封，锁 8–12 个会。"),
+            ("T-7", "展前一周", "确认时间、酒店、一页 PDF。"),
+            ("T+3", "展后三天", "纪要 + 片子 + 下一步。项目或经销商分轨。"),
         ]
     else:
-        films = [
-            ("Film A  ·  60s", "System", "One operator, one match, full night. Extend the existing 6s handball intro. Home, YouTube, enquiry page. Due 20 Oct."),
-            ("Film B  ·  30s", "SCORE", "Score UI close-up + fascia. Only one point: one person changes the score. LinkedIn / IG."),
-            ("Film C  ·  30s", "LED", "Perimeter and scoreboard in a live match. For integrators. No pixel-pitch lecture."),
+        cols = [
+            ("Three emails", "1 Intro: one-operator system, link the site.\n2 Proof: embed the 60s film.\n3 Meeting: the next show is the reason.\nGerman master, English backup. No blast."),
+            ("Direct", "Peter + Linda name 40: DACH clubs, arenas, integrators.\nEight a week — phone, LinkedIn, mail in the same week.\nROUNDS brings five more Swiss / south-German chances."),
+            ("Inbound discipline", "i@slam.systems, human reply in 48h.\nOne sheet, reviewed Mondays.\nOnly real conversations count.\nIn show week, replies become “see you there”."),
         ]
-        acq_t = "Four acquisition lines only"
-        acqs = [
-            ("1  List", "Peter + Linda name 40: DACH clubs, arenas, integrators. Eight reached each week."),
-            ("2  Partner", "ROUNDS brings five Swiss / southern-German opportunities this season. No new dealer army."),
-            ("3  Inbound", "Site form + i@slam.systems, human reply in 48h. One sheet, reviewed Mondays."),
-            ("4  Show", "One show only: ISE Barcelona, Feb 2027. No extra autumn tour."),
+        seq = [
+            ("T-21", "Three weeks out", "Send email 3 to people who will be there. Lock 8–12 meetings."),
+            ("T-7", "One week out", "Confirm time, hotel, one-pager."),
+            ("T+3", "Three days after", "Notes + film + next step. Project track or dealer track."),
         ]
-    for i, (k, t, b) in enumerate(films):
-        y = Inches(1.16) + i * Inches(1.05)
-        add_box(s, ML, y, Inches(6.15), Inches(0.96), WASH)
-        add_tf(s, ML + Inches(0.18), y + Inches(0.1), Inches(5.8), Inches(0.24), k, 11, MAGENTA, True, font)
-        add_tf(s, ML + Inches(0.18), y + Inches(0.34), Inches(5.8), Inches(0.24), t, 14, INK, True, font)
-        add_tf(s, ML + Inches(0.18), y + Inches(0.58), Inches(5.8), Inches(0.32), b, 11, MUTED, False, font)
-    add_tf(s, Inches(7.05), Inches(1.16), Inches(5.6), Inches(0.3), acq_t, 14, INK, True, font)
-    for i, (k, b) in enumerate(acqs):
-        y = Inches(1.52) + i * Inches(1.05)
-        add_box(s, Inches(7.05), y, Inches(5.65), Inches(0.96), PAPER, LINE)
-        add_tf(s, Inches(7.22), y + Inches(0.1), Inches(5.3), Inches(0.26), k, 13, MAGENTA, True, font)
-        add_tf(s, Inches(7.22), y + Inches(0.40), Inches(5.3), Inches(0.48), b, 12, MUTED, False, font)
-    footer(s, 7, 8, font, "")
+    for i, (t, b) in enumerate(cols):
+        x = ML + i * Inches(4.1)
+        add_box(s, x, Inches(1.14), Inches(3.92), Inches(3.15), WASH)
+        add_tf(s, x + Inches(0.2), Inches(1.28), Inches(3.52), Inches(0.36), t, 16, INK, True, font)
+        add_tf(s, x + Inches(0.2), Inches(1.72), Inches(3.52), Inches(2.35), b, 13, MUTED, False, font)
+    for i, (k, t, b) in enumerate(seq):
+        x = ML + i * Inches(4.1)
+        add_box(s, x, Inches(4.46), Inches(3.92), Inches(2.40), PAPER, LINE)
+        add_tf(s, x + Inches(0.2), Inches(4.60), Inches(3.52), Inches(0.28), k, 12, MAGENTA, True, font)
+        add_tf(s, x + Inches(0.2), Inches(4.90), Inches(3.52), Inches(0.32), t, 15, INK, True, font)
+        add_tf(s, x + Inches(0.2), Inches(5.28), Inches(3.52), Inches(1.35), b, 13, MUTED, False, font)
+    footer(s, 7, font)
 
-    # ——— 7 SCOREBOARD ———
+    # ───────── 8 ONLINE EVENTS ─────────
     s = prs.slides.add_slide(blank)
     add_box(s, 0, 0, W, H, PAPER)
-    header(s, C["s8k"], C["s8t"], font)
-    if is_cn:
-        rows = [
-            ["日期", "必须交付", "负责人", "数字"],
-            ["9/29", "slam.systems 德文上线", "Linda / 网站", "1 个可对外域名"],
-            ["10/13", "EN+ZH 首页与导航", "Eva / 网站", "3 个语言可切换"],
-            ["10/13", "LinkedIn / IG / YouTube 首发", "Peter + Eva", "3 个账号各 ≥1 条"],
-            ["10/20", "三支视频可嵌官网", "Jürg", "60s + 30s + 30s"],
-            ["11/30", "欧洲名单全部触达", "Peter + Linda", "40 家"],
-            ["12/20", "有效对话（不是点赞）", "Linda", "8 次"],
-            ["1/31", "现场演示或场馆走访", "Linda + Jürg", "2 次"],
+    header(
+        s,
+        "07  /  事件营销  ·  线上活动" if cn else "07  /  Events  ·  Online briefings",
+        "不做公开大会。把正确的人关进一间小房间。" if cn else "No public festival. Put the right people in a small room.",
+        font,
+    )
+    if cn:
+        items = [
+            ("每月封闭简报", "30 分钟。一人操作系统 + 一支片子。邀请 8–12 个集成商或经销商苗子。从 11 月起，Linda 主持。"),
+            ("展会前夜会", "ISE / Inter BEE 前一晚，酒店 90 分钟。已约到的人再加 4 个当地名字。不办酒会。"),
+            ("比赛夜远程看", "有现场时，给短名单开 20 分钟控制室窗口。证据比幻灯片强。Jürg 在场。"),
+            ("经销商私董", "日本、欧洲各一场。讲授权范围、项目支持和 48 小时工厂响应。不讲招商政策。"),
         ]
-        bottom = "下周一开始执行：冻结德文缺陷清单，列出 40 家欧洲名单初稿。日韩不进这张表。"
+        kill = "不做：粉丝直播、公开 Webinar 拉新、六国同传、为办活动而办活动。"
+        out = "每次活动的产出只有三样：到场名单、2 个下一步会议、1 条可发 LinkedIn 的现场句。没有第四样。"
+    else:
+        items = [
+            ("Monthly closed briefing", "30 minutes. One-operator system + one film. Invite 8–12 integrators or dealer candidates. From November, Linda hosts."),
+            ("Night-before the show", "90 minutes in the hotel the evening before ISE / Inter BEE. The booked names plus four local adds. Not a drinks party."),
+            ("Match-night window", "When we have a live job, open a 20-minute control-room view for the shortlist. Proof beats slides. Jürg on the call."),
+            ("Dealer roundtable", "One Europe, one Japan. Territory, project support, 48h factory. Not a franchise pitch."),
+        ]
+        kill = "Do not: fan livestreams, public lead-gen webinars, six-language simulcast, events for their own sake."
+        out = "Each event produces only three things: the attendance list, two next meetings, one LinkedIn line from the room. Nothing else."
+    for i, (t, b) in enumerate(items):
+        x = ML + (i % 2) * Inches(6.2)
+        y = Inches(1.14) + (i // 2) * Inches(2.15)
+        add_box(s, x, y, Inches(5.95), Inches(2.00), WASH)
+        add_tf(s, x + Inches(0.22), y + Inches(0.18), Inches(5.5), Inches(0.36), t, 16, INK, True, font)
+        add_tf(s, x + Inches(0.22), y + Inches(0.62), Inches(5.5), Inches(1.2), b, 14, MUTED, False, font)
+    add_tf(s, ML, Inches(5.55), Inches(12.1), Inches(0.4), kill, 13, INK, True, font)
+    add_box(s, ML, Inches(6.05), Inches(12.08), Inches(0.85), INK)
+    add_tf(s, ML + Inches(0.22), Inches(6.18), Inches(11.6), Inches(0.6), out, 14, WHITE, False, font, PP_ALIGN.LEFT, MSO_ANCHOR.MIDDLE)
+    footer(s, 8, font)
+
+    # ───────── 9 SHOW CALENDAR ─────────
+    s = prs.slides.add_slide(blank)
+    add_box(s, 0, 0, W, H, PAPER)
+    header(
+        s,
+        "08  /  展会节点" if cn else "08  /  Show calendar",
+        "不参展。按节点出差。欧洲打项目，日本找经销商。" if cn else "No booth. Travel the nodes. Europe for projects, Japan for a dealer.",
+        font,
+    )
+    if cn:
+        rows = [
+            ["时间", "展会", "城市", "打什么人", "怎么打"],
+            ["2026.10.19–21", "SPORTEL", "摩纳哥", "联赛 / 转播 / 体育科技", "本季欧洲第一仗。参观 + 8 场会。"],
+            ["2026.11.18–20", "Inter BEE", "千叶", "广电 / 系统商", "日本第一仗。找经销商，不卖散单。"],
+            ["2027.01.27–29", "Japan Sports Week", "千叶", "球队 / 场馆设施", "经销商短名单。第二次日本出差。"],
+            ["2027.02.01–02", "Sports World Congress", "巴塞罗那", "场馆运营商", "与 ISE 同城一周，场馆侧。"],
+            ["2027.02.02–05", "ISE", "巴塞罗那", "欧洲集成商", "本季欧洲主攻。项目 + 经销商苗子。"],
+            ["2027.05.11–14", "KOBA", "首尔", "韩国广电（可选）", "日本经销商能带路才去。"],
+        ]
+        play = "打法：2 人出差（商务 + 技术）。不租展位。展前 21 天锁 8–12 个会，住会场附近，早餐和晚间约人。每天 4 个有效会面。展后 7 天全跟完，分「项目」和「经销商」两条漏斗。IBC 阿姆斯特丹 2026.09 已过，本季不补位。FSB 科隆 2027.10 先占位，不进本季考核。"
     else:
         rows = [
-            ["Date", "Must ship", "Owner", "Number"],
-            ["29 Sep", "German live on slam.systems", "Linda / web", "1 public domain"],
-            ["13 Oct", "EN+ZH home and nav", "Eva / web", "3 languages switch"],
-            ["13 Oct", "LinkedIn / IG / YouTube first posts", "Peter + Eva", "≥1 post per channel"],
-            ["20 Oct", "Three films on the site", "Jürg", "60s + 30s + 30s"],
-            ["30 Nov", "Full Europe list reached", "Peter + Linda", "40 accounts"],
-            ["20 Dec", "Real conversations (not likes)", "Linda", "8"],
-            ["31 Jan", "On-site demo or venue walk", "Linda + Jürg", "2"],
+            ["When", "Show", "City", "Who", "How we play"],
+            ["19–21 Oct 2026", "SPORTEL", "Monaco", "Leagues / broadcast / sports tech", "First Europe trip. Visitor + 8 meetings."],
+            ["18–20 Nov 2026", "Inter BEE", "Chiba", "Broadcast / system houses", "First Japan trip. Hunt a dealer, no parts sales."],
+            ["27–29 Jan 2027", "Japan Sports Week", "Chiba", "Teams / venue facilities", "Dealer shortlist. Second Japan trip."],
+            ["1–2 Feb 2027", "Sports World Congress", "Barcelona", "Venue operators", "Same week as ISE. Venue side."],
+            ["2–5 Feb 2027", "ISE", "Barcelona", "European integrators", "Main Europe strike. Projects + dealer seeds."],
+            ["11–14 May 2027", "KOBA", "Seoul", "Korea broadcast (optional)", "Only if a Japan dealer opens the door."],
         ]
-        bottom = "Start next Monday: freeze the German defect list, draft the 40-name Europe list. Korea/Japan stay off this scoreboard."
-    table_grid(s, ML, Inches(1.18), [Inches(1.55), Inches(4.55), Inches(3.2), Inches(2.75)], Inches(0.58), rows, font, True)
-    add_box(s, ML, Inches(6.05), Inches(12.08), Inches(0.85), MAGENTA)
-    add_tf(s, ML + Inches(0.22), Inches(6.22), Inches(11.6), Inches(0.55), bottom, 15, WHITE, True, font, PP_ALIGN.LEFT, MSO_ANCHOR.MIDDLE)
-    footer(s, 8, 8, font, "")
+        play = "Play: two people travel (commercial + technical). No booth. Twenty-one days out, lock 8–12 meetings near the hall — breakfast and evening. Four real meetings a day. Seven days after, every name followed, split into project vs dealer. IBC Amsterdam Sep 2026 has passed; we do not backfill. FSB Cologne Oct 2027 is a hold, not a Q1 KPI."
+    table_grid(s, ML, Inches(1.10), [Inches(1.95), Inches(2.55), Inches(1.55), Inches(2.75), Inches(3.25)], Inches(0.62), rows, font, True, 11)
+    add_box(s, ML, Inches(5.58), Inches(12.08), Inches(1.32), WASH)
+    add_tf(s, ML + Inches(0.2), Inches(5.70), Inches(11.7), Inches(1.1), play, 13, INK, False, font)
+    footer(s, 9, font)
+
+    # ───────── 10 DEALERS ─────────
+    s = prs.slides.add_slide(blank)
+    add_box(s, 0, 0, W, H, PAPER)
+    header(
+        s,
+        "09  /  经销商" if cn else "09  /  Dealers",
+        "要规模，就要做经销商。展会是找人的地方。" if cn else "Scale needs dealers. Shows are where we find them.",
+        font,
+    )
+    if cn:
+        why = (
+            "一家公司盖不住德瑞奥俱乐部和日本场馆。加人填不满。\n"
+            "经销商和集成商把 COR + LED 送进项目，我们保交付和 48 小时工厂响应。"
+        )
+        cards = [
+            ("欧洲", "ROUNDS 是现在的瑞士/南德入口。\nISE 再找 2 家能打包场馆项目的集成商（德、荷或北欧）。\n本季目标：对话，不签 20 家。"),
+            ("日本", "必须有一家本地伙伴才进场。\nInter BEE 开谈，Sports Week 收短名单，\n2027.03 目标一份 LOI。今秋不卖散单。"),
+            ("给什么", "德/英资料包、三支片子、项目 PDF、\n48 小时工厂支持、一场远程演示。\n不给消费品牌授权，不开招商会。"),
+        ]
+        rules = "规则：宁缺毋滥。欧洲增量 2 家，日本 1 家。先看他们有没有场馆项目，再谈授权。展会上交换名片不算经销商。"
+    else:
+        why = (
+            "One company cannot cover DACH clubs and Japanese venues. Hiring will not close the gap.\n"
+            "Dealers and integrators put COR + LED into projects. We keep delivery and a 48-hour factory."
+        )
+        cards = [
+            ("Europe", "ROUNDS is the Swiss / south-German door now.\nISE: two more integrators who can package a venue (DE, NL or Nordic).\nThis season: conversations, not twenty contracts."),
+            ("Japan", "We do not enter without one local partner.\nInter BEE opens talks, Sports Week shortlists,\nLOI target March 2027. No parts sales this autumn."),
+            ("What they get", "DE/EN pack, three films, project PDF,\n48h factory, one remote demo.\nNo consumer franchise. No dealer conference."),
+        ]
+        rules = "Rule: few and real. Two incremental in Europe, one in Japan. Venue projects first, paper second. A badge scan is not a dealer."
+    add_tf(s, ML, Inches(1.14), Inches(12.1), Inches(0.85), why, 16, INK, False, font)
+    for i, (t, b) in enumerate(cards):
+        x = ML + i * Inches(4.1)
+        add_box(s, x, Inches(2.15), Inches(3.92), Inches(3.55), WASH)
+        add_box(s, x, Inches(2.15), Inches(3.92), Pt(4), MAGENTA)
+        add_tf(s, x + Inches(0.22), Inches(2.40), Inches(3.5), Inches(0.4), t, 18, INK, True, font)
+        add_tf(s, x + Inches(0.22), Inches(2.90), Inches(3.5), Inches(2.55), b, 14, MUTED, False, font)
+    add_box(s, ML, Inches(5.88), Inches(12.08), Inches(1.02), INK)
+    add_tf(s, ML + Inches(0.22), Inches(6.04), Inches(11.6), Inches(0.72), rules, 14, WHITE, False, font, PP_ALIGN.LEFT, MSO_ANCHOR.MIDDLE)
+    footer(s, 10, font)
+
+    # ───────── 11 SCOREBOARD ─────────
+    s = prs.slides.add_slide(blank)
+    add_box(s, 0, 0, W, H, PAPER)
+    header(
+        s,
+        "10  /  九十天必须交出来的东西" if cn else "10  /  What must be done in 90 days",
+        "日期、负责人、数字。没有第三种状态。" if cn else "Date, owner, number. No third status.",
+        font,
+    )
+    if cn:
+        rows = [
+            ["日期", "必须交付", "战线", "负责人", "数字"],
+            ["9/29", "slam.systems 德文上线", "独立站", "Linda", "1 个域名"],
+            ["10/13", "EN+ZH 首页 / 三社媒首发", "独立站 · 社媒", "Eva + Peter", "3 语 + 3 账号"],
+            ["10/20", "三支视频可嵌官网", "社媒 · 邮件", "Jürg", "60s+30s+30s"],
+            ["10/21", "SPORTEL 出差完成", "展会 · 直达", "Linda + Peter", "8 场会"],
+            ["11/20", "Inter BEE 经销商开谈", "展会 · 经销商", "Linda + Jürg", "6 家面谈"],
+            ["11/30", "欧洲名单全部触达", "邮件 · 直达", "Peter + Linda", "40 家"],
+            ["12/20", "有效对话（不是点赞）", "直达", "Linda", "8 次"],
+            ["1/29", "日本经销商短名单", "经销商", "Linda", "3 家"],
+            ["2/05", "ISE + SWC 巴塞罗那", "展会 · 经销商", "Linda + Jürg", "12 场会"],
+            ["3/31", "日本 LOI 或明确放弃", "经销商", "Linda", "1 份"],
+        ]
+        bottom = "下周一开始：冻结德文缺陷清单，列出欧洲 40 家和 SPORTEL 会谈名单。日本进展会表，不进今秋销售表。"
+    else:
+        rows = [
+            ["Date", "Must ship", "Engine", "Owner", "Number"],
+            ["29 Sep", "German live on slam.systems", "Site", "Linda", "1 domain"],
+            ["13 Oct", "EN+ZH home / social first posts", "Site · Social", "Eva + Peter", "3 langs + 3 accounts"],
+            ["20 Oct", "Three films on the site", "Social · Email", "Jürg", "60s+30s+30s"],
+            ["21 Oct", "SPORTEL trip done", "Show · Direct", "Linda + Peter", "8 meetings"],
+            ["20 Nov", "Inter BEE dealer talks open", "Show · Dealer", "Linda + Jürg", "6 meetings"],
+            ["30 Nov", "Full Europe list reached", "Email · Direct", "Peter + Linda", "40 accounts"],
+            ["20 Dec", "Real conversations (not likes)", "Direct", "Linda", "8"],
+            ["29 Jan", "Japan dealer shortlist", "Dealer", "Linda", "3 names"],
+            ["5 Feb", "ISE + SWC Barcelona", "Show · Dealer", "Linda + Jürg", "12 meetings"],
+            ["31 Mar", "Japan LOI or a clear no", "Dealer", "Linda", "1 paper"],
+        ]
+        bottom = "Start next Monday: freeze the German defect list, draft the 40 EU names and the SPORTEL meeting list. Japan is on the show calendar, not on this autumn’s sales sheet."
+    table_grid(s, ML, Inches(1.08), [Inches(1.35), Inches(4.05), Inches(2.35), Inches(2.15), Inches(2.15)], Inches(0.48), rows, font, True, 11)
+    add_box(s, ML, Inches(6.42), Inches(12.08), Inches(0.52), MAGENTA)
+    add_tf(s, ML + Inches(0.18), Inches(6.48), Inches(11.7), Inches(0.4), bottom, 13, WHITE, True, font, PP_ALIGN.LEFT, MSO_ANCHOR.MIDDLE)
+    footer(s, 11, font)
 
     prs.save(C["file"])
     print("wrote", C["file"])
