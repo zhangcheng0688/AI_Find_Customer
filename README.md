@@ -1,3 +1,30 @@
+# Agent 工厂（本分支 · P0 骨架）
+
+可白标的 **组织级 Agent 工厂**（SaaS 多租户优先）：在平台搭机器人 → 挂企微/飞书 → 可人工调用，也可无人值守推进长程任务（催办、升级、转人工）。
+
+**架构一句话：** 编排 = Coze Studio；主动长程 = 自研任务引擎 + Activepieces（MIT 核心，禁 EE）；知识 = RAGFlow；触达 = 企微/飞书 + `channel-gateway`。
+
+**API 技术栈（已锁定）：Go + Gin。** 不选 NestJS、不用 Hertz。理由：P0/P1 的差异点是渠道网关（长连接、幂等、重试）和 Mission 状态机上的强制 `tenant_id` 隔离，不是 Nest 更擅长的 CRUD 后台；Go 单二进制、内存占用低，更适合和 Coze / RAGFlow / Activepieces 挤在 PoC 的 4C16G Compose 机上。Gin 生态比 Hertz 通用，1–2 人团队更好招人、更好查文档。控制台仍为 React + TypeScript + Ant Design Pro；`channel-gateway` 与 API 同用 Go。
+
+**License 红线：** 禁止把 **Dify / n8n / FastGPT / MaxKB** 当作可白标多租户内核；Activepieces **只用 MIT 社区核心，禁用 `packages/ee`**。OpenClaw 不替代 Coze 或任务引擎。详见 [`docs/license-compliance.md`](docs/license-compliance.md)。
+
+**本阶段（Prompt-0）只建目录与文档，不实现业务、不接企微。** Compose 中间件见 Prompt-1。目录树：
+
+```
+apps/api                 # Go + Gin，含 mission（尚未写代码）
+apps/console             # React + TS + Ant Design Pro
+apps/channel-gateway     # Go，渠道网关
+deploy/compose           # Prompt-1 再写 docker-compose
+deploy/k8s
+templates/cable-quote
+templates/collection-chase
+docs/                    # PRD v1.1、简报、合规、P0 清单
+```
+
+权威文档：[`docs/PRD与技术栈.md`](docs/PRD与技术栈.md) v1.1。文档索引：[`docs/README.md`](docs/README.md)。
+
+---
+
 # AI Hunter
 
 > 面向外贸与 B2B 场景的自动化客户挖掘系统，基于 FastAPI、LangGraph、多 Agent 流水线与可配置多模型能力。
