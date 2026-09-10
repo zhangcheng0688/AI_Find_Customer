@@ -1,3 +1,37 @@
+# Agent 工厂（白标 · 扣子 + RAGFlow）
+
+这是 **你自己的白标 Agent 产品**：编排底座用开源 **扣子 Coze Studio**，知识用 **RAGFlow**，对外页面是自研控制台（品牌 / 租户 / 对话）。
+
+**不是电缆询价、不是企微催办系统。** 产品口径见 [`docs/北极星.md`](docs/北极星.md)，7 天排期见 [`docs/7day-launch-plan.md`](docs/7day-launch-plan.md)。
+
+**架构：** 你的 UI → `apps/api` 壳（租户映射）→ Coze Studio + RAGFlow。
+
+**API：** Go + Gin。控制台：React + TypeScript + Ant Design。License 红线：禁止 Dify / n8n / FastGPT / MaxKB 当内核。详见 [`docs/license-compliance.md`](docs/license-compliance.md)。
+
+### 怎么跑（产品壳，尚不包含扣子/RAG 进程）
+
+```bash
+make factory-test
+make factory-api        # http://localhost:8080/health
+make factory-gateway    # 内部占位
+make factory-console    # http://localhost:5173
+```
+
+扣子与 RAGFlow 按官方 compose 在有 Docker 的机器上另起，见 7 天计划 Day 3–4。中间件：[`deploy/compose/README.md`](deploy/compose/README.md)。
+
+```
+apps/api                 # Go + Gin 产品壳
+apps/console             # 你的白标 UI（对话页会往这里长）
+apps/channel-gateway     # 渠道占位，非主路径
+deploy/compose           # Postgres / Redis / MinIO
+templates/default-agent  # 通用 Bot + 知识库绑定
+docs/                    # 北极星、7 天计划、PRD 技术约束
+```
+
+权威文档：[`docs/PRD与技术栈.md`](docs/PRD与技术栈.md) v1.1。文档索引：[`docs/README.md`](docs/README.md)。
+
+---
+
 # AI Hunter
 
 > 面向外贸与 B2B 场景的自动化客户挖掘系统，基于 FastAPI、LangGraph、多 Agent 流水线与可配置多模型能力。

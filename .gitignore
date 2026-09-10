@@ -110,3 +110,12 @@ logs/
 
 # ── License server runtime ───────────────────────────────────
 license-server/.env
+
+# ── Agent 工厂（Go / Node 占位应用）──────────────────────────
+apps/**/node_modules/
+apps/**/dist/
+apps/**/vendor/
+apps/api/bin/
+apps/api/data/
+apps/channel-gateway/bin/
+apps/console/dist/
