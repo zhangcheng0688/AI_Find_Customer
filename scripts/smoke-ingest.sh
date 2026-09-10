@@ -6,10 +6,10 @@ MSG="smoke-${RANDOM}"
 
 echo "== ingest =="
 curl -sfS -X POST "${GW}/dev/ingest" -H "Content-Type: application/json" \
-  -d "{\"tenantId\":\"${TENANT}\",\"botId\":\"bot-quote\",\"userId\":\"wx-1\",\"text\":\"YJLV 3x95 报价\",\"externalMsgId\":\"${MSG}\"}"
+  -d "{\"tenantId\":\"${TENANT}\",\"botId\":\"demo-agent\",\"userId\":\"builder\",\"text\":\"你好，介绍一下你能做什么\",\"externalMsgId\":\"${MSG}\"}"
 echo
 echo "== ingest idempotent =="
 curl -sfS -X POST "${GW}/dev/ingest" -H "Content-Type: application/json" \
-  -d "{\"tenantId\":\"${TENANT}\",\"botId\":\"bot-quote\",\"userId\":\"wx-1\",\"text\":\"YJLV 3x95 报价\",\"externalMsgId\":\"${MSG}\"}"
+  -d "{\"tenantId\":\"${TENANT}\",\"botId\":\"demo-agent\",\"userId\":\"builder\",\"text\":\"你好，介绍一下你能做什么\",\"externalMsgId\":\"${MSG}\"}"
 echo
 echo "smoke-ingest OK"

@@ -1,146 +1,136 @@
-# 7 天上线计划（冻结版）
+# 7 天上线计划（纠正版）
 
-权威需求：[`PRD与技术栈.md`](./PRD与技术栈.md) v1.1。栈已锁定：**Go + Gin** / React+TS / Postgres+Redis+MinIO。
+权威产品定义：[`北极星.md`](./北极星.md)。  
+PRD v1.1 仍作技术约束（License、Coze、RAGFlow、多租户壳），**其中电缆/企微催办首发闭环作废**，不按那条故事排期。
 
-PRD 原文 P1 是 **2 周** 打通企微闭环、P2 再 **3–4 周** 做完整多租户壳。7 天要「搭出来、上线」，必须把 **上线** 定义成可对外演示的试点，而不是把 P0–P2 全部做完。
+**你要做的项目：** 扣子（Coze Studio）做 Agent 编排底座 + RAGFlow 做知识 + **你自己的白标 UI** 包在外面，做成可对外交付的产品。
 
-## 1. D7「上线」是什么（验收口径）
+栈已锁定：壳 API = **Go + Gin**；控制台 = React + TS；数据 = Postgres / Redis / MinIO。
 
-试点环境（一台 4C16G + Compose，可公网或内网）必须同时满足：
+## 1. D7「上线」是什么
 
-1. **一键起核心**：Postgres / Redis / MinIO 健康；API / 渠道网关 / 控制台可访问。
-2. **询价闭环（可先模拟企微）**：入站文本 → 任务引擎建 Mission → 返回报价/答复草稿 → 控制台看得见。
-3. **无人值守**：超时后任务引擎自动催办至少 1 次（演示间隔可缩到秒级；生产默认 T+24h / T+72h）。
-4. **可升级 / 可取消**：第二次超时通知负责人（handed_off）；客户已回或人工关闭则取消后续催办。
-5. **不串租**：所有查询强制 `tenant_id`；换租户看不到数据。
-6. **红线不破**：不用 Dify / n8n / FastGPT / MaxKB；Activepieces 不用 `packages/ee`；不用 OpenClaw 替换 Coze 或任务引擎。
-7. **能给别人点开**：控制台有白标占位（名称 / Logo / 主题色）；有演示脚本。
+一台机器上，别人打开的是 **你的控制台**，不是扣子官方后台、也不是 RAGFlow 原生页。
 
-## 2. 7 天明确不做（避免膨胀）
+1. Compose（或脚本）拉起：Postgres/Redis/MinIO + **Coze Studio** + **RAGFlow** + 你的 API/控制台。
+2. 控制台可换 Logo / 产品名 / 主题色（白标）。
+3. 在你的 UI 里：选一个 Bot → 对话；回答来自 **扣子工作流**，需要资料时走 **RAGFlow**，页面能看到引用。
+4. 租户逻辑隔离：租户 A 的 Bot / 知识库，租户 B 进不去（壳上 `tenant_id` 映射 Coze workspace + RAGFlow dataset）。
+5. 红线：不用 Dify/n8n/FastGPT/MaxKB。
 
-| 不做 | 原因 |
+## 2. 7 天不做
+
+| 不做 | 说明 |
 |------|------|
-| 真多租户计费 / 配额拦截 / 支付 | P2，不挡试点 |
-| 飞书 | 与企微同构，D8+ |
-| 业务人员在 Coze 画布上自己改流程 | 引擎能挂上即可，不承诺实施培训 |
-| RAG 质量调到抽样 80% | 先通链路，再灌电缆规格书 |
-| K8s / 信创 / 达梦 / Bisheng | P4–P5 |
-| 自定义域名 / 完整 SSO | P2–P3 |
-| 美化成完整 Ant Design Pro 中后台 | 控制台先 Pro 风格一页任务台 |
+| 电缆询价、催办销售、企微长连接当主路径 | 不是本产品 |
+| 把扣子 / RAGFlow 原生 UI 当对外产品 | 你要自己的壳 |
+| 完整计费、飞书、K8s、信创 | 上线之后 |
+| 一次做完「行业模板市场」 | 先 1 个通用 Demo Agent |
 
-真企微长连接、真 Coze、真 RAGFlow：**D5–D6 有凭证和机器再接**；没有则继续用模拟入站 + mock 检索，**不挡 D7 演示上线**。
+企微渠道可以后挂（channel-gateway 已有占位），**不挡这 7 天**。
 
-## 3. 架构怎么在 7 天落地
+## 3. 架构（纠正后）
 
 ```
-企微或 POST /dev/ingest
-        │
-        ▼
-channel-gateway（鉴权占位 · 幂等 · 租户路由）
-        │
-        ▼
-apps/api 产品壳
-  · Tenant / Branding
-  · Mission 状态机（主动长程的核心）
-  · 催办调度（先内置 ticker；Activepieces 作 P1 profile）
-        │
-        ├─ 智能步骤：Coze OpenAPI（没有则 mock orchestrator）
-        └─ 知识：RAGFlow（没有则 mock 引用）
-        │
-        ▼
-控制台任务台 + 企微出站（没有则只写任务流水）
+用户 ──► 你的控制台（白标 UI）
+              │
+              ▼
+         apps/api 产品壳
+         租户 · 品牌 · Bot 绑定
+         EngineBinding: coze_space / rag_dataset
+              │
+      ┌───────┴───────┐
+      ▼               ▼
+ Coze Studio      RAGFlow
+ Agent/工作流      解析/检索/引用
+ Apache 2.0       Apache 2.0
 ```
 
-编排大脑仍是 Coze；主动长程仍是任务引擎。7 天用 mock 填引擎空缺，**接口形状按真引擎预留**。
+壳不替代扣子画布：搭建者仍可在扣子里画 Agent（或你后续把关键配置收进自己的 UI）。对外用户只进你的页面。
 
-## 4. 逐日计划
+## 4. 逐日
 
-### Day 1 — 地基可跑（今天开始）
+### Day 1 — 口径与壳（已部分完成）
 
-- Compose：Postgres 16 / Redis 7 / MinIO + 健康检查 + `.env.example`
-- `apps/api`：`GET /health`、dev tenant seed、Mission CRUD、状态机非法迁移报错
-- 单测覆盖状态机；`scripts/smoke-mission.sh`
-- Coze / RAGFlow / Activepieces：`profile: engines` 文档化，不阻塞中间件
+- 文档改成「白标 Agent = 扣子 + RAGFlow + 自研 UI」
+- 现有 API 健康检查、租户 seed、白标字段保留（这是壳，不是电缆业务）
+- 去掉产品叙事里的电缆询价
 
-**当日 DoD：** curl 能建任务并改状态；无 Docker 时 API 可用 SQLite 本地演示。
+**DoD：** 任何人读 README / 北极星 都不会以为这是电缆项目。
 
-### Day 2 — 入站闭环 + 控制台
+### Day 2 — 白标控制台骨架（你要漂亮 UI 的底）
 
-- `apps/channel-gateway`：`POST /dev/ingest`（tenantId, botId, userId, text, externalMsgId）
-- 同一 `externalMsgId` 不重复建任务
-- 控制台：任务列表、状态筛选、白标读配置、一键模拟询价
-- 网关与 API 走同一租户头 `X-Tenant-Id`
+控制台主路径改成产品页，而不是「催办任务表」：
 
-**当日 DoD：** 模拟一条询价 → Mission 落库 → 控制台可见 → 返回 mock 回复。
+- 首页：我的 Agent（名称、状态、绑定的扣子 Bot / 知识库）
+- 对话页：输入框 + 消息流（先 mock，接口形状按真扣子）
+- 设置页：Logo、产品名、主题色
+- 视觉：按 Ant Design Pro 后台质感铺布局（你后面可以再换皮肤）
 
-### Day 3 — 无人值守催办
+**DoD：** 不看扣子后台，也能在你的域名感页面里完成一次对话（允许回答仍是 mock）。
 
-- Mission：`open → waiting → running → done | failed | handed_off`
-- 内置 chaser：`due_at` 到期发催办 A；再到期催办 B + 升级负责人
-- 取消：写 `cancel_reason`，不再催
-- 演示环境 `DEMO_CHASE_AFTER` 默认 30s（生产 24h/72h）
-- 审计：关键动作写入 `context_json` 流水（谁、何时、何种动作）
+### Day 3 — 真拉起扣子底座
 
-**当日 DoD：** 不点任何按钮，到期后任务自己推进；控制台能看到催办记录。
+- 按 [coze-dev/coze-studio](https://github.com/coze-dev/coze-studio) 官方 compose 起服务（默认 UI `:8888`）
+- 注册管理员、配模型（DeepSeek / 通义 / GLM 任一 Key）
+- 在扣子里建 **一个** Demo Agent（通用助手即可）
+- `apps/api` 增加 `EngineBinding`：tenant → `coze_space_id` / `coze_bot_or_workflow_id`
 
-### Day 4 — 部署形态
+**DoD：** 浏览器能打开扣子；API 能记下绑定。对外仍不把 `:8888` 当产品。
 
-- API / Gateway / Console 的 Dockerfile + Compose `profile: app`
-- Caddy/Nginx 反代说明（TLS）
-- `docs/runbook.md`：端口、启动顺序、备份（Postgres 卷）
-- 电缆模板目录补「询价报价 + 催办」话术占位（还不是 Coze 导出）
+### Day 4 — 真拉起 RAGFlow
 
-**当日 DoD：** 在目标机 `docker compose up -d`（或 SQLite 开发模式）能对外访问控制台。
+- 官方 RAGFlow compose（内存吃得比扣子凶，机器建议 8C32G；4C16G 能起就起，起不来就文档写清最低配）
+- 建 dataset，上传 1～2 份说明文档（产品自己的介绍，**不是电缆规格书**）
+- 壳记录 `ragflow_dataset_id`，按租户前缀隔离
 
-### Day 5 — 真引擎 / 真企微（有条件）
+**DoD：** RAGFlow API 能检索并返回带引用的片段。
 
-**你需要提供（缺则跳过，保持 mock）：**
+### Day 5 — 接上：你的 UI → 扣子 → RAGFlow
+
+运行时（对用户不可见）：
+
+```
+控制台发消息
+  → API（验租户）
+  → 需要知识：RAGFlow retrieve
+  → 扣子运行 Agent/工作流（把检索结果当上下文）
+  → 流式或一次返回到你的对话页
+```
+
+扣子暂时调不通就：UI 仍走同一 API，后端降级「RAG 片段 + 直连模型」，**不要把电缆 mock 催办接回来**。
+
+**DoD：** 你的对话页一条真实问题，能看到扣子（或降级模型）的回答 + RAG 引用。
+
+### Day 6 — 白标打磨
+
+- 控制台去掉扣子/RAGFlow 商标露出（NOTICE 留在 docs，页面上是你的品牌）
+- 登录先 dev；主题色/Logo 生效
+- 两个租户：知识库与 Bot 绑定互不可见
+- 反向代理：对外只暴露你的 console（扣子/RAG 管理口仅内网）
+
+**DoD：** 演示链接看起来像「你的 Agent 产品」，不像开源套壳后台。
+
+### Day 7 — 上线
+
+- 一键脚本：中间件 → 扣子 → RAGFlow → api → console
+- `docs/runbook.md`：端口、模型 Key、备份
+- smoke：健康检查 + 对话一轮 + 引用非空
+- 给你可转发的 URL 和演示账号
+
+## 5. 机器与你要提供的
 
 | 项 | 用途 |
 |----|------|
-| 4C16G 云主机（或现成 Linux） | 真上线 |
-| 企微 Bot 凭证 | 长连接收发 |
-| 至少一个模型 API Key | 真回复（DeepSeek / 通义 / GLM） |
-| （可选）域名 | HTTPS |
+| 建议 8C32G（最低 4C16G 先起扣子） | 扣子 + RAGFlow 同机 |
+| Docker | 两个引擎官方都靠 compose |
+| 模型 API Key | 扣子后台配模型 |
+| （可选）域名 + TLS | 对外像产品 |
 
-- 企微：channel-gateway 换长连接，内部 JSON 不变
-- Coze Studio / RAGFlow：能拉起就拉起；拉不起则保持 HTTP mock，列进 `docs/p1-ready.md`
+没有 Docker 的云开发机只能继续跑壳；**引擎必须在有 Docker 的主机上**。
 
-**当日 DoD：** 要么真企微一条消息进任务引擎，要么书面确认「演示线继续 mock，生产凭证 D8 再接」。
+## 6. 和现有代码怎么相处
 
-### Day 6 — 首发闭环打磨
+已经写的 Mission / 催办 / `/dev/ingest` **降为内部可选**（以后做主动任务再用），不再当 7 天主路径。  
+主路径改为：`控制台对话 → API → Coze + RAGFlow`。
 
-- 话术：询价 → 带「来源占位」的答复草稿 → 催办 A/B
-- 转人工：低置信或价格承诺 → `handed_off`
-- 两租户 smoke：B 租户看不到 A 的任务
-- `templates/cable-quote` 演示脚本（curl + 控制台路径）
-
-**当日 DoD：** 按 PRD 6.2 / 6.3 能讲完一条完整故事（允许检索为 mock 引用）。
-
-### Day 7 — 上线日
-
-- 跑 `scripts/smoke-mission.sh` + ingest smoke，结果写入 `docs/p0-acceptance.md`
-- 冻结演示账号（dev tenant）、端口、演示口令
-- 监控最小值：健康检查 + 结构化日志
-- 交付：启动命令、红线、下一步（真 Coze 工作流、灌规格书、第二租户白标）
-
-**当日 DoD：** 你能把控制台 URL 发给别人演示；串租事故 = 0。
-
-## 5. 人力与节奏
-
-单人可扛这 7 天（PRD §22）。每日结束必须有可演示增量，禁止只改文档。
-
-阻塞升级规则：同一问题超过 2 小时（镜像拉不起来、企微权限不足）→ 降级为 mock，**不中断 D7**。
-
-## 6. 风险（7 天视角）
-
-| 风险 | 对策 |
-|------|------|
-| Coze/RAGFlow 镜像重、难一次起 | 默认不随核心 Compose 启动；接口先 mock |
-| 无企微测试企业 | `/dev/ingest` 顶上线演示 |
-| 无云主机 | 本机 Compose/SQLite 先演示，D4 再迁 |
-| 需求膨胀到「完整 SaaS」 | 以本文 D7 口径为准，其余进 D8+ 的 P2 |
-
-## 7. D8 起（不在这 7 天承诺）
-
-P2 多租户壳、白标域名、配额、模板一键实例化、真 RAG 灌库与 80% 抽样、飞书、Activepieces 社区版接催办触发器。
+电缆模板目录废弃，改为通用 `templates/default-agent`（扣子 Bot + RAG dataset 绑定说明）。

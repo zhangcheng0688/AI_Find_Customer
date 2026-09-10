@@ -1,38 +1,31 @@
-# Agent 工厂（本分支 · P0 骨架）
+# Agent 工厂（白标 · 扣子 + RAGFlow）
 
-可白标的 **组织级 Agent 工厂**（SaaS 多租户优先）：在平台搭机器人 → 挂企微/飞书 → 可人工调用，也可无人值守推进长程任务（催办、升级、转人工）。
+这是 **你自己的白标 Agent 产品**：编排底座用开源 **扣子 Coze Studio**，知识用 **RAGFlow**，对外页面是自研控制台（品牌 / 租户 / 对话）。
 
-**架构一句话：** 编排 = Coze Studio；主动长程 = 自研任务引擎 + Activepieces（MIT 核心，禁 EE）；知识 = RAGFlow；触达 = 企微/飞书 + `channel-gateway`。
+**不是电缆询价、不是企微催办系统。** 产品口径见 [`docs/北极星.md`](docs/北极星.md)，7 天排期见 [`docs/7day-launch-plan.md`](docs/7day-launch-plan.md)。
 
-**API 技术栈（已锁定）：Go + Gin。** 不选 NestJS、不用 Hertz。理由：P0/P1 的差异点是渠道网关（长连接、幂等、重试）和 Mission 状态机上的强制 `tenant_id` 隔离，不是 Nest 更擅长的 CRUD 后台；Go 单二进制、内存占用低，更适合和 Coze / RAGFlow / Activepieces 挤在 PoC 的 4C16G Compose 机上。Gin 生态比 Hertz 通用，1–2 人团队更好招人、更好查文档。控制台仍为 React + TypeScript + Ant Design Pro；`channel-gateway` 与 API 同用 Go。
+**架构：** 你的 UI → `apps/api` 壳（租户映射）→ Coze Studio + RAGFlow。
 
-**License 红线：** 禁止把 **Dify / n8n / FastGPT / MaxKB** 当作可白标多租户内核；Activepieces **只用 MIT 社区核心，禁用 `packages/ee`**。OpenClaw 不替代 Coze 或任务引擎。详见 [`docs/license-compliance.md`](docs/license-compliance.md)。
+**API：** Go + Gin。控制台：React + TypeScript + Ant Design。License 红线：禁止 Dify / n8n / FastGPT / MaxKB 当内核。详见 [`docs/license-compliance.md`](docs/license-compliance.md)。
 
-**7 天上线计划（冻结口径）：** [`docs/7day-launch-plan.md`](docs/7day-launch-plan.md)。D7 = 可演示试点（模拟企微询价 → Mission → 无人值守催办 → 控制台），不是完整 P2 SaaS。
-
-### 怎么跑（Agent 工厂）
+### 怎么跑（产品壳，尚不包含扣子/RAG 进程）
 
 ```bash
 make factory-test
-# 三个终端：
 make factory-api        # http://localhost:8080/health
-make factory-gateway    # POST /dev/ingest
+make factory-gateway    # 内部占位
 make factory-console    # http://localhost:5173
 ```
 
-中间件（需 Docker）：`make factory-middleware`。端口与引擎说明见 [`deploy/compose/README.md`](deploy/compose/README.md)。
-
-目录树：
+扣子与 RAGFlow 按官方 compose 在有 Docker 的机器上另起，见 7 天计划 Day 3–4。中间件：[`deploy/compose/README.md`](deploy/compose/README.md)。
 
 ```
-apps/api                 # Go + Gin，Mission 任务引擎
-apps/console             # React + TS + Ant Design 任务台
-apps/channel-gateway     # Go，模拟企微入站
+apps/api                 # Go + Gin 产品壳
+apps/console             # 你的白标 UI（对话页会往这里长）
+apps/channel-gateway     # 渠道占位，非主路径
 deploy/compose           # Postgres / Redis / MinIO
-deploy/k8s
-templates/cable-quote
-templates/collection-chase
-docs/                    # PRD v1.1、7 天计划、合规
+templates/default-agent  # 通用 Bot + 知识库绑定
+docs/                    # 北极星、7 天计划、PRD 技术约束
 ```
 
 权威文档：[`docs/PRD与技术栈.md`](docs/PRD与技术栈.md) v1.1。文档索引：[`docs/README.md`](docs/README.md)。

@@ -98,15 +98,15 @@ export default function App() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           tenantId,
-          botId: "bot-quote",
-          userId: "wx-demo-user",
-          text: "YJLV 3×95 电缆询价，要含税到厂价",
+          botId: "demo-agent",
+          userId: "builder",
+          text: "你好，介绍一下你能做什么",
           externalMsgId: `ui-${Date.now()}`,
         }),
       });
       const body = await readJson(res);
-      if (!body.ok) throw new Error(body.error || "ingest failed");
-      message.success(body.mockReply || "已模拟询价");
+      if (!body.ok) throw new Error(body.error || "chat failed");
+      message.success(body.mockReply || "已发送");
       await load();
     } catch (e) {
       message.error(String(e));
@@ -125,20 +125,17 @@ export default function App() {
       },
       { title: "负责人", dataIndex: "assignee", width: 120 },
       {
-        title: "下次催办",
-        dataIndex: "due_at",
+        title: "时间",
+        dataIndex: "created_at",
         width: 170,
         render: (v?: string | null) => (v ? dayjs(v).format("MM-DD HH:mm:ss") : "—"),
       },
       {
-        title: "询价/催办",
+        title: "消息",
         dataIndex: "context_json",
         ellipsis: true,
-        render: (ctx: Mission["context_json"]) => {
-          const text = typeof ctx?.text === "string" ? ctx.text : "";
-          const chases = Array.isArray(ctx?.chases) ? ctx!.chases.length : 0;
-          return `${text}${chases ? ` · 催办×${chases}` : ""}`;
-        },
+        render: (ctx: Mission["context_json"]) =>
+          typeof ctx?.text === "string" ? ctx.text : "",
       },
     ],
     [],
@@ -163,7 +160,7 @@ export default function App() {
           {brand}
         </Typography.Title>
         <Typography.Text style={{ color: "rgba(255,255,255,0.65)" }}>
-          任务台 · {tenantId} · 开发登录（无需密码）
+          白标工作台 · {tenantId} · 对话将接扣子 + RAGFlow
         </Typography.Text>
       </Header>
       <Content style={{ padding: 24 }}>
@@ -185,7 +182,7 @@ export default function App() {
           />
           <Button onClick={() => void load()}>刷新</Button>
           <Button type="primary" onClick={() => void simulate()}>
-            模拟企微询价
+            试问 Agent
           </Button>
         </Space>
         <Table

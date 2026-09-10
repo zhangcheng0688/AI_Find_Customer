@@ -56,20 +56,20 @@ func main() {
 		if body.UserID == "" {
 			body.UserID = "anonymous"
 		}
-		mockReply := fmt.Sprintf("已收到询价：「%s」。正在检索规格书并生成报价草稿（mock，P1 接 RAGFlow/Coze）。任务已进入任务引擎，超时将自动催办。", body.Text)
+		mockReply := fmt.Sprintf("（壳占位）已收到：「%s」。下一步由扣子 Agent + RAGFlow 作答，而不是行业询价流程。", body.Text)
 		payload := map[string]any{
 			"bot_id":          body.BotID,
-			"type":            "inquiry",
+			"type":            "chat",
 			"status":          "waiting",
-			"assignee":        "sales-owner",
+			"assignee":        "builder",
 			"external_msg_id": body.ExternalMsgID,
 			"context_json": map[string]any{
-				"userId":     body.UserID,
-				"text":       body.Text,
-				"mockReply":  mockReply,
-				"channel":    "wecom-sim",
-				"chases":     []any{},
-				"orchestrator": "mock",
+				"userId":       body.UserID,
+				"text":         body.Text,
+				"mockReply":    mockReply,
+				"channel":      "console",
+				"orchestrator": "pending-coze",
+				"knowledge":    "pending-ragflow",
 			},
 		}
 		raw, _ := json.Marshal(payload)
