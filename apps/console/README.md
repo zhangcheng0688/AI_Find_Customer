@@ -1,11 +1,9 @@
 # apps/console
 
-React + TypeScript + Ant Design 任务台（Pro 风格一页，未铺完整 Pro 脚手架）。
+你的白标 UI。当前是 Ant Design 工作台骨架；对话页会接到扣子 + RAGFlow。漂亮视觉你可以继续改这一层，不要去改扣子原生后台当产品。
 
 ```bash
 cd apps/console
 npm install
 npm run dev
 ```
-
-默认通过 Vite 代理访问本机 `8080` / `8081`。白标：`VITE_BRAND_NAME` / `VITE_BRAND_LOGO` / `VITE_THEME_COLOR`，运行时也会读 `GET /tenants/:id`。
