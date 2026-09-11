@@ -65,4 +65,13 @@
     });
     if (dialog.requestFullscreen) dialog.requestFullscreen().catch(() => {});
   });
+
+  document.querySelectorAll('.project-video-embed video').forEach(video => {
+    video.addEventListener('ended', () => {
+      const contact = document.getElementById('direct-contact');
+      if (!contact) return;
+      contact.scrollIntoView({behavior: 'smooth', block: 'start'});
+      contact.focus({preventScroll: true});
+    });
+  });
 })();

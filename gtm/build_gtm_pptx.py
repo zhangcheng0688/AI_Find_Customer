@@ -22,7 +22,7 @@ SOFT = RGBColor(0xC8, 0xC8, 0xC8)
 W = Inches(13.333)
 H = Inches(7.5)
 ML = Inches(0.62)
-TOTAL = 11
+TOTAL = 12
 
 
 def set_run(run, size, color, bold=False, font_name="Calibri"):
@@ -235,7 +235,7 @@ def build(C, lang):
         Inches(6.72),
         Inches(12),
         Inches(0.3),
-        "11 页  ·  执行版  ·  2026.09" if cn else "11 slides  ·  Operating version  ·  September 2026",
+        "12 页  ·  执行版  ·  2026.09" if cn else "12 slides  ·  Operating version  ·  September 2026",
         12,
         RGBColor(0x8A, 0x8A, 0x8A),
         False,
@@ -451,7 +451,7 @@ def build(C, lang):
             ("9/22", "定稿", "德文 v2.2.6 冻结。修首页假视频、手机菜单缺 Peripherals、表单不能只靠 mailto。"),
             ("9/29", "上线", "slam.systems 切新站。德文可对外。i@slam.systems 人工 48 小时必回。"),
             ("10/13", "三语", "EN/ZH 导航和首页可用。中文首页不允许仍是英文。"),
-            ("10/20", "弹药", "三支片子、一份项目 PDF。所有邮件、社媒、展会二维码指回这里。"),
+            ("10/20", "弹药", "7 秒 SCORE 片播完跳转表单（主题 Scoreboard Handball）。再加系统片 / LED 片和项目 PDF。"),
         ]
         must_t, must_b = "上线当天必须为真", "· 德文全站可点\n· Start Your Project 能变成询盘\n· 瑞士 + 深圳地址正确\n· 手球 hero 仍是原片"
         wait_t, wait_b = "上线当天可以还没做", "· 日文 / 韩文\n· 六个社媒图标全亮\n· 复杂表单后台\n· 案例页 20 张大图"
@@ -460,7 +460,7 @@ def build(C, lang):
             ("22 Sep", "Freeze", "Lock German v2.2.6. Fix fake Watch-video, missing Peripherals in mobile nav, mailto-only forms."),
             ("29 Sep", "Go live", "Cut slam.systems to the new site. German is public. i@slam.systems answered in 48 hours."),
             ("13 Oct", "3 languages", "EN/ZH nav and home work. Chinese home must not stay English."),
-            ("20 Oct", "Ammunition", "Three films, one project PDF. Every mail, post and show QR lands here."),
+            ("20 Oct", "Ammunition", "7s SCORE film ends on the form (subject Scoreboard Handball). Then system/LED films and a project PDF."),
         ]
         must_t, must_b = "Must be true on go-live", "· Full German site clickable\n· Start Your Project produces an enquiry\n· Swiss + Shenzhen addresses correct\n· Handball hero stays the original still"
         wait_t, wait_b = "Allowed to wait", "· Japanese / Korean\n· All six social icons live\n· A heavy form backend\n· A 20-image case gallery"
@@ -484,31 +484,33 @@ def build(C, lang):
     header(
         s,
         "05  /  社交媒体" if cn else "05  /  Social",
-        "只做三家。发现场，不发参数。展会周加码。" if cn else "Three channels. Post the match, not the spec. Spike around shows.",
+        "先开两家验证。瑞士独立号注册。发现场，不发参数。" if cn else "Prove two channels first. Swiss SIM. Post the match, not the spec.",
         font,
     )
     if cn:
         rows = [
-            ["渠道", "为什么", "发什么", "频率", "谁来发"],
-            ["LinkedIn", "买家在这里。\n获客主场。", "一人操作系统、场馆夜、\n展会约见入口。", "2 条/周\n展会周 4 条", "Peter\nLinda 转评"],
-            ["Instagram", "画面即证据。\n给集成商转发。", "控制室 15 秒、LED 近景、\n比赛夜。不发参数表。", "3 条/周", "Eva\n素材来自现场"],
-            ["YouTube", "能被搜到。\n官网和邮件都嵌。", "60 秒系统片 + SCORE / LED\n各一支 30 秒。", "2 条/月", "Jürg 定调\nDonglin 协助"],
+            ["渠道", "阶段", "发什么", "频率", "谁"],
+            ["LinkedIn", "现在开\n商务获客主场", "一人操作系统、场馆夜、\n展会约见。德语母版。", "2–3 天一条\n展会周加倍", "Peter\nLinda 转评"],
+            ["Instagram", "现在开\n画面即证据", "Reels：控制室、LED 近景、\n比赛夜。不发参数表。", "2–3 天一条", "Eva\n现场素材"],
+            ["X / Twitter", "两家跑通再开\n图文与行业动态", "一句现场、一张图、一个链。\n对标 Stramatel：装机与比赛夜。", "有事才发", "Peter"],
+            ["YouTube", "两家跑通再开\n可被搜到", "7 秒 SCORE + 60 秒系统片\n+ 教程长视频。", "2 条/月", "Jürg\nDonglin"],
         ]
-        films = "三支片子循环用：A 60 秒系统片（10/20 交，用手球 intro 延伸）· B 30 秒 SCORE · C 30 秒 LED。官网、邮件、展会、经销商包同一套。"
-        no = "不做：TikTok、Pinterest、小红书对欧洲获客、Facebook 日常。账号可以占着，不排期、不考核。"
+        films = "注册：买一个全新瑞士手机号，账号不绑私人号。热点只蹭职业比赛夜和展会周，不蹭 iPhone 级消费发布会。"
+        no = "Facebook 只做竞品观察，不日常运营。TikTok / 小红书不对欧洲获客。文案可用 AI 起草，人必须改完再发。"
     else:
         rows = [
-            ["Channel", "Why", "What", "Cadence", "Who"],
-            ["LinkedIn", "Buyers live here.\nPrimary acquisition.", "One-operator system, match night,\nshow-meeting link.", "2 / week\n4 in show week", "Peter\nLinda comments"],
-            ["Instagram", "Picture is proof.\nIntegrators forward it.", "15s control room, LED close-up,\nmatch night. No spec sheets.", "3 / week", "Eva\nfootage from site"],
-            ["YouTube", "Searchable.\nEmbed on site + mail.", "60s system film + 30s SCORE\nand 30s LED.", "2 / month", "Jürg directs\nDonglin assists"],
+            ["Channel", "Phase", "What", "Cadence", "Who"],
+            ["LinkedIn", "Open now\nBuyer home", "One-operator system, match night,\nshow meeting. German master.", "Every 2–3 days\nDouble in show week", "Peter\nLinda comments"],
+            ["Instagram", "Open now\nPicture is proof", "Reels: control room, LED, match night.\nNo spec sheets.", "Every 2–3 days", "Eva\nSite footage"],
+            ["X / Twitter", "After the two work\nShort news", "One line, one still, one link.\nLike Stramatel: install + match night.", "When there is news", "Peter"],
+            ["YouTube", "After the two work\nSearch", "7s SCORE + 60s system\n+ longer how-to.", "2 / month", "Jürg\nDonglin"],
         ]
-        films = "Three films, reused everywhere: A 60s system (due 20 Oct, extend the handball intro) · B 30s SCORE · C 30s LED. Same pack for site, mail, shows, dealers."
-        no = "Do not: TikTok, Pinterest, Xiaohongshu for Europe, Facebook as a daily channel. Accounts may exist. They are not scheduled or scored."
-    table_grid(s, ML, Inches(1.12), [Inches(1.7), Inches(2.45), Inches(3.45), Inches(2.0), Inches(2.45)], Inches(1.05), rows, font, True, 12)
-    add_box(s, ML, Inches(5.48), Inches(12.08), Inches(0.72), INK)
-    add_tf(s, ML + Inches(0.2), Inches(5.58), Inches(11.7), Inches(0.52), films, 13, WHITE, False, font, PP_ALIGN.LEFT, MSO_ANCHOR.MIDDLE)
-    add_tf(s, ML, Inches(6.32), Inches(12.1), Inches(0.58), no, 13, MUTED, False, font)
+        films = "Register on a new Swiss mobile number. Accounts stay off personal SIMs. Newsjack match nights and show weeks, not consumer gadget launches."
+        no = "Facebook is for watching competitors, not a daily channel. No TikTok / Xiaohongshu for Europe. AI may draft copy. A person publishes."
+    table_grid(s, ML, Inches(1.12), [Inches(1.85), Inches(2.35), Inches(3.35), Inches(2.15), Inches(2.35)], Inches(0.82), rows, font, True, 11)
+    add_box(s, ML, Inches(5.38), Inches(12.08), Inches(0.72), INK)
+    add_tf(s, ML + Inches(0.2), Inches(5.48), Inches(11.7), Inches(0.52), films, 13, WHITE, False, font, PP_ALIGN.LEFT, MSO_ANCHOR.MIDDLE)
+    add_tf(s, ML, Inches(6.22), Inches(12.1), Inches(0.68), no, 13, MUTED, False, font)
     footer(s, 6, font)
 
     # ───────── 7 EMAIL + DIRECT ─────────
@@ -671,12 +673,46 @@ def build(C, lang):
     add_tf(s, ML + Inches(0.22), Inches(6.04), Inches(11.6), Inches(0.72), rules, 14, WHITE, False, font, PP_ALIGN.LEFT, MSO_ANCHOR.MIDDLE)
     footer(s, 10, font)
 
-    # ───────── 11 SCOREBOARD ─────────
+    # ───────── 11 SLAM AGENT ─────────
     s = prs.slides.add_slide(blank)
     add_box(s, 0, 0, W, H, PAPER)
     header(
         s,
-        "10  /  九十天必须交出来的东西" if cn else "10  /  What must be done in 90 days",
+        "10  /  Slam Agent" if cn else "10  /  Slam Agent",
+        "今秋仍卖项目。Agent 是 2027 的差异化叙事，不是现在的交货清单。" if cn else "This autumn we still sell projects. Agent is the 2027 story, not this quarter’s SKU.",
+        font,
+    )
+    if cn:
+        cards = [
+            ("定位升级", "从「硬件 + 软件」讲成 Slam Agent：\n一场比赛的智能代理，而不只是记分屏。\n用来区别同质化记分/LED 竞品。"),
+            ("技术路径", "开源 Linux 网关底座。\n语音切灯光 / 广告方案。\n自然语言交代「下一球暂停广告」。\n能演示再写进官网，不能演示就先别写。"),
+            ("场景互动", "现场氛围感知：掌声分贝触发灯光秀。\n参考互动应用，不做粉丝玩具。\n给集成商看「整场系统会自己反应」。"),
+            ("需求入口", "Solutions 页加 Custom AI Solution。\n请客户写下：自动统计、售票、灯光编排。\n用来收集需求，不假装功能已经交付。"),
+        ]
+        rule = "纪律：德文主站今秋主诉仍是一人操作系统 + SCORE / LED。Agent 只出现在简报、LinkedIn 和封闭活动，不替代现有产品名。"
+    else:
+        cards = [
+            ("The shift", "Package hardware + software as Slam Agent:\nthe intelligent proxy for a match night,\nnot just a scoreboard. This is how we\nleave commodity LED behind."),
+            ("The path", "Open Linux gateway. Voice to lights\nand ad playlists. Natural language:\n“hold the next timeout ad.”\nDemo first. Then put it on the site."),
+            ("The room", "Sense the arena: applause triggers a light cue.\nNot a fan toy. Show integrators the system\nreacts to the match."),
+            ("The intake", "A Custom AI Solution door on Solutions.\nAsk for stats, ticketing, lighting plots.\nCollect demand. Do not fake shipping."),
+        ]
+        rule = "Rule: the German site this autumn still sells one-operator SCORE + LED. Agent lives in briefings, LinkedIn and closed rooms — it does not replace product names."
+    for i, (t, b) in enumerate(cards):
+        x = ML + (i % 4) * Inches(3.08)
+        add_box(s, x, Inches(1.18), Inches(2.92), Inches(4.55), WASH)
+        add_tf(s, x + Inches(0.16), Inches(1.34), Inches(2.6), Inches(0.4), t, 16, MAGENTA, True, font)
+        add_tf(s, x + Inches(0.16), Inches(1.82), Inches(2.6), Inches(3.7), b, 13, MUTED, False, font)
+    add_box(s, ML, Inches(5.92), Inches(12.08), Inches(0.98), INK)
+    add_tf(s, ML + Inches(0.2), Inches(6.06), Inches(11.7), Inches(0.72), rule, 14, WHITE, False, font, PP_ALIGN.LEFT, MSO_ANCHOR.MIDDLE)
+    footer(s, 11, font)
+
+    # ───────── 12 SCOREBOARD ─────────
+    s = prs.slides.add_slide(blank)
+    add_box(s, 0, 0, W, H, PAPER)
+    header(
+        s,
+        "11  /  九十天必须交出来的东西" if cn else "11  /  What must be done in 90 days",
         "日期、负责人、数字。没有第三种状态。" if cn else "Date, owner, number. No third status.",
         font,
     )
@@ -684,8 +720,8 @@ def build(C, lang):
         rows = [
             ["日期", "必须交付", "战线", "负责人", "数字"],
             ["9/29", "slam.systems 德文上线", "独立站", "Linda", "1 个域名"],
-            ["10/13", "EN+ZH 首页 / 三社媒首发", "独立站 · 社媒", "Eva + Peter", "3 语 + 3 账号"],
-            ["10/20", "三支视频可嵌官网", "社媒 · 邮件", "Jürg", "60s+30s+30s"],
+            ["10/13", "EN+ZH 首页 / LI+IG 首发", "独立站 · 社媒", "Eva + Peter", "2 个账号先活"],
+            ["10/20", "7 秒 SCORE 片 + 表单跳转", "独立站 · 视频", "Jürg", "7s → 表单"],
             ["10/21", "SPORTEL 出差完成", "展会 · 直达", "Linda + Peter", "8 场会"],
             ["11/20", "Inter BEE 经销商开谈", "展会 · 经销商", "Linda + Jürg", "6 家面谈"],
             ["11/30", "欧洲名单全部触达", "邮件 · 直达", "Peter + Linda", "40 家"],
@@ -699,8 +735,8 @@ def build(C, lang):
         rows = [
             ["Date", "Must ship", "Engine", "Owner", "Number"],
             ["29 Sep", "German live on slam.systems", "Site", "Linda", "1 domain"],
-            ["13 Oct", "EN+ZH home / social first posts", "Site · Social", "Eva + Peter", "3 langs + 3 accounts"],
-            ["20 Oct", "Three films on the site", "Social · Email", "Jürg", "60s+30s+30s"],
+            ["13 Oct", "EN+ZH home / LI+IG first posts", "Site · Social", "Eva + Peter", "2 accounts live"],
+            ["20 Oct", "7s SCORE film + form jump", "Site · Video", "Jürg", "7s → form"],
             ["21 Oct", "SPORTEL trip done", "Show · Direct", "Linda + Peter", "8 meetings"],
             ["20 Nov", "Inter BEE dealer talks open", "Show · Dealer", "Linda + Jürg", "6 meetings"],
             ["30 Nov", "Full Europe list reached", "Email · Direct", "Peter + Linda", "40 accounts"],
@@ -713,7 +749,7 @@ def build(C, lang):
     table_grid(s, ML, Inches(1.08), [Inches(1.35), Inches(4.05), Inches(2.35), Inches(2.15), Inches(2.15)], Inches(0.48), rows, font, True, 11)
     add_box(s, ML, Inches(6.42), Inches(12.08), Inches(0.52), MAGENTA)
     add_tf(s, ML + Inches(0.18), Inches(6.48), Inches(11.7), Inches(0.4), bottom, 13, WHITE, True, font, PP_ALIGN.LEFT, MSO_ANCHOR.MIDDLE)
-    footer(s, 11, font)
+    footer(s, 12, font)
 
     prs.save(C["file"])
     print("wrote", C["file"])
